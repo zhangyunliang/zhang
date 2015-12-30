@@ -1,0 +1,3 @@
+<?php
+//000000043200a:2:{i:0;a:11:{s:5:"ad_id";s:2:"89";s:7:"site_id";s:2:"35";s:7:"city_id";s:1:"1";s:5:"title";s:12:"生活信息";s:8:"link_url";s:27:"/life/detail/life_id/8.html";s:5:"photo";s:28:"2015/04/25/553b2178c7231.jpg";s:4:"code";s:0:"";s:7:"bg_date";s:10:"2015-01-30";s:8:"end_date";s:10:"2020-01-01";s:6:"closed";s:1:"0";s:7:"orderby";s:1:"1";}i:1;a:11:{s:5:"ad_id";s:2:"82";s:7:"site_id";s:2:"35";s:7:"city_id";s:1:"1";s:5:"title";s:18:"Baocms震撼来袭";s:8:"link_url";s:36:"http://www.baocms.cn/jifen/main.html";s:5:"photo";s:28:"2015/04/24/5539dc27d5f78.jpg";s:4:"code";s:0:"";s:7:"bg_date";s:10:"2015-01-26";s:8:"end_date";s:10:"2020-01-01";s:6:"closed";s:1:"0";s:7:"orderby";s:1:"3";}}
+?>

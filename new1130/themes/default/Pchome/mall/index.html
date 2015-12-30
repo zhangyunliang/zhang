@@ -1,0 +1,394 @@
+<include file="public:header" />
+<include file="mall:top"/>
+<include file="public:nav"/>
+
+
+<div class="content zy_content" id="pcw-list">
+    <div style="height:30px;">
+        <ul style="clear: both">
+                <li class="goods_flLi"><a href="<{:U('mall/index',array('fid'=>$fid))}>">所有类目</a></li>
+			<if condition="!empty($cat)">
+                <li class="goods_flLi goods_flLix">&gt;</li>
+                <script>
+                    $(function () {
+                        $('.goods_flLiLf .goods_flLiA').hover(function () {
+                            $(this).parent().find('.goods_flLiLfk').show();
+                            $(this).addClass("on");//加上父类的css
+                        });
+                        $('.goods_flLiLf').hover(function () {
+                        }, function () {
+                            $(this).find('.goods_flLiLfk').hide();
+                            $(this).children(".goods_flLiA").removeClass("on");
+                        });
+                        $('.goods_flLiFl').hover(function () {
+                            $(this).parent().find('.goods_flLiLfk').hide();
+                            $(this).parent().find(".goods_flLiA").removeClass("on");
+                        });
+                    });
+                </script>
+                <if condition="!empty($cat)">
+                    <li class="goods_flLi goods_flLiLf goods_flLiLf1"><a class="goods_flLiA first" href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>"><{$goodscate[$cat]['goods_category_name']}><em></em></a><a href="<{:U('mall/index',array('fid'=>$fid))}>" class="goods_flLiFl">ｘ</a>
+                        <div class="goods_flLiLfk"><a href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                            <foreach name="goodscate" item="item">
+                                <eq name="item.parent_id" value="$cat">
+                                    |<a <eq name="item.goods_category_id" value="$cate_id">class="on"</eq>  href="<{:U('mall/index',array('cat'=>$item['parent_id'],'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$goodscate[$item['goods_category_id']]['goods_category_name']}></a>
+                                </eq>
+                            </foreach>
+                        </div>
+                    </li>
+                </if>
+
+                <!--二级平级-->
+                <if condition="!empty($cate_id)">
+                    <li class="goods_flLi goods_flLix">&gt;</li>
+                    <li class="goods_flLi goods_flLiLf goods_flLiLf2"><a class="goods_flLiA second" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$cate_id,'fid'=>$fid))}>"><{$goodscate[$cate_id]['goods_category_name']}></a><a href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>" class="goods_flLiFl">ｘ</a>
+                    </li>
+                    <li class="goods_flLi goods_flLix"></li>
+                </if>
+        </ul>
+        </if>
+    </div>
+
+
+    <!--模式切换代码段-->
+    <if condition="!empty($fid) and $fid eq 1">
+        <div class="left zy_content_l" id="rowshow">
+            <!--start-->
+            <form name="my-form" method="get" action="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$cate_id))}>">
+
+                <div class="goods_flBox" id="shopping">
+                    <ul>
+                        <!--页面显示一级菜单-->
+                        <if condition="!empty($cat)">
+                            <li class="goods_flList">
+                                <div class="left goods_flList_l"> 一级分类：</div>
+                                <div class="left goods_flList_r">
+                                    <a class="goods_flListA" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                    <foreach name="goodscate" item="item">
+                                        <neq name="item.cat_id" value="0"><!--第一级条件可以更改-->
+                                            <if condition="$item.goods_category_id eq $cat">
+                                                <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                <else/>
+                                                <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                            </if>
+
+                                        </neq>
+                                    </foreach>
+                                </div>
+                            </li>
+                        </if>
+                        <!--页面显示一级菜单-->
+                        <if condition="empty($cat)">
+                            <li class="goods_flList">
+                                <div class="left goods_flList_l">一级分类：</div>
+                                <div class="left goods_flList_r">
+                                    <a class="goods_flListA on" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                    <foreach name="goodscate" item="item">
+                                        <neq name="item.cat_id" value="0"><!--第一级条件可以更改-->
+                                            <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                        </neq>
+                                    </foreach>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="left goods_flList_l">二级分类：</div>
+                                <div class="left goods_flList_r">
+                                    <a class="goods_flListA on" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                </div>
+                            </li>
+                        </if>
+                        <!--页面显示二级菜单-->
+                        <if condition="!empty($cat) and empty($cate_id)">
+                            <li class="goods_flList">
+                                <div class="left goods_flList_l">二级分类：</div>
+                                <div class="left goods_flList_r">
+                                    <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>">全部</a>
+                                    <foreach name="goodscate" item="item">
+                                        <eq name="item.parent_id" value="$cat">
+                                            <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                        </eq>
+                                    </foreach>
+                                </div>
+                            </li>
+                        </if>
+                        <!--页面显示二级菜单-->
+                        <if condition="!empty($cat) and !empty($cate_id)">
+                            <li class="goods_flList">
+                                <div class="left goods_flList_l">二级分类：</div>
+                                <div class="left goods_flList_r">
+                                    <a class="goods_flListA " href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>">全部</a>
+                                    <foreach name="goodscate" item="item">
+                                        <eq name="item.parent_id" value="$cat">
+                                            <if condition="$item.goods_category_id eq $cate_id">
+                                                <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                <else/>
+                                                <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                            </if>
+
+                                        </eq>
+                                    </foreach>
+                                </div>
+                            </li>
+                        </if>
+                    </ul>
+                </div>
+                <!--搜索-->
+                <div class="filter_wrap">
+                    <label>商品名：</label><input type="text" name="goods_name" value="<{$formget['goods_name']}>"/>
+                    <label>型号：</label><input type="text" name="version" value="<{$formget['version']}>"/>
+                    <label>品牌：</label><input type="text" name="brand" value="<{$formget['brand']}>"/>
+                    <label> 颜色：</label><input type="text" name="color"  value="<{$formget['color']}>" />
+                    <input type="submit" class="filter_submit"  value="搜  索">
+                </div>
+            </form>
+            <!--商品展示开始-->
+            <div class="sort_wrap">
+                <ul class="left type">
+                    <li class="on"><a>综合</a></li>
+                    <li ><a href="<{:U('mall/index',array('price_order'=>1,'fid'=>$fid))}>">价格<span class="icon_sort">↓</span></a></li>
+                    <li ><a href="<{:U('mall/index',array('brand_order'=>1,'fid'=>$fid))}>">销量</a></li>
+                </ul>
+                <ul class="right style">
+                    <li class="on grid"><a><i class="pic"></i></a></li>
+                    <li class="list"><a><i class="text"></i></a></li>
+                </ul>
+                <div class="clear"></div>
+            </div>
+            <div class="qg-sp-listBox">
+                <div class="qg-sp-list">
+                    <ul >
+                        <foreach name="list" item="item" key="key">
+                            <if condition="$key % 5 eq 0">
+                                <li class="margin_sp">
+                                    <else/>
+                                <li>
+                            </if>
+                            <div class="qg-sp-liBox">
+                                <div class="infobox">
+									<div class="img">
+										<a target="_blank" href="<{:U('search/detail',array('goods_name_id'=>$item['goods_name_id'],'brand_name'=>$item['brand_name'],'goods_version'=>$item['goods_version']))}>">
+											<img src="__ROOT__/../customer/<{$item.goods_thumb}>" />
+										</a>
+									</div>
+									
+									<p class="rap">
+										<a target="_blank" href="<{:U('search/detail',array('goods_name_id'=>$item['goods_name_id'],'brand_name'=>$item['brand_name'],'goods_version'=>$item['goods_version']))}>"><{$item['goods_name']}></a>
+									</p>                                 
+									<p class="version"><span class="title">品牌:</span><{$item.brand_name}></p>
+									<p class="version"><span class="title">型号:</span><{$item.goods_version}></p>
+									<p class="version"><span class="title">颜色:</span>默认</p>
+									<p class="version"><span class="title">单位:</span>3米每卷</p>
+								</div>
+								<div class="operationbox">
+									<div class="sc_cpList_gj">
+										<span class="left">
+											<span class="sc_cpList_gjj">
+												<span class="money">￥<{$item.price}></span>
+											</span>
+										</span>
+										<span class="right">
+											<a class="addcart">加入购物车</a>
+										</span>
+									</div>
+								</div>
+                            </div>
+                            </li>
+                        </foreach>
+                    </ul>
+                </div>
+            </div>
+            <div class="x">
+                <{$page}>
+            </div>
+
+
+            <else/>
+
+            <!--列表形态展示-->
+            <div class="left zy_content_l" id="listshow">
+                <!--start-->
+                <form name="my-form" method="get" action="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$cate_id))}>">
+
+                    <div class="goods_flBox" id="shopping">
+                        <ul>
+                            <!--页面显示一级菜单-->
+                            <if condition="!empty($cat)">
+                                <li class="goods_flList">
+                                    <div class="left goods_flList_l"> 一级分类：</div>
+                                    <div class="left goods_flList_r">
+                                        <a class="goods_flListA" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                        <foreach name="goodscate" item="item">
+                                            <neq name="item.cat_id" value="0"><!--第一级条件可以更改-->
+                                                <if condition="$item.goods_category_id eq $cat">
+                                                    <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                    <else/>
+                                                    <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                </if>
+
+                                            </neq>
+                                        </foreach>
+                                    </div>
+                                </li>
+                            </if>
+                            <!--页面显示一级菜单-->
+                            <if condition="empty($cat)">
+                                <li class="goods_flList">
+                                    <div class="left goods_flList_l">一级分类：</div>
+                                    <div class="left goods_flList_r">
+                                        <a class="goods_flListA on" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                        <foreach name="goodscate" item="item">
+                                            <neq name="item.cat_id" value="0"><!--第一级条件可以更改-->
+                                                <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                            </neq>
+                                        </foreach>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="left goods_flList_l">二级分类：</div>
+                                    <div class="left goods_flList_r">
+                                        <a class="goods_flListA on" href="<{:U('mall/index',array('fid'=>$fid))}>">全部</a>
+                                    </div>
+                                </li>
+                            </if>
+                            <!--页面显示二级菜单-->
+                            <if condition="!empty($cat) and empty($cate_id)">
+                                <li class="goods_flList">
+                                    <div class="left goods_flList_l">二级分类：</div>
+                                    <div class="left goods_flList_r">
+                                        <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>">全部</a>
+                                        <foreach name="goodscate" item="item">
+                                            <eq name="item.parent_id" value="$cat">
+                                                <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                            </eq>
+                                        </foreach>
+                                    </div>
+                                </li>
+                            </if>
+                            <!--页面显示二级菜单-->
+                            <if condition="!empty($cat) and !empty($cate_id)">
+                                <li class="goods_flList">
+                                    <div class="left goods_flList_l">二级分类：</div>
+                                    <div class="left goods_flList_r">
+                                        <a class="goods_flListA " href="<{:U('mall/index',array('cat'=>$cat,'fid'=>$fid))}>">全部</a>
+                                        <foreach name="goodscate" item="item">
+                                            <eq name="item.parent_id" value="$cat">
+                                                <if condition="$item.goods_category_id eq $cate_id">
+                                                    <a class="goods_flListA on" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                    <else/>
+                                                    <a class="goods_flListA" href="<{:U('mall/index',array('cat'=>$cat,'cate_id'=>$item['goods_category_id'],'fid'=>$fid))}>"><{$item['goods_category_name']}></a>
+                                                </if>
+
+                                            </eq>
+                                        </foreach>
+                                    </div>
+                                </li>
+                            </if>
+                        </ul>
+                    </div>
+                    <!--搜索-->
+                    <div class="filter_wrap">
+                        <div class="filter_title">筛选条件</div>
+                        <label>商品名：</label><input type="text" name="goods_name" value="<{$formget['goods_name']}>"/>
+                        <label>型号：</label><input type="text" name="version" value="<{$formget['version']}>"/>
+                        <label>品牌：</label><input type="text" name="brand" value="<{$formget['brand']}>"/>
+                        <label> 颜色：</label><input type="text" name="color"  value="<{$formget['color']}>" />
+                        <input type="submit" class="filter_submit"  value="搜  索">
+                    </div>
+                    <div class="sort_wrap">
+                        <ul class="left type">
+                            <li class="on"><a>综合</a></li>
+                            <li ><a href="<{:U('mall/index',array('price_order'=>1,'fid'=>$fid))}>">价格<span class="icon_sort">↓</span></a></li>
+                            <li ><a href="<{:U('mall/index',array('brand_order'=>1,'fid'=>$fid))}>">销量</a></li>
+                        </ul>
+                        <ul class="right style">
+                            <li class="grid"><a><i class="pic"></i></a></li>
+                            <li class="on list"><a><i class="text"></i></a></li>
+                        </ul>
+                        <div class="clear"></div>
+                    </div>
+                </form>
+                <!--商品展示开始-->
+
+                <div class="list_table">
+					<table>
+						<tr class="toptr">
+							<th class="top1">图片</th>
+							<th class="top2">品名</th>
+							<th class="top3">品牌</th>
+							<th class="top4">型号</th>
+							<th class="top5">颜色</th>
+							<th class="top6">单位</th>
+							<th class="top7">价格</th>
+							<th class="top8">操作</th>
+						</tr>
+						<foreach name="list" item="item" key="key">
+							<tr>
+								<td class="img">
+									<a target="_blank" href="<{:U('search/detail',array('goods_name_id'=>$item['goods_name_id'],'brand_name'=>$item['brand_name'],'goods_version'=>$item['goods_version']))}>">
+										<img src="__ROOT__/../customer/<{$item.goods_thumb}>" />
+									</a>
+								</td>
+								<td class="name">
+									<a target="_blank" href="<{:U('search/detail',array('goods_name_id'=>$item['goods_name_id'],'brand_name'=>$item['brand_name'],'goods_version'=>$item['goods_version']))}>"><{$item['goods_name']}></a>
+								</td>
+								<td class="bonus"><{$item.brand_name}></td>
+								<td class="version"><{$item.goods_version}></td>
+								<td class="color">默认</td>
+								<td class="unit">3米/卷</td>
+								<td class="price">￥999.99</td>
+								<td class="operation"><a href="#" class="addcart">加入购物车</a></td>
+							</tr>
+						</foreach>
+					</table>
+				</div>
+                <div class="x">
+                    <{$page}>
+                </div>
+            </div>
+            <!--商品展示结束-->
+    </if>
+    <script>
+        $(function () {
+            $(".qg-sp-tab span").each(function (e) {
+                $(this).click(function () {
+                    $(this).parent().find("span").removeClass("on");
+                    $(this).addClass("on");
+                    $(".qg-sp-tab-nr .qg-sp-tab-nrList").each(function (i) {
+                        if (e == i) {
+                            //$(this).parent().find(".qg-sp-tab-nrList").hide();
+                            $(this).show();
+                        }
+                        else {
+                            //$(this).hide();
+                        }
+                    });
+                });
+                $(".qg-sp-tab span").eq(0).click();
+            });
+
+        });
+
+    </script>
+</div>
+</div>
+</div>
+<php>
+
+    $get_url=I('get.');
+
+    $list_url=$get_url;
+    $list_url['fid']=2;
+
+    $grid_url=$get_url;
+    $grid_url['fid']=1;
+
+</php>
+<script type="text/javascript">
+    $(".grid").click(function(){
+        location.href = "<{:U('',$grid_url)}>";
+    });
+    $(".list").click(function(){
+        location.href = "<{:U('',$list_url)}>";
+    });
+</script>
+<include file="public:footer"/>
