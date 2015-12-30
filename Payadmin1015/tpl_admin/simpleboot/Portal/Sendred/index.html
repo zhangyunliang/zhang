@@ -1,0 +1,117 @@
+<!-- 红包活动-->
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">发放红包</a></li>
+  </ul>
+  <!-- 将类型id传过去 -->
+  
+  <form name="sou" class="well form-search"  action="{:U('Sendred/index')}" method="post">
+  <input type="hidden" name="bid" value="{$bid}"/>
+    <label>会员等级查询：</label>
+	  <select name="vip">
+	  	<option value="-1">全部</option>
+		  <foreach name="vv" item="vo">
+		  	<php>$select=$vo['vip']===$vp?"selected":""</php>
+		  	<option value="{$vo.vip}" {$select}>{$vo.name}</option>
+		  </foreach>
+	  </select>
+	  <label>手机号：</label>
+	  <input type="text" name="temp_buyers_mobile" value="{$formget.temp_buyers_mobile}"/>
+	  <input type="submit" class="btn btn-success" value="搜索" />
+
+  </form>
+
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+	            <th width="30">ID</th>
+	            <th width="30">手机号</th>
+	            <th width="30">昵称</th>
+                <th width="30">注册时间</th>
+                <th width="30">头像</th>
+	            <th width="30">最后登录时间</th>
+	            <th width="30">会员等级</th>
+	            <th width="100">操作</th>
+	          </tr>
+        </thead>
+			<php>$v=array('0'=>'普通','1'=>'vip');</php>
+        	<foreach name="list" item="vo">
+	        	<tr>
+		            <td>
+		            <input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.temp_buyers_id}" >
+		            </td>
+		            <td>{$vo.temp_buyers_id}</td>
+		            <td>{$vo.temp_buyers_mobile}</td>
+		            <td>{$vo.nick}</td>
+                    <td>{$vo.add_time|date='Y-m-d H:i:s',###}</td>
+    	            <td><img width="25" height="25" src="{:sp_get_user_avatar_url($vo['photo'])}" /></td>
+		            <td>{$vo.lastlogin|date='Y-m-d H:i:s',###}</td>
+		            <td>{$v[$vo['vip']]}</td>
+		            <td>
+		            	<!-- <a href="javascript:open_iframe_dialog('{:u('comment/commentadmin/index',array('post_id'=>$vo['id']))}','评论列表')">查看评论</a> | -->
+		            	<a href="javascript:open_iframe_dialog('{:U('Portal/Sendred/send',array('id'=>$vo['temp_buyers_id'],'bid'=>$vo['bonus_id']))}','发红包啦')">发红包</a>
+		            	
+					</td>
+	          	</tr>
+	          	<input type="hidden" name="bid" value="{$vo.bonus_id}"/>
+          </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+    </div>
+
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>             
+       	<button class="btn btn-primary" type="button" id="J_Content_send">批量发送红包</button>
+        <!-- <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('Sendred/send',array('id'=>$vo['temp_buyers_id']))}" data-subcheck="true" >批量发送红包</button> --> 
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+
+$(function () {
+	setCookie("refersh_time",0);
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_send').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            var bid=$("input[name='bid']").val();
+            //alert(bid);
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+
+            if (str == 0) {
+				art.dialog.through({
+					id:'error',
+					icon: 'error',
+					content: '您没有勾选信息，无法进行操作！',
+					cancelVal: '关闭',
+					cancel: true
+				});
+                return false;
+            }
+            var $this = $(this);
+            art.dialog.open("__ROOT__/index.php?g=Portal&m=Sendred&a=send&ids="+id+"&bid=" + bid, {
+                title: "批量发红包",
+                width:"80%"
+            });
+        });
+    });
+});
+
+
+</script>
+</body>
+</html>

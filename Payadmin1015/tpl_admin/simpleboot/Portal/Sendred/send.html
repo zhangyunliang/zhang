@@ -1,0 +1,56 @@
+<admintpl file="header" />
+<body>
+<div style="width:500px;height:100px;padding-left:500px;margin-top:30px;">
+
+  <form name="f1" method="post" action="{:u('Sendred/send_post')}">
+  	<if condition="($send_type neq 5)">
+	<label>红包类型：</label>
+	<select name="bonus_id">
+		<option value="{$bonus_id}">{$bonus_name}[￥{$bonus_money}元]</option>
+	</select><br />
+	
+	<label>发放类型：</label>
+	<php>$type=array('1'=>'按会员等级发送','2'=>'按商品类型发送','4'=>'线下发送','5'=>'凭空发送');</php>
+	<select name="send_type">
+		<option value="{$send_type}">{$type[$send_type]}</option>
+	</select><br />
+	
+	<label>红包数量：</label><input type="text" name="num" maxlength="20px"/>
+	<br />
+ <input type="hidden" name="send_type" value="{$send_type}"/>
+	<input type="hidden" name="bonus_money" value="{$bonus_money}"/>
+	<input type="hidden" name="user_id" value="{$id}"/>
+	<div>
+		<button class="btn btn_submit J_ajax_submit_btn" type="submit">提交</button>
+		<input class="btn J_ajax_close_btn" type="reset" value="重置"/>
+	</div>
+	<else/>
+		<input type="hidden" name="bonus_id" value="{$bonus_id}"/>
+		<label><strong>红包类型：</strong></label>
+		<select name="send_type">
+			<option value="5">发红包</option>
+		</select><br />
+		
+		<label><strong>红包金额：</strong></label>
+		<input type="text" name="bonus_money" value=""/>*请输入红包金额<br />
+		
+		<label>
+		<input type="radio" name="state" value="0" checked = "checked"/><strong>直接充值</strong>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<!-- <input type="radio" name="state" value="1"/><strong>需领取</strong> -->
+		
+
+		</label>
+		<input type="hidden" name="user_id" value="{$id}"/>
+  <input type="hidden" name="send_type" value="{$send_type}"/>
+
+		<div>
+			<button class="btn btn_submit J_ajax_submit_btn btn-success" type="submit">提交</button>
+			<input class="btn J_ajax_close_btn btn-success" type="reset" value="重置"/>
+		</div>
+	</if>
+  </form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="">尾货商品添加</a></li>
+    </ul>
+    <div>基本信息</div>
+    <form class="form-horizontal J_ajaxForm" name="myform" method="post" action="{:U('Adwhsp/add_post')}">
+        <div class="search_type cc mb10">
+            <div class="mb10">
+                <div class="form-actions" style="padding-left:40px;">商品选择区：<br />
+                    <span class="mr20">*商品分类：
+                         <select name="goods_cat_id" id="select_1">
+                            <option value='-1' >--请选择--</option>
+                            <foreach name="list1" item="vo">
+                                <if condition="($vo.cat_id neq 0) or ($vo.grade eq 1)">
+                                    <option value="{$vo.goods_category_id}" disabled="true">{$vo.goods_category_name}</option>
+                                    <else/>
+                                    <option value="{$vo.goods_category_id}">{$vo.goods_category_name}</option>
+                                </if>
+
+                            </foreach>
+                         </select>
+
+                         &nbsp;&nbsp;&nbsp;&nbsp;*商品品牌：
+                        <select name="brand_id" id="select_2">
+                            <option value='-1' >--请选择--</option>
+                            <foreach name="list2" item="vo">
+                                <option value="{$vo.brand_id}">{$vo.brand_name}</option>
+                            </foreach>
+                        </select>
+                    </span><br /><br /><br />
+
+                    <span class="mr20">*请选择颜色：</span>
+                    <select name="color_id" >
+                        <option value='-1' >--请选择--</option>
+                        <foreach name="list3" item="vo">
+                            <option value="{$vo.color_id}">{$vo.color}</option>
+                        </foreach>
+                    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <span class="mr20">*请选择供应商：</span>
+                    <select name="cms_suppliers_id" style="width:320px;">
+                        <option value='-1' >--请选择--</option>
+                        <foreach name="list4" item="vo">
+                            <option value="{$vo.suppliers_id}">{$vo.suppliers_name}</option>
+                        </foreach>
+                    </select><br /><br /><br />
+                </div>
+                <div class="form-actions" style="padding-left:40px;">商品填写区：<br />
+
+                    <span class="mr20">*商品名称：</span>
+                    <input type="text" placeholder="请输入商品名..." name="goods_name" id="inp"/>&nbsp;&nbsp;
+                    <span class="mr20">*商品单位：</span>
+                    <input type="text" placeholder="请输入商品单位..." name="goods_unit"/>&nbsp;&nbsp;
+                    <!--需要判断-->
+                    <span class="mr20">*商品型号：</span>
+                    <input type="text" placeholder="请输入商品型号..." name="goods_version" id="inp_1"/><br /><br />
+
+                    <span class="mr20">*公开价：</span>
+                    <input type="text" placeholder="请输入公开价..." name="public_price"/>&nbsp;&nbsp;
+                    <span class="mr20">*会员价：</span>
+                    <input type="text" placeholder="请输入会员价..." name="shop_price"/>&nbsp;&nbsp;
+                    <span class="mr20">*内部价：</span>
+                    <input type="text" placeholder="请输入内部价..." name="private_price"/>&nbsp;&nbsp;
+                    <span class="mr20">*商品库存：</span>
+                    <input type="text" placeholder="请输入库存..." name="stock"/>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" name="goodsnames" value="" id="gne"/>
+        <input type="hidden" name="getversions" value="" id="vers"/>
+        <div class="form-actions" style="padding-left:20px;">
+            <button class="btn btn-primary btn_submit J_ajax_submit_btn" type="submit">提交</button>
+            <a class="btn btn-primary" href="{:U('Adwhsp/index')}">重填</a><span id="hh"></span>
+        </div>
+    </form>
+
+
+</div>
+<script type="text/javascript" src="__ROOT__/statics/js/common.js"></script>
+<script>
+    /**
+     * Created by yunliang on 2015/11/10.
+     */
+    $(function () {
+
+        //商品分类点击后更改品牌
+        $('#select_1').change(function(){
+            //alert(1);
+            var cat_id=$(this).val();
+            $.ajax({
+                type:'POST',
+                dataType:'json',
+                url:'__ROOT__/index.php?g=portal&m=Adwhsp&a=getbrand',
+                data:'goods_category_id='+$('#select_1').val(),
+
+                success:function(msg){
+                    if(msg!=null){
+                        var option_str='';
+                        for(var i=0;i<msg.length;i++){
+                            option_str+="<option value="+msg[i].brand_id+">"+msg[i].brand_name+"</option>";
+                        }
+                        $('#select_2 option').remove();
+                        $('#select_2').append(option_str);
+                    }else {
+                        $('#select_2 option').remove();
+                        $('#select_2').append("<option value='0'>暂无品牌</option>");
+                    }
+                }
+            })
+        });
+
+
+        //判断型号并且添加
+        $('#inp_1').blur(function(){
+            //alert(1);
+            var text=$(this).val();
+            //alert(text);
+            var id=$('#select_1 option:selected').val();
+            //alert(id);
+            $.ajax({
+                type:'POST',
+                dataType:'json',
+                url:'__ROOT__/index.php?g=portal&m=Adwhsp&a=pdversion',
+                data:{"goodsid":id,"vs":text},
+
+                success:function(msg){
+                    //alert(msg);
+                    if(msg!='0'){
+                        //已有的型号
+                        //console.log(msg.version_id);
+                        $('#vers').val(msg.version_id);
+                    }
+                }
+
+            })
+        });
+
+        //判断商品名并添加
+        $('#inp').blur(function(){
+            var name=$(this).val();
+            var id=$('#select_1 option:selected').val();
+            $.ajax({
+                type:'POST',
+                dataType:'json',
+                url:'__ROOT__/index.php?g=portal&m=Adwhsp&a=pdname',
+                data:{"spname":name,"goodsid":id},
+
+                success:function(msg){
+                    if(msg!='0'){
+                        //已有的商品名
+                        //console.log(msg.goods_name_id);
+                        $('#gne').val(msg.goods_name_id);
+                    }
+
+                }
+            })
+        });
+
+    });
+
+</script>
+</body>
+</html>

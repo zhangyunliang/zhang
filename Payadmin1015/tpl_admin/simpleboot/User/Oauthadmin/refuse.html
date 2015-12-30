@@ -1,0 +1,44 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed" style="min-width:600px;">
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="{:U('Oauthadmin/nopass',array('id'=>$id))}">
+      <div class="table_list" style="text-align:center;">
+							<textarea style="width:500px;hight:600px;" id="reason" name='reason' rows="10"></textarea>
+              <input type='hidden' value='{$p}'/>
+							<p><input type="submit" value="提交" id='send' ></p>
+
+	      <div class="p10"><div class="pages">  </div> </div>
+  </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script type='text/javascript'>
+			$(function(){
+				  $('#send').click(function(){
+                if($("#reason").val() == ''){
+          
+                alert("请输入拒绝理由.");
+                $("#reason").focus();
+                return false;
+               }else{
+               	//确实要拒绝
+               confirm('您确定要拒绝此供应商吗？');
+
+               	//提交
+               $('form').submit();
+
+               //关闭
+              alert('供应商拒绝成功！');
+              parent.location.reload();
+
+               
+              }
+       });
+
+ 
+			});
+</script>
+</body>
+</html>

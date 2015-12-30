@@ -1,0 +1,330 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">商品列表</a></li>
+     <li><a href="{:U('AdminPost/add',array('term'=>empty($term['term_id'])?'':$term['term_id']))}"  target="_self">添加商品</a></li>
+  </ul>
+  <form class="well form-search" method="get" action="{:u('GROUP_NAME/AdminPost/get_goods')}" id='form-search'>
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">分类：
+        <select class="select_2" name="goods_cat_id" id="search_category_id">
+            <option value='0' >全部</option>
+            <foreach name="cat_tree" item="vo">
+            <option value='{$vo.goods_category_id}' style="text-indent:{$vo['lev']*20}px;" >{$vo.goods_category_name}</option>     
+            </foreach>
+        </select>
+        <span class="mr20" >品牌：
+        <select class="select_2" name="brand_name" style="width:120px;" id="search_brand_id">
+            
+
+        </select>
+        <span class="mr20" >型号：
+        <select class="select_2" name="goods_version" style="width:120px;" id='search_version_id'>
+            
+
+        </select>
+        <span class="mr20" >颜色：
+        <select class="select_2" name="search_color_id" style="width:120px;" id='search_color_id'>
+            
+
+        </select>
+<!--         &nbsp;&nbsp;时间：
+<input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time|default=''}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off"> -->
+        
+        <!-- 
+        <select class="select_2" name="searchtype" style="width:70px;">
+          <option value='0' >标题</option>
+        </select>
+         -->
+<!--                &nbsp; &nbsp;关键字：
+        <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入关键字..."> -->
+        <input type="button" class="btn" value="搜索" id='search'/>
+        </span>
+      </div>
+    </div>
+  </form>
+<if condition="$lists eq 0">
+          <h4>没有找到相关产品！</h4>
+<else/>
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+            <tr>
+              <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+              
+              <th>ID</th>
+       
+              <th>商品名称</th>
+              <th>分类</th>
+              <th >品牌</th>
+              <th >型号</th>
+               <th >颜色</th>
+
+              <th >最近修改</th>
+              <th>管理员</th>
+              <th>审核时间</th>
+              <th >状态</th>
+              <th >操作</th>
+            </tr>
+        </thead>
+
+         <php>
+            $status=array('0'=>'审核中...',"1"=>"已通过","2"=>"未通过");
+          </php>
+          <foreach name="lists" item="vo">
+
+            <tr>
+                <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.goods_id}" ></td>
+         
+                <td>{$vo.goods_id}</td>
+                <td>{$vo.goods_name}</td>
+                <td>{$vo.goods_category_name}</td>
+                <td >{$vo.brand_name}</td>
+                <td>{$vo.goods_version}</td>
+                <td >{$vo.color}</td>
+                <td>{$vo.last_update|date='Y-m-d H:i:s',###}</td>
+                <td>{$vo.user_nicename}</td>
+                <td>{$vo.admin_time|date='Y-m-d H:i:s',###}</td>
+                <td>{$status[$vo['is_pass']]}</td>
+                <td>
+                  <a href=''>查看</a> | 
+                <if condition="$vo['is_pass'] eq 1">
+                    <font color="#cccccc">审核通过</font> |
+                    <a href="{:U('AdminPost/nopass_ajax',array('id'=>$vo['goods_id']))}" class="J_ajax_dialog_btn" data-msg="您确定要不通过此供应商吗？" >审核不通过</a> 
+                <else/>
+                    <a href="{:U('AdminPost/pass_ajax',array('id'=>$vo['goods_id']))}" class="J_ajax_dialog_btn" data-msg="您确定要通过此商品吗？" >审核通过</a> |
+                    <font color="#cccccc">审核不通过</font> 
+                </if >
+
+          </td>
+              </tr>
+          </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+         </if >
+          
+     
+    </div>
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
+       
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('check'=>1))}" data-subcheck="true" >审核通过</button>
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('AdminPost/check',array('uncheck'=>1))}" data-subcheck="true" >审核不通过</button>
+       
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script type='text/javascript'>
+
+var _response = null;
+var _str = null;
+function update(id,status){
+
+ var  url = null
+  if(status==0){
+   url = "{:U('AdminPost/nopass_ajax')}";
+   confirm("您确定要不通过此供应商吗？"); 
+  }else{
+   url = "{:U('AdminPost/pass_ajax')}";
+   confirm("您确定要通过此商品吗？"); 
+  }
+  $.post(url, {  
+                id: id
+            }, function(info,status){ 
+              //console.log(info);
+                for (var i = 0; i < _response.data[0].length; i++) {
+                if (_response.data[0][i].goods_id == id) {
+                  if(info.status == 1 ){
+                    _response.data[0][i].is_pass = info.data;
+                    //console.info( _response.data[0][i]);
+                    break;
+                  }
+                  }
+                }
+
+          searchData(_response,_str);
+                   
+        },"json"); 
+
+
+}
+
+function searchData(response,str)
+{
+  if(response.status == 1 && response.data[0] ){
+          var $html = '<table width="100%" class="table table-hover"><thead><tr><th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th><th>ID</th><th>商品名称</th><th >商品型号</th><th >最近修改</th><th>管理员</th><th>审核时间</th><th >状态</th><th >操作</th></tr></thead>';
+         
+
+  
+          for (var i = 0; i < response.data[0].length; i++) {
+
+            $html += '<tr><td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value='+response.data[0][i].goods_id+" ></td><td>"+response.data[0][i].goods_id+"</td><td>"+response.data[0][i].goods_name+"</td><td>"+response.data[0][i].goods_version+"</td><td>"+UnixToDate(response.data[0][i].last_update,true)+"</td><td>"+response.data[0][i].user_nicename+"</td><td>"+UnixToDate(response.data[0][i].admin_time,true)+"</td><td>"+Tostats(response.data[0][i].is_pass)+'</td><td>';
+            $html += '<a href="#">查看</a> | ';
+            if(response.data[0][i].is_pass == 1){ 
+              $html +='<font color="#cccccc">审核通过</font> | <a href="#" class="J_ajax_dialog_btn" data-msg="您确定要不通过此供应商吗？" onclick="update('+response.data[0][i].goods_id+',0)">审核不通过</a>';
+            }else{
+              $html +='<a href="#" class="J_ajax_dialog_btn" data-msg="您确定要通过此商品吗？" onclick="update('+response.data[0][i].goods_id+',1)">审核通过</a> | <font color="#cccccc">审核不通过</font> </if > </td></tr></table>';
+            }
+          }
+
+          _response = response;
+          _str = str;
+               $('.table_list table').empty().html($html);
+               //把数据填进去
+
+               $('.pagination').empty().html(response.data[1]);
+               
+              }else{
+               $('.pagination').empty();
+               
+               
+               $('.table_list table').empty().html(str);
+              }
+}
+
+function refersh_window() {
+    var refersh_time = getCookie('refersh_time');
+    if (refersh_time == 1) {
+        window.location="{:u('AdminPost/index',$formget)}";
+    }
+}
+setInterval(function(){
+  refersh_window();
+}, 2000);
+$(function () {
+  setCookie("refersh_time",0);
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_remove').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+            if (str == 0) {
+        art.dialog.through({
+          id:'error',
+          icon: 'error',
+          content: '您没有勾选信息，无法进行操作！',
+          cancelVal: '关闭',
+          cancel: true
+        });
+                return false;
+            }
+            var $this = $(this);
+            art.dialog.open("__ROOT__/index.php?g=portal&m=AdminPost&a=move&ids=" + id, {
+                title: "批量移动",
+                width:"80%"
+            });
+        });
+    });
+});
+
+      
+    $(document).ready(function() {  
+        $('.btn').click(function(){
+             
+        //   var str = '<b>您搜索的';
+        //       if($('#search_category_id :selected').text()){
+        //         str += '+分类：'+$('#search_category_id :selected').text();
+        //       }
+        //       if($('#search_brand_id :selected').text()){
+        //         str += '+品牌：'+$('#search_brand_id :selected').text();
+        //       }
+        //       if($('#search_color_id :selected').text()){
+        //         str += '+型号：'+$('#search_color_id :selected').text();
+        //       }
+        //       if($('#search_version_id :selected').text()){
+        //         str += '+颜色：'+$('#search_version_id :selected').text();
+        //       }
+
+        //       str +='+没有相关商品信息</b>';
+        //   $.post("{:u('AdminPost/get_goods')}", {  
+        //         goods_cat_id: $('#search_category_id').val(), 
+        //         brand_name: $('#search_brand_id').val(),
+        //         goods_color:$('#search_color_id').val(),
+        //         goods_version:$('#search_version_id').val()
+        //     }, function(response,status){ 
+        //       //console.log(response);
+        //       searchData(response,str);
+                   
+        // },"json"); 
+          $('#form-search').submit();
+        });  
+        $('#search_category_id').change(function(){ 
+             //清空数据
+            $('#search_brand_id').empty();
+            $('#search_version_id').empty();
+            $('#search_color_id').empty();   
+            $.post("{:u('AdminPost/get_bcv')}", {  
+                goods_category_id: $('#search_category_id').val(),  
+            }, function(response,status){ 
+
+                  if(response.status == 1){
+
+                    var brand_html ="<option value='0' >全部</option>";
+                    for (var i=0,len=response.data.brand_name.length; i<len; i++){
+                    brand_html +="<option value="+response.data.brand_name[i]+">"+response.data.brand_name[i]+"</option>";   
+                    }
+                    $('#search_brand_id').append(brand_html);
+                    var version_html ="<option value='0' >全部</option>";
+                    for (var i=0,len=response.data.goods_version.length; i<len; i++){
+                    version_html +="<option value="+response.data.goods_version[i]+">"+response.data.goods_version[i]+"</option>";   
+                    }
+                    $('#search_version_id').append(version_html);
+                    var color_html ="<option value='0' >全部</option>";
+                    for (var i=0,len=response.data.color_name.length; i<len; i++){
+                    color_html +="<option value="+response.data.color_name[i]+">"+response.data.color_name[i]+"</option>";   
+                    }
+                    $('#search_color_id').append(color_html);
+                  }
+            },"json");  
+
+        });  
+    });  
+    function UnixToDate(unixTime, isFull, timeZone) {
+                if (typeof (timeZone) == 'number')
+                {
+                    unixTime = parseInt(unixTime) + parseInt(timeZone) * 60 * 60;
+                }
+                var time = new Date(unixTime * 1000);
+                var ymdhis = "";
+                ymdhis += time.getUTCFullYear() + "-";
+                ymdhis += (time.getUTCMonth()+1) + "-";
+                ymdhis += time.getUTCDate();
+                if (isFull === true)
+                {
+                    ymdhis += " " + time.getUTCHours() + ":";
+                    ymdhis += time.getUTCMinutes() + ":";
+                    ymdhis += time.getUTCSeconds();
+                }
+                return ymdhis;
+            }
+    function Tostats(num){
+       switch (num){
+         case '0':
+            return '审核中...';
+         case '1':
+          return '已通过';
+         case '2':
+          return '未通过';
+         case 0:
+            return '审核中...';
+         case 1:
+          return '已通过';
+         case 2:
+          return '未通过';
+       }
+
+    }
+</script>
+</body>
+</html>

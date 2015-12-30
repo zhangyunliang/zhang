@@ -1,0 +1,62 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<php>$user_statuses=array("0"=>"已冻结","1"=>"正常","2"=>"未验证")</php>
+<div class="wrap jj">
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="#">
+      <div class="table_list">
+	    <table class="table table-hover">
+	        <thead>
+	          <tr>
+	            <th align='center'>ID</th>
+	            <th>用户名</th>
+	            <th>昵称</th>
+	            <th>头像</th>
+	            <!-- <th>E-mail</th> -->
+	            <th>注册时间</th>
+	            <th>最后登录时间</th>
+	            <!-- <th>最后登录IP</th> -->
+	            <th>状态</th>
+	            <th align='center'>操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<foreach name="lists" item="vo">
+	        	<tr>
+	            <td align='center'>{$vo.temp_buyers_id}</td>
+	            <td>{$vo.temp_buyers_mobile}</td>
+	            <td>{$vo.nick|default='未填写'}</td>
+	            <td>
+	            	<if condition = "$vo['photo'] neq '' ">
+	            		<img width="25" height="25" src="{$Think.const.NROOT}/Guest/{$vo.photo}" />
+	            		<else/>
+
+	            	</if>
+	            </td>
+	            <!-- <td>{$vo.user_email}</td> -->
+	            <td>{$vo.add_time|date='Y-m-d H:i:s',###}</td>
+	            <td>{$vo.lastlogin|date='Y-m-d H:i:s',###}</td>
+	            <!-- <td>{$vo.last_login_ip}</td> -->
+	            <td>{$user_statuses[$vo['is_check']]}</td>
+
+	            <td align='center'>
+              <if condition="($vo['is_check'] eq 0)">
+		            <font color="#cccccc">冻结</font> |
+		            <a href="{:U('indexadmin/cancelban',array('id'=>$vo['temp_buyers_id'],'p'=> $_GET['p']))}" class="J_ajax_dialog_btn" data-msg="您确定要启用此用户吗？">启用</a>
+														<elseif condition="($vo['is_check'] eq 1)"/>
+		            <a href="{:U('indexadmin/ban',array('id'=>$vo['temp_buyers_id'],'p'=> $_GET['p']))}" class="J_ajax_dialog_btn" data-msg="您确定要冻结此用户吗？">冻结</a> |
+		            <font color="#cccccc">启用</font>
+		            </if>
+		        		</td>
+	          	</tr>
+	          	</foreach>
+			</tbody>
+	      </table>
+	      <div class="pagination">{$page}</div>
+  </div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>

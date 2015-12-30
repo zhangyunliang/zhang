@@ -1,0 +1,217 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed" style="min-width:600px;">
+<div class="wrap jj" id="miaodian">
+  <div style='color:#1dd2af'>[基本信息]</div>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="#">
+      <div class="table_list">
+      <php>
+        $statuses = array(
+        '0'=>'已取消',
+        '1'=>'待付款',
+        '2'=>'已付款，待发货',
+        '3'=>'已付款，已发货',
+        '4'=>'买家确认收货，订单完成',
+        '5'=>'买家申请退款,卖家未确认',
+        '6'=>'卖家已同意买家退款',
+        '7'=>'管理员已确认，退款已处理',
+        '8'=>'',
+        '9'=>'',
+        '200'=>'订单已入账',
+        '201'=>'买家申请提现',
+        '202'=>'申请提现已处理',
+        '203'=>'卖家已同意买家退款',
+        '204'=>'管理员已确认，退款已处理',
+        '205'=>'货到付款进行中',
+        '206'=>'货到付款已完成',
+        '207'=>'白条支付进行中',
+        '208'=>'白条已收货，管理员未结算',
+        '209'=>'白条已收货，管理员已结算',
+        '210'=>'已发送的红包',
+        '211'=>'余额支付成功',
+        '212'=>'余额支付取消'
+        );
+        $method_array = array(
+        '0'=>'支付宝',
+        '1'=>'货到付款',
+        '2'=>'支付宝网银',
+        '3'=>'白条支付',
+        '4'=>'通联支付',
+        '5'=>'余额支付');
+      </php>
+      <table width="100%" class="table table-hover">
+          <thead>
+            <tr>
+              <th align='center'>ID</th>
+              <th>订单号</th>
+              <th>支付方式</th>
+               <th>
+                订单状态
+               <if condition="($orderinfos['method'] eq 1) and ($orderinfos['state'] eq 3) and ($orderinfos['actually_money'] eq 0)">
+               <a class="btn  btn-success" style="padding:2px 10px;font-size:12px;font-weight:normal;" href="{:U('AdminPage/confirmation_goods',array('id'=>$orderinfos['temp_purchase_id'],'sn'=>$orderinfos['temp_purchase_sn'],'invitation_id'=>$orderinfos['invitation_person']))}">确认收货</a>
+               <else />
+               </if>
+              </th>
+               <th>购货人</th>
+               <th>卖家备注</th>
+               <th>下单时间</th>
+               
+              
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align='center'>{$orderinfos.temp_purchase_id}</td>
+              <td>{$orderinfos.temp_purchase_sn}<br/>{$orderinfos.purchase_title}</td>
+              <td>{$method_array[$orderinfos['method']]}</td>
+              <td>
+                {$statuses[$orderinfos['state']]}
+              </td>
+              <td>{$orderinfos.nick}[手机号：{$orderinfos.temp_buyers_mobile}]<!-- <a href="javascript:open_iframe_dialog('{:U('AdminPage/buyers_info',array('id'=>$vo['temp_purchase_id']))}','查看购货人信息');">[ 显示购货人信息 ]</a> --></td>
+              <td>{$orderinfos.suppliers_remarks}</td>
+              <td>{$orderinfos.time|date='Y-m-d H:i:s',###}</td>
+            
+              </tr>
+      </tbody>
+        </table>
+       <div style='color:#1dd2af'>[商品信息]</div>
+             <table width="100%" class="table table-hover">
+          <thead>
+            <tr>
+              <th align='center' >商品名称 [ 品牌 ]</th>
+              <th>型号</th>
+              <th>颜色</th>
+              <th>分类</th>
+              <th>备注</th>
+               <th>单价</th>
+               <th>数量</th>
+               <th scope="col">
+              <div align="center">
+              <strong>小计</strong>
+              </div>
+              </th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            <foreach name='goodsinfo' item='vo'>
+            <tr>
+              <td align='center' id='contentwidth'>
+                <if condition="isset($vo['goods_img'])">
+                  <img width="100" height="100" src="{$Think.const.NROOT}/customer/{$vo.goods_img}" />
+                  <else/>
+                </if>
+                <br/>{$vo.name}[{$vo.brand_name|default='无品牌信息'}]</td>
+              <td>{$vo.version}</td>
+              <td>{$vo.color}</td>
+
+              <td>{$vo.goods_category_name}</td>
+              <td>{$vo.description}</td>
+              <td>{$vo.price}</td>
+              <td>{$vo.amount}{$vo.unit}</td>
+              <td scope="col">
+              <div align="center">
+              <strong>￥{$vo['price']*$vo['amount']}元</strong>
+              <php>$total += $vo['price']*$vo['amount'];</php>
+              </div>
+              </td>
+              </tr>
+            </foreach>
+              <tr>
+              <td align='center'></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>
+              <div align="right">
+                <strong>合计：</strong>
+              </div>
+              </td>
+              <td>
+                <div align="right">￥<php>echo $total;</php>元</div>
+              </td>
+              </tr>
+      </tbody>
+        </table>
+        <div style='color:#1dd2af'>[收货人信息]</div>
+             <table width="100%" class="table table-hover">
+          <thead>
+            <tr>
+              <th align='center'>收货人</th>
+              <th>地址</th>
+               <th>手机</th>
+               <th>收货时间</th>
+
+          
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align='center'>{$orderinfos.name}</td>
+              <td>{$orderinfos.address}</td>
+              <td>{$orderinfos.mobile}</td>
+              <td>{$orderinfos.receive_time}</td>
+
+              </tr>
+      </tbody>
+        </table>
+      
+      <div style='color:#1dd2af'>[费用信息]</div>
+             <table width="100%" class="table table-hover" align="right">
+          <tr>
+          <td>
+          <div align="right">
+          商品总金额：
+          <strong>￥<php>echo $total = $total!= 0 ? $total : '0.00';</php>元</strong>
+          物流费用：
+          <strong>￥{$orderinfos.transportation|default='0.00'}元</strong>
+          </div>
+          </td>
+          </tr>
+          <tr>
+          <td>
+          <div align="right">
+          订单总金额：
+          <strong>￥{$orderinfos.money|default='0.00'}元</strong><br />
+
+          实收金额：
+          <strong>￥{$orderinfos.actually_money|default='0.00'}元</strong><br />
+          <if condition="$orderinfos['state'] eq 4">
+          <a class="btn  btn-success" style="padding:2px 10px;font-size:12px;font-weight:normal;" href="{:U('AdminPage/confirmation_goods',array('id'=>$orderinfos['temp_purchase_id'],'sn'=>$orderinfos['temp_purchase_sn'],'edit'=>1))}">修改实收金额</a>
+          </if>
+          </div>
+          </td>
+          </tr>
+          </tr>
+
+        </table>
+        <div class="p10"><div class="pages">  </div> </div>
+  </div>
+
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script type='text/javascript'>
+$(document).ready(function(e) {
+var ImgsTObj = $('#contentwidth img');
+if(ImgsTObj){
+$.each(ImgsTObj,function(){
+$(this).click(function(){
+window.open($(this).attr('src'),"_blank");
+});
+});
+}
+
+});
+// function nofind(){
+// var img= event.srcElement;
+// img.src="__ROOT__/statics/images/icon/nogoods.png";
+// img.onerror=null; 
+// }
+</script>
+
+</body>
+</html>

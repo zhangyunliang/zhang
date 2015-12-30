@@ -1,0 +1,92 @@
+
+<!-- 
+充值列表
+ -->
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">充值订单列表</a></li>
+  </ul>
+  <form class="well form-search" method="post" action="{:u('Recharge/index')}">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">订单状态：
+        <!-- 删除状态为：-2 -->
+        <select class="select_2" name="order_status">
+        	<!-- <option value="10">全部</option> -->
+          	<foreach name="val" item="vo">
+          	<php>$select=$vo['sid']===$status_id?"selected":"";</php>
+          		<option value="{$vo.sid}" {$select}>{$vo.name}</option>
+          	</foreach>
+        </select>
+        &nbsp;&nbsp;时间：
+        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time|default=''}" style="width:200px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time|default=''}" style="width:200px;" autocomplete="off">
+        <input type="submit" class="btn  btn-success" value="搜索"/>
+        </span>
+      </div>
+    </div>
+  </form>
+  <!-- 支付方式 -->
+  <php>
+  	$pay=array('100'=>'支付宝','1'=>'货到付款','2'=>'支付宝网银','3'=>'白条支付','4'=>'通联支付','5'=>'余额支付');
+  </php>
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+	            <th >ID</th>
+	            <th >订单号</th>
+                <th >用户昵称</th>
+                <th >订单状态</th>
+	            <th >支付方式</th>
+	            <th ><span>充值总金额</span></th>
+	            <th >下单时间</th>
+	            <th >红包类型</th>
+	            <th >红包金额</th>
+	            <!-- <th width="100">操作</th> -->
+	          </tr>
+        </thead>
+
+			<!-- 展示 -->
+			<php>$status=array('-1'=>'取消','0'=>'待付款','1'=>'已付款','200'=>'已发红包');</php>
+        	<foreach name="list" item="vo">
+		        	<tr>
+			            <td>{$vo.order_id}</td>
+			            <td>{$vo.order_sn}</td>
+			            <td>{$vo.nick}</td>
+	                    <td style="font-weight: bolder;">{$status[$vo['order_status']]}</td>
+	                    <if condition="$vo.pay_method eq 0">
+	                    <td style="font-weight: bolder;">{$pay[$vo['pay_method']+100]}</td><!-- 支付方式 -->
+	                    <else/>
+	                    <td style="font-weight: bolder;">{$pay[$vo['pay_method']]}</td>
+	                    </if>
+			            <td style="font-weight: bolder;">{$vo.order_amount}</td>
+			            <td>{$vo.add_time|date='Y-m-d H:i:s',###}</td>
+			            <td>{$vo.bonus_name}</td>
+			            <td style="font-weight: bolder;">{$vo.bonus_money}</td>
+			            <!-- <td>
+			            	<a href="{:U('Recharge/account',array('id'=>$vo['order_id']))}" target="_blank">查看</a>|
+			            	<a href="{:U('Recharge/edit',array('id'=>$vo['order_id']))}" >编辑</a>|
+			            	<a href="{:U('Recharge/delete',array('id'=>$vo['order_id']))}" class="J_ajax_del" >删除</a>
+						</td>-->
+		          	</tr>
+         	 </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+    </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+function refersh_window() {
+    var refersh_time = getCookie('refersh_time');
+    if (refersh_time == 1) {
+        window.location="{:u('Recharge/index',$formget)}";
+    }
+}
+</script>
+</body>
+</html>

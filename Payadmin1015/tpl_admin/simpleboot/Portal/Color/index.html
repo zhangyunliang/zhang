@@ -1,0 +1,46 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('Color/index')}">颜色列表</a></li>
+      <li><a href="{:U('Color/add')}">添加颜色</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="{:U('Color/listorders')}">
+      <div class="table_list">
+	    <table width="100%" class="table table-hover">
+	        <thead>
+	          <tr>
+	           <!--  <th width="80">排序</th> -->
+	            <th width="100">ID</th>
+	            <th>颜色名称</th>
+	            <th>操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+			<!-- 循环展示品牌 -->
+			 
+  			<foreach name="list" item="li">
+				<tr>
+				<!-- <td><input name={listorders.$id} type="text" size="3" value="" class="input input-order" /></td> -->
+				<td align="center">{$li.color_id}</td>
+				<td>{$li.color}</td>
+				<td align="center">
+					<a href="{:U('Color/edit',array('id'=>$li['color_id']))}">编辑</a>|
+					<a class="J_ajax_del" href="{:U('Color/delete',array('id'=>$li['color_id']))}">删除</a>
+				</td>
+				</tr>
+			</foreach>
+			
+				<!--  {$brand}-->
+			</tbody>
+	      </table>
+	     <div class="pagination">{$page}</div>   
+  		</div>
+
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js?"></script>
+</body>
+</html>

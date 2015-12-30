@@ -1,0 +1,47 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+	<div class="wrap J_check_wrap">
+		<ul class="nav nav-tabs">
+	        <li class="active"><a href="#A" data-toggle="tab">添加颜色</a></li>
+	    </ul>
+		<form class="form-horizontal J_ajaxForm" name="myform" id="myform" action="{:u('Colorsh/add_post')}" method="post">
+
+			<div class="tabbable">
+		        <div class="tab-content">
+		          <div class="tab-pane active" id="A">
+		          		<table cellpadding="2" cellspacing="2" width="100%">
+							<tbody>
+								<tr>
+									<td width="140">颜色名称:</td>
+									<td><input type="text" name="color" maxlength="20"/>*</td>
+								</tr>
+								<tr>
+									<td width="140">颜色类型:</td>
+									<td>
+										<select name="goods_category_id">
+											<option value="-1">--请选择--</option>
+											<foreach name="list" item="vo">
+												<if condition="($vo['cat_id'] neq 0) or ($vo['grade'] eq 1)">
+													<option value="{$vo.goods_category_id}" disabled="true">{$vo.goods_category_name}</option>
+													<else/>
+													<option value="{$vo.goods_category_id}">{$vo.goods_category_name}</option>
+												</if>
+											</foreach>
+										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+		          </div>
+		        </div>
+		    </div>
+		     <div class="form-actions">
+		     <!--  class="btn btn-primary btn_submit J_ajax_submit_btn" -->
+		           <button class="btn btn-primary btn_submit J_ajax_submit_btn" type="submit">提交</button>
+		      		<a class="btn" href="{:U('Colorsh/index')}">返回</a>
+		      </div>
+		</form>
+	</div>
+	<script type="text/javascript" src="__ROOT__/statics/js/common.js"></script>
+</body>
+</html>
