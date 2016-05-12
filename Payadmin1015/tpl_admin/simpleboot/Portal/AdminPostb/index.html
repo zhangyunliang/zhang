@@ -1,0 +1,238 @@
+
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">上海商品列表</a></li>
+  </ul>
+  <form class="well form-search" method="post" action="{:u('AdminPostb/index')}">
+    <div class="search_type cc mb10">
+      <div class="mb10">
+        <span class="mr20">分类：
+        <select class="select_1" name="goods_cat_id" style="width:150px;" id="cat">
+          	<option value='0' >全部</option>
+          	<foreach name="type" item="vo">
+          	<php>$select=$vo['goods_category_id']===$cat?"selected":"";</php>
+          	<if condition="($vo['grade'] eq 1) or ($vo['cat_id'] neq 0)">
+            <option value='{$vo.goods_category_id}' disabled="true">{$vo.goods_category_name}</option>
+            <else/>
+            <option value='{$vo.goods_category_id}' {$select}>{$vo.goods_category_name}</option>
+            </if>
+            </foreach>
+        </select>
+        &nbsp;&nbsp;品牌：
+        <select class="select_2" name="brand_id" style="width:120px;" id="brand">
+            <option value='0' >全部</option>
+            <foreach name="brands" item="vo">
+            <php>$select=$vo['brand_id']===$pinpai?"selected":"";</php>
+            <option value='{$vo.brand_id}' {$select}>{$vo.brand_name}</option>
+            </foreach>
+        </select>
+          &nbsp;&nbsp;型号：
+        <select class="select_3" name="version_id" style="width:320px;" id="version">
+            <option value='0' >全部</option>
+            <foreach name="versions" item="vo">
+            <php>$select=$vo['version_id']===$vs?"selected":"";</php>
+            <option value='{$vo.version_id}' {$select}>{$vo.version}</option>
+            </foreach>
+        </select>
+         &nbsp;&nbsp;颜色：
+        <select class="select_4" name="color_id" style="width:120px;" id="color">
+            <option value='0' >全部</option>
+            <foreach name="colors" item="vo">
+            <php>$select=$vo['color_id']===$yanse?"selected":"";</php>
+            <option value='{$vo.color_id}' {$select}>{$vo.color}</option>
+            </foreach>
+        </select>
+
+
+        &nbsp; &nbsp;关键字：
+        <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入商品名..." id="key">
+        <input type="submit" class="btn btn-primary" id="sou" value="搜索"/>
+        </span>
+      </div>
+    </div>
+  </form>
+
+  <form class="J_ajaxForm_myself" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+		            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+		            <th>ID</th>
+	              <th width="180">商品名称</th>
+	              <th>分类</th>
+	              <th>品牌</th>
+	              <th>型号</th>
+	              <th>颜色</th>
+	              <th>供应商</th>
+	              <!--<th>操作管理员</th>
+	              <th width="50px">审核时间</th>-->
+	              <th>管理员</th>
+                <!--<th>状态</th>-->
+                <th>上下架</th>
+	              <th >操作</th>
+	          </tr>
+        </thead>
+
+         <php>
+            $status=array("1"=>"已通过","0"=>"未通过");
+            $del=array('1'=>'已下架','0'=>'上架');
+          </php>
+          <foreach name="lists" item="vo">
+
+            <tr>
+                <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.goods_id}" ></td>
+                <td>{$vo.goods_id}</td>
+                <td>{$vo.goods_name}</td>
+                <td>{$vo.goods_category_name}</td>
+                <td >{$vo.brand_name}</td>
+                <td>{$vo.goods_version}</td>
+                <td >{$vo.goods_color}</td>
+                <!--<td>{$vo.last_update|date='Y-m-d H:i:s',###}</td>-->
+                <td>{$vo.suppliers_name|default='暂无供应商'}</td>
+                <td>{$vo.user_nicename|default='暂无数据'}</td>
+
+                <!--<if condition="$vo['admin_time'] eq '' ">
+                  <td>暂未录入</td>
+                  <else/>
+                  <td>{$vo.admin_time|date='Y-m-d H:i:s',###}</td>
+                </if>-->
+                <!--<td>{$vo.admin_time|default="暂未录入"|date='Y-m-d H:i:s',###}</td>-->
+                <!--<td>{$status[$vo['is_pass']]}</td>-->
+                <td>{$del[$vo['is_delete']]}</td>
+                <td>
+                  <!--<a href="http://www.pcw365.com/ecshop2/display/goods.php?goods_id={$vo.goods_id}">look</a>|-->
+	                <a href="javascript:open_iframe_dialog('{:u('AdminPostb/look',array('id'=>$vo['goods_id']))}','查看商品详情')">查看</a> |
+	                <if condition="$vo['is_pass'] eq 1">
+	                    <font color="#cccccc">审核通过</font> |
+	                    <a href="{:U('AdminPostb/check',array('id'=>$vo['goods_id'],'uncheck'=>1,'p'=>$formget['p'] ))}" class="J_ajax_my" data-msg="您确定要不通过此供应商吗？" >审核不通过</a>|
+	                <else/>
+	                    <a href="{:U('AdminPostb/check',array('id'=>$vo['goods_id'],'check'=>1,'p'=>$formget['p'] ))}" class="J_ajax_my" data-msg="您确定要通过此商品吗？" >审核通过</a> |
+	                    <font color="#cccccc">审核不通过</font>|
+	                </if >&nbsp;&nbsp;
+                    <a href="javascript:open_iframe_dialog('{:U('AdminPostb/edit',array('id'=>$vo['goods_id']))}','商品编辑')">进入编辑</a>
+         		 </td>
+              </tr>
+          </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+    </div>
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>
+
+        <button class="btn btn-primary J_ajax_submit_myself" type="submit" data-action="{:u('AdminPostb/check',array('check'=>1 ))}" data-subcheck="true" >审核通过</button>
+        <button class="btn btn-primary J_ajax_submit_myself" type="submit" data-action="{:u('AdminPostb/check',array('uncheck'=>1 ))}" data-subcheck="true" >审核不通过</button>
+
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+function refersh_window() {
+    var refersh_time = getCookie('refersh_time');
+    if (refersh_time == 1) {
+        window.location="{:u('AdminPostb/index',$formget)}";
+    }
+}
+setInterval(function(){
+	refersh_window();
+}, 2000);
+$(function () {
+	setCookie("refersh_time",0);
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_remove').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+            if (str == 0) {
+				art.dialog.through({
+					id:'error',
+					icon: 'error',
+					content: '您没有勾选信息，无法进行操作！',
+					cancelVal: '关闭',
+					cancel: true
+				});
+                return false;
+            }
+            var $this = $(this);
+            art.dialog.open("__ROOT__/index.php?g=portal&m=AdminPost&a=move&ids=" + id, {
+                title: "批量移动",
+                width:"80%"
+            });
+        });
+    });
+
+  //ajax条件搜索
+	$('.select_1').change(function(){
+		var cat_id=$(this).val();
+		 $.ajax({
+		        type:'POST',
+		        dataType:'json',
+		        url:'__ROOT__/index.php?g=portal&m=AdminPostb&a=choose',
+		        //ajax传递当前选项的value值
+		        data:'cat_id='+$('.select_1').val(),
+		        success:function(msg) {
+		        	//console.log(msg);
+
+					if (msg[0]!=null) {
+			           	 var option_str='';
+			           	  for (var i=0; i<msg[0].length; i++) {
+			                option_str+='<option value="'+msg[0][i].brand_id+'">'+msg[0][i].brand_name+'</option>';
+			              }
+
+			           	$('.select_2 option').remove();
+			            //添加书写好的内容。
+			             $('.select_2').append(option_str);
+		            }else{
+		                //如果返回值为空,则移除所有带标记的option,恢复默认选项。
+			        	$('.select_2 option').remove();
+						$('.select_2').append("<option value='0'>暂无品牌</option>");
+		           }
+
+					if (msg[1]!=null) {
+			           	 var option_str='';
+			           	  for (var i=0; i<msg[1].length; i++) {
+			                option_str+='<option value="'+msg[1][i].version_id+'">'+msg[1][i].version+'</option>';
+			              }
+
+			           	$('.select_3 option').remove();
+			            //添加书写好的内容。
+			             $('.select_3').append(option_str);
+		            }else{
+		                //如果返回值为空,则移除所有带标记的option,恢复默认选项。
+			        	$('.select_3 option').remove();
+						$('.select_3').append("<option value='0'>暂无型号</option>");
+		           }
+
+
+//                    if(msg[2]!=null){
+//                        var option_str='';
+//                        for(var i=0;i<msg[2].length;i++){
+//                            option_str+='<option value="'+msg[2][i].color_id+'">'+msg[2][i].color+'</option>';
+//                        }
+//
+//                        $('.select_4 option').remove();
+//                        $('.select_4').append(option_str);
+//                    }else{
+//                        $('.select_4 option').remove();
+//                        $('.select_4').append("<option value='0'>暂无颜色</option>");
+//                    }
+		        }
+		     })
+	});
+
+
+});
+</script>
+</body>
+</html>

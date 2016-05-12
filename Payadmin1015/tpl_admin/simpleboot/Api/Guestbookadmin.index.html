@@ -1,0 +1,108 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('guestbookadmin/index')}">商品列表</a></li>
+  </ul>
+<!--seach start-->
+<div class="form-div" class="wrap J_check_wrap">
+		<form class="well form-search" name="searchForm" action="javascript:searchGoods()">
+		<img width="26" border="0" height="22" alt="SEARCH" src="images/icon_search.gif">
+		<select name="cat_id">
+		<option value="0">所有分类</option>
+		<option value="1">手机类型</option>
+		<option value="5">    双模手机</option>
+		<option value="16">        cxcx</option>
+		<option value="2">    CDMA手机</option>
+		<option value="3">    GSM手机</option>
+		<option value="4">    3G手机</option>
+		<option value="12">充值卡</option>
+		<option value="15">    联通手机充值卡</option>
+		<option value="13">    小灵通/固话充值卡</option>
+		<option value="14">    移动手机充值卡</option>
+		<option value="6">手机配件</option>
+		<option value="8">    耳机</option>
+		<option value="9">    电池</option>
+		<option value="11">    读卡器和内存卡</option>
+		<option value="7">    充电器</option>
+		</select>
+		<select name="brand_id">
+		<option value="0">所有品牌</option>
+		<option value="1">诺基亚</option>
+		<option value="11"> 恒基伟业</option>
+		<option value="10">金立</option>
+		<option value="9">联想</option>
+		<option value="8">LG</option>
+		<option value="7">索爱</option>
+		<option value="6">三星</option>
+		<option value="5">夏新</option>
+		<option value="4">飞利浦</option>
+		<option value="3">多普达</option>
+		<option value="2">摩托罗拉</option>
+		<option value="12">fdfd</option>
+		</select>
+		<select name="intro_type">
+		<option value="0">全部</option>
+		<option value="is_best">精品</option>
+		<option value="is_new">新品</option>
+		<option value="is_hot">热销</option>
+		<option value="is_promote">特价</option>
+		<option value="all_type">全部推荐</option>
+		</select>
+		<select name="suppliers_id">
+		<option value="0">全部</option>
+		<option value="1">北京供货商</option>
+		<option value="2">上海供货商</option>
+		</select>
+		<select name="is_on_sale">
+		<option value="">全部</option>
+		<option value="1">上架</option>
+		<option value="0">下架</option>
+		</select>
+		关键字
+		<input type="text" size="15" name="keyword">
+		<input class="button" type="submit" value=" 搜索 ">
+		</form>
+	</div>
+<!--seach end-->
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="#">
+      <div class="table_list">
+	    <table width="100%" class="table table-hover">
+	        <thead>
+	          <tr>
+	            <th width="50">ID</th>
+	            <th>商品名称</th>
+	            <th>商品型号</th>
+	            <th>价格</th>
+	            <th>最新修改</th>
+	            <th>状态</th>
+	            <th width="120">操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	<foreach name="guestmsgs" item="vo">
+	        	<tr>
+		            <td>{$vo.id}</td>
+		            <td>{$vo.full_name}</td>
+		            <td>{$vo.email}</td>
+		            <td>{$vo.title}</td>
+		            <td>{$vo.msg}</td>
+		            <td>{$vo.createtime}</td>
+		            <td>
+		            	<a href="{:U('guestbookadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >查看</a>|
+			            <a href="{:U('guestbookadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >通过</a>|
+			            <a href="{:U('guestbookadmin/delete',array('id'=>$vo['id']))}" class="J_ajax_del" >不通过</a>
+			        </td>
+	          	</tr>
+	          	</foreach>
+			</tbody>
+	      </table>
+	      <div class="pagination">{$Page}</div>
+  		</div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js?"></script>
+</body>
+</html>

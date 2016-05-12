@@ -1,0 +1,129 @@
+<admintpl file="header" />
+
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="javascript:;">订单列表</a></li>
+  </ul>
+  <!-- 搜索列表 -->
+  <form class="well form-search" method="post" action="{:u('Orderlist/index')}">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">订单状态：
+        <select class="select_2" name="state" style="width:100px;">
+          <option value=''>全部</option>
+          <foreach name="state" item="vo">
+          	<php>$select=$vo['tid']===$method?"selected":"";</php>
+          	<option value="{$vo.tid}" {$select}>{$vo.name}</option>
+          </foreach>
+        </select>
+        &nbsp;&nbsp;订单号：
+        <input type="text" name="temp_purchase_sn" value="{$formget.temp_purchase_sn}" style="width:200px;"/>
+        &nbsp;&nbsp;收货人：
+        <input type="text" name="name" value="{$formget[name][1]}" style="width:80px;"/>
+		&nbsp;&nbsp;
+        <button class="btn">搜索</button>
+        </span>
+      </div>
+    </div>
+  </form>
+  <!-- 订单展示 -->
+  <form class="J_ajaxForm" action="" method="post">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+	            <th width="40">订单号</th>
+	            <th width="40">下单时间</th>
+	            <th width="60">收货人</th>
+                <th width="50">总金额</th>
+                <th width="80">应付金额</th>
+	            <th width="80">订单状态</th>
+	            <th width="45">操作</th>
+	          </tr>
+        </thead>
+        	<foreach name="list" item="vo">
+        	<php>if($vo){</php>
+	        	<tr>
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.temp_purchase_id}" ></td>
+		   <!-- 订单号 --><td>{$vo.temp_purchase_sn}</td>
+		   <!-- 下单时间 --><td>{$vo.time|date='Y-m-d H:i:s',###}</td>
+		   <!-- 收货人 --><td><p>{$vo.name}</p><p>{$vo.address}</p><p>{$vo.mobile}</p></td>
+		   <!-- 总金额 --><td>{$vo.money}</td>
+           <!-- 应付金额 --><td>{$vo.money}</td>
+           
+						<php>if($vo['state']==0){</php>
+    	   <!-- 订单状态 --><td style="color:#ff00ff;">订单已经取消</td>
+						<php>}if($vo['state']==1){</php>
+						<td style="color:#ff00ff;">待付款</td>
+						<php>}if($vo['state']==2){</php>
+						<td style="color:#ff00ff;">待发货</td>
+						<php>}if($vo['state']==3){</php>
+						<td style="color:#ff00ff;">已发货</td>
+						<php>}if($vo['state']==4){</php>
+						<td style="color:#ff00ff;">已完成</td>
+						<php>}if($vo['state']==5){</php>
+						<td style="color:#ff00ff;">待确认</td>
+						<php>}if($vo['state']==6){</php>
+						<td style="color:#ff00ff;">待退款</td>
+						<php>}if($vo['state']==7){</php>
+						<td style="color:#ff00ff;">无效</td>
+						<php>}</php>
+    	    <td>
+    	         <a href="连接地址：" target='_blank'>查看</a>|
+    	         <a class="J_ajax_del" href="{:U('Orderlist/delete',array('id'=>$vo['temp_purchase_id']))}" target='_blank'>移除</a>
+			</td>
+			</tr>
+			<php>}else{</php>
+			<tr><td>$sorry</td></tr>
+			<php>}</php>
+          </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+    </div>
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
+        <button class="btn btn-primary J_ajax_submit_btn" type="submit" data-action="{:u('Orderlist/distory')}">撤销订单</button>
+      </div>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+$(function () {
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_remove').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+            if (str == 0) {
+				art.dialog.through({
+					id:'error',
+					icon: 'error',
+					content: '您没有勾选信息，无法进行操作！',
+					cancelVal: '关闭',
+					cancel: true
+				});
+                return false;
+            }
+            var $this = $(this);
+            art.dialog.open("__ROOT__/index.php?g=portal&m=Orderlist&a=move&ids=" + id, {
+                title: "批量移动",
+                width:"80%"
+            });
+        });
+    });
+});
+
+
+</script>
+</body>
+</html>

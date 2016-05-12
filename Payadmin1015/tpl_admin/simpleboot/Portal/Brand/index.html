@@ -1,0 +1,46 @@
+<admintpl file="header"/>
+<body class="J_scroll_fixed">
+<div class="wrap jj">
+  <ul class="nav nav-tabs">
+     <li class="active"><a href="{:U('Brand/index')}">上海品牌列表</a></li>
+      <li><a href="{:U('Brand/add')}">添加品牌</a></li>
+  </ul>
+  <div class="common-form">
+    <form method="post" class="J_ajaxForm" action="">
+      <div class="table_list">
+	    <table width="100%" class="table table-hover">
+	        <thead>
+	          <tr>
+	            <th width="100">ID</th>
+	            <th>品牌名称</th>
+				<th>品牌类型</th>
+	            <th>操作</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+			<!-- 循环展示品牌 -->
+			 
+  			<foreach name="list" item="li">
+				<tr>
+				<td align="center">{$li.brand_id}</td>
+				<td>{$li.brand_name}</td>
+				<td>{$li.goods_category_name}</td>
+				<td align="center">
+					<!--  <a href="{:U('Brand/add',array('id'=>$li['brand_id']))}">添加</a>|-->
+					<a href="{:U('Brand/edit',array('id'=>$li['brand_id']))}">编辑</a>|
+					<a class="J_ajax_del" href="{:U('Brand/delete',array('id'=>$li['brand_id']))}">删除</a>
+				</td>
+				</tr>
+			</foreach>
+			
+				<!--  {$brand}-->
+			</tbody>
+	      </table>
+	     <div class="pagination">{$page}</div>   
+  		</div>
+    </form>
+  </div>
+</div>
+<script src="__ROOT__/statics/js/common.js?"></script>
+</body>
+</html>

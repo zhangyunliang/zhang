@@ -1,0 +1,3 @@
+<?php
+//000000021600a:2:{i:0;a:11:{s:5:"ad_id";s:2:"74";s:7:"site_id";s:1:"7";s:7:"city_id";s:1:"1";s:5:"title";s:15:"4.0震撼发布";s:8:"link_url";s:28:"/shop/detail/shop_id/30.html";s:5:"photo";s:28:"2015/04/24/5539af39aa4b1.jpg";s:4:"code";s:0:"";s:7:"bg_date";s:10:"2015-01-26";s:8:"end_date";s:10:"2020-01-01";s:6:"closed";s:1:"0";s:7:"orderby";s:1:"1";}i:1;a:11:{s:5:"ad_id";s:2:"21";s:7:"site_id";s:1:"7";s:7:"city_id";s:1:"1";s:5:"title";s:14:"PC首页广告";s:8:"link_url";s:28:"/shop/detail/shop_id/30.html";s:5:"photo";s:28:"2015/04/24/5539af4a076f8.jpg";s:4:"code";s:14:"PC首页广告";s:7:"bg_date";s:10:"2014-11-20";s:8:"end_date";s:10:"2020-01-01";s:6:"closed";s:1:"0";s:7:"orderby";s:1:"2";}}
+?>

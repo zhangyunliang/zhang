@@ -1,0 +1,79 @@
+<include file="public:topOne" /> 
+    <div class="topTwo">
+        <div class="left">
+            <if condition="!empty($CONFIG['site']['logo'])">
+                <h1><a href="<{:U('pchome/index/index')}>"><img width="153" height="63" src="__ROOT__/attachs/<{$CONFIG.site.logo}>" /></a></h1>
+                <else/>
+                <h1><a href="<{:U('pchome/index/index')}>"><img width="153" height="63" src="__PUBLIC__/img/logo_03.png" /></a></h1>
+            </if> 
+            <div class="changeCity"><{$city_name}><a href="<{:U('pchome/city/index')}>" class="change">[切换城市]</a></div>
+        </div>
+        <div class="left center">
+            <div class="searchBox">
+                <script>
+                    $(document).ready(function () {
+                        $(".selectList li a").click(function () {
+                            $("#search_form").attr('action', $(this).attr('rel'));
+                            $("#selectBoxInput").html($(this).html());
+                            $('.selectList').hide();
+                        });
+                        $(".selectList a").each(function(){
+                            if($(this).attr("cur")){
+                                $("#search_form").attr('action', $(this).attr('rel'));
+                                $("#selectBoxInput").html($(this).html());
+                            }
+                        })
+                    });//$("#search_form").attr("action",$("#search_form").attr("action").replace(".html","/search_key/"+$("#search_key").val()+".html"));
+                </script>
+                <form id="search_form" method="get" onsubmit='var submit_url=$("#search_form").attr("action").replace(".html","/search_key/"+$("#search_key").val()+".html");location.href=submit_url;return false;'  action="<{:U('search/index')}>">
+                    <!--<div style="display:none;" class="selectBox">-->
+                    <div class="selectBox">
+                        <span class="select"  id="selectBoxInput">尾货</span>
+                        <div   class="selectList">
+                            <ul>
+                                <li><a href="javascript:void(0);" rel="<{:U('search/index')}>">尾货</a></li>
+                                <li><a href="javascript:void(0);" rel="<{:U('search/index')}>">辅材</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <input id="search_key" type="text" class="text"  placeholder="商品/品牌/颜色/型号" value="<{$formget.search_key}>"/>
+                    <!--<input type="hidden" name="search_area_id" value=""/>&lt;!&ndash;辅材1 KO 2尾货&ndash;&gt;-->
+                    <input type="submit" class="submit" value="搜索" />
+                </form>
+            </div>
+            </div>
+
+
+            <!--关键字连接
+            <div class="hotSearch">
+                <php>$a =1;</php>
+                <calldata mdl="Keyword" where="" limit="0,6" cache="43200" order="key_id desc">
+                    <if condition="$item['type'] eq 0 or $item['type'] eq 1">
+                        <a href="<{:U('pchome/shop/index',array('keyword'=>$item['keyword']))}>"><{$item.keyword}></a>
+                    <elseif condition="$item['type'] eq 2"/>
+                        <a href="<{:U('pchome/tuan/index',array('keyword'=>$item['keyword']))}>"><{$item.keyword}></a>
+                    <elseif condition="$item['type'] eq 3"/>
+                        <a href="<{:U('pchome/life/index',array('keyword'=>$item['keyword']))}>"><{$item.keyword}></a>
+                    <elseif condition="$item['type'] eq 4"/>
+                        <a href="<{:U('pchome/mall/index',array('keyword'=>$item['keyword']))}>"><{$item.keyword}></a>
+                    </if>
+                </calldata>
+            </div>
+            -->
+        </div>
+        <div class="right topTwo_b">
+<!--			<div class="topTwo_tel">
+				服务热线：<big>055-456879852</big>
+			</div>
+-->			<div class="clear"></div>
+            <!--
+            <div class="protect">
+                <ul>
+                    <li><em>&nbsp;</em><a href="javascript:void(0);">随时退</a></li>
+                    <li class="protectLi2"><em>&nbsp;</em><a href="javascript:void(0);">不满意免单</a></li>
+                    <li class="protectLi3"><em>&nbsp;</em><a href="javascript:void(0);">过期退款</a></li>
+                </ul>
+            </div>
+            -->
+        </div>
+    </div>
