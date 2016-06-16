@@ -1,0 +1,10 @@
+#*
+.*
+!.gitignore
+*.swp
+*~
+*.swo
+$.swn
+config/
+tmp/
+data/

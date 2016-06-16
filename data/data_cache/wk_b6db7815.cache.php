@@ -1,0 +1,27 @@
+<?php 'a:3:{s:19:\"__mp_cache_contents\";a:3:{i:0;a:47:{s:7:\"task_id\";s:2:\"45\";s:8:\"model_id\";s:1:\"3\";s:10:\"work_count\";s:3:\"300\";s:11:\"single_cash\";s:5:\"10.00\";s:11:\"profit_rate\";s:2:\"20\";s:14:\"task_fail_rate\";s:2:\"10\";s:11:\"task_status\";s:1:\"2\";s:10:\"task_title\";s:40:\"38节帮我为我的妈妈送上祝福谢谢，一元一条\";s:9:\"task_desc\";s:304:\"交稿限制：买家要求每个会员最多交稿数量为1个，超过将无法提交
+
+节日分类:
+
+格式：电话号码为13176270790
+
+阿姨您好，我是来自（哪的）（谁），我代表您的儿子王康平，在（哪）向您送去节日的祝福，祝您（自由发挥）！您的儿子真的很爱您！感谢您给了他生命！三八节快乐-伟大的母亲。
+
+软件发截图，在线审核，一元一条\";s:9:\"task_file\";s:0:\"\";s:8:\"task_pic\";N;s:8:\"indus_id\";s:3:\"208\";s:9:\"indus_pid\";s:3:\"201\";s:3:\"uid\";s:1:\"5\";s:8:\"username\";s:4:\"lele\";s:10:\"start_time\";s:10:\"1332585991\";s:8:\"sub_time\";s:10:\"1345545991\";s:8:\"end_time\";s:10:\"1345564800\";s:11:\"sp_end_time\";N;s:4:\"city\";s:13:\"安徽省,合肥市\";s:9:\"task_cash\";s:7:\"3000.00\";s:9:\"real_cash\";s:7:\"2400.00\";s:18:\"task_cash_coverage\";N;s:9:\"cash_cost\";s:7:\"3000.00\";s:11:\"credit_cost\";s:4:\"0.00\";s:8:\"view_num\";s:1:\"0\";s:8:\"work_num\";s:1:\"0\";s:9:\"leave_num\";s:1:\"0\";s:9:\"focus_num\";s:1:\"0\";s:8:\"mark_num\";s:1:\"0\";s:11:\"is_delineas\";s:1:\"0\";s:6:\"kf_uid\";s:1:\"0\";s:8:\"pay_item\";s:5:\"4,3,2\";s:8:\"att_cash\";s:5:\"60.00\";s:7:\"contact\";s:77:\"a:4:{s:6:\"mobile\";N;s:2:\"qq\";N;s:5:\"email\";s:13:\"tianya@sadc.c\";s:3:\"msn\";N;}\";s:10:\"unique_num\";N;s:8:\"ext_desc\";N;s:10:\"task_union\";s:1:\"0\";s:12:\"alipay_trust\";N;s:8:\"is_delay\";s:1:\"0\";s:9:\"r_task_id\";N;s:8:\"is_trust\";s:1:\"0\";s:10:\"trust_type\";N;s:6:\"is_top\";s:1:\"1\";s:11:\"is_auto_bid\";s:1:\"0\";s:5:\"point\";s:20:\"31.859252,117.216005\";s:12:\"payitem_time\";s:55:\"a:2:{s:3:\"top\";i:1332672391;s:6:\"urgent\";i:1332672391;}\";}i:1;a:47:{s:7:\"task_id\";s:2:\"51\";s:8:\"model_id\";s:1:\"3\";s:10:\"work_count\";s:3:\"500\";s:11:\"single_cash\";s:4:\"1.00\";s:11:\"profit_rate\";s:2:\"20\";s:14:\"task_fail_rate\";s:2:\"10\";s:11:\"task_status\";s:1:\"2\";s:10:\"task_title\";s:10:\"婚礼的祝福\";s:9:\"task_desc\";s:600:\"婚礼定于5月27日，想寻求各位达人对我和我老婆婚礼的祝福。
+新郎：周靖汉
+新娘：仰圆
+要求：各位拍摄VCR，长短不限，说几句对我和我老婆婚礼的祝福。
+地域不限，国籍不限，最好有外国友人的祝福，各种语言都行。婚礼定于5月27日，想寻求各位达人对我和我老婆婚礼的祝福。
+新郎：周靖汉
+新娘：仰圆
+要求：各位拍摄VCR，长短不限，说几句对我和我老婆婚礼的祝福。
+地域不限，国籍不限，最好有外国友人的祝福，各种语言都行。婚礼定于5月27日，想寻求各位达人对我和我老婆婚礼的祝福。
+新郎：周靖汉
+新娘：仰圆
+要求：各位拍摄VCR，长短不限，说几句对我和我老婆婚礼的祝福。
+地域不限，国籍不限，最好有外国友人的祝福，各种语言都行。\";s:9:\"task_file\";s:0:\"\";s:8:\"task_pic\";N;s:8:\"indus_id\";s:3:\"202\";s:9:\"indus_pid\";s:3:\"201\";s:3:\"uid\";s:1:\"5\";s:8:\"username\";s:4:\"lele\";s:10:\"start_time\";s:10:\"1332586204\";s:8:\"sub_time\";s:10:\"1340362204\";s:8:\"end_time\";s:10:\"1340380800\";s:11:\"sp_end_time\";N;s:4:\"city\";s:13:\"湖南省,益阳市\";s:9:\"task_cash\";s:6:\"500.00\";s:9:\"real_cash\";s:6:\"400.00\";s:18:\"task_cash_coverage\";N;s:9:\"cash_cost\";s:6:\"500.00\";s:11:\"credit_cost\";s:4:\"0.00\";s:8:\"view_num\";s:1:\"0\";s:8:\"work_num\";s:1:\"0\";s:9:\"leave_num\";s:1:\"0\";s:9:\"focus_num\";s:1:\"0\";s:8:\"mark_num\";s:1:\"0\";s:11:\"is_delineas\";s:1:\"0\";s:6:\"kf_uid\";s:1:\"0\";s:8:\"pay_item\";s:5:\"3,2,4\";s:8:\"att_cash\";s:5:\"60.00\";s:7:\"contact\";s:77:\"a:4:{s:6:\"mobile\";N;s:2:\"qq\";N;s:5:\"email\";s:13:\"tianya@sadc.c\";s:3:\"msn\";N;}\";s:10:\"unique_num\";N;s:8:\"ext_desc\";N;s:10:\"task_union\";s:1:\"0\";s:12:\"alipay_trust\";N;s:8:\"is_delay\";s:1:\"0\";s:9:\"r_task_id\";N;s:8:\"is_trust\";s:1:\"0\";s:10:\"trust_type\";N;s:6:\"is_top\";s:1:\"1\";s:11:\"is_auto_bid\";s:1:\"0\";s:5:\"point\";s:20:\"28.568414,112.361141\";s:12:\"payitem_time\";s:55:\"a:2:{s:3:\"top\";i:1332672604;s:6:\"urgent\";i:1332672604;}\";}i:2;a:47:{s:7:\"task_id\";s:2:\"67\";s:8:\"model_id\";s:1:\"3\";s:10:\"work_count\";s:1:\"5\";s:11:\"single_cash\";s:6:\"400.00\";s:11:\"profit_rate\";s:2:\"20\";s:14:\"task_fail_rate\";s:2:\"10\";s:11:\"task_status\";s:1:\"2\";s:10:\"task_title\";s:13:\"flash网页制作\";s:9:\"task_desc\";s:252:\"类别:网站动画设计
+按照已有的平面设计，制作flash页面，logo，字体，颜色均已设计好，
+类别:网站动画设计
+按照已有的平面设计，制作flash页面，logo，字体，颜色均已设计好，
+类别:网站动画设计
+按照已有的平面设计，制作flash页面，logo，字体，颜色均已设计好，
+\";s:9:\"task_file\";s:0:\"\";s:8:\"task_pic\";N;s:8:\"indus_id\";s:3:\"169\";s:9:\"indus_pid\";s:3:\"167\";s:3:\"uid\";s:1:\"2\";s:8:\"username\";s:4:\"lele\";s:10:\"start_time\";s:10:\"1332726775\";s:8:\"sub_time\";s:10:\"1345686775\";s:8:\"end_time\";s:10:\"1345737600\";s:11:\"sp_end_time\";N;s:4:\"city\";s:13:\"四川省,成都市\";s:9:\"task_cash\";s:7:\"2000.00\";s:9:\"real_cash\";s:7:\"1600.00\";s:18:\"task_cash_coverage\";N;s:9:\"cash_cost\";s:7:\"2000.00\";s:11:\"credit_cost\";s:4:\"0.00\";s:8:\"view_num\";s:1:\"0\";s:8:\"work_num\";s:1:\"0\";s:9:\"leave_num\";s:1:\"0\";s:9:\"focus_num\";s:1:\"0\";s:8:\"mark_num\";s:1:\"0\";s:11:\"is_delineas\";s:1:\"0\";s:6:\"kf_uid\";s:1:\"0\";s:8:\"pay_item\";s:5:\"4,3,2\";s:8:\"att_cash\";s:5:\"60.00\";s:7:\"contact\";s:81:\"a:4:{s:6:\"mobile\";N;s:2:\"qq\";N;s:5:\"email\";s:17:\"1668966921@qq.com\";s:3:\"msn\";N;}\";s:10:\"unique_num\";N;s:8:\"ext_desc\";N;s:10:\"task_union\";s:1:\"0\";s:12:\"alipay_trust\";N;s:8:\"is_delay\";s:1:\"0\";s:9:\"r_task_id\";N;s:8:\"is_trust\";s:1:\"0\";s:10:\"trust_type\";N;s:6:\"is_top\";s:1:\"1\";s:11:\"is_auto_bid\";s:1:\"0\";s:5:\"point\";s:19:\"30.367481,102.89916\";s:12:\"payitem_time\";s:55:\"a:2:{s:3:\"top\";i:1332813175;s:6:\"urgent\";i:1332813175;}\";}}s:18:\"__mp_cache_created\";i:1465984321;s:23:\"__mp_cache_dependencies\";N;}';
