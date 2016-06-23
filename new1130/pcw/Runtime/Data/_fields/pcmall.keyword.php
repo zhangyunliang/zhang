@@ -1,1 +1,0 @@
-<?php	return array ( 0 => 'key_id', 1 => 'keyword', 2 => 'type', 3 => 'create_time', 4 => 'create_ip', '_autoinc' => true, '_pk' => 'key_id', '_type' => array ( 'key_id' => 'int(10) unsigned', 'keyword' => 'varchar(32)', 'type' => 'tinyint(2)', 'create_time' => 'int(11)', 'create_ip' => 'varchar(128)', ), );?>

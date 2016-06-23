@@ -1,1 +1,0 @@
-var s=$(".messages");msgshow(s);$(".messages .close").click(function(){var a=$(this).parent(".messages");msghide(a)});function msgshow(b){var a=setTimeout(function(){b.slideDown(200);clearTimeout(a)},400)}function msghide(a){a.animate({opacity:0.01},200,function(){a.slideUp(200,function(){a.remove()})})};

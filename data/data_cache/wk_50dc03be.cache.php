@@ -1,1 +1,0 @@
-<?php 'a:3:{s:19:\"__mp_cache_contents\";a:5:{s:3:\"uid\";s:1:\"1\";s:8:\"username\";s:5:\"admin\";s:8:\"password\";s:32:\"0192023a7bbd73250516f069df18b500\";s:9:\"rand_code\";s:6:\"oj75ld\";s:5:\"email\";s:15:\"admin@admin.com\";}s:18:\"__mp_cache_created\";i:1465984232;s:23:\"__mp_cache_dependencies\";N;}';

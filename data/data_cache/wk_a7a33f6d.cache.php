@@ -1,1 +1,0 @@
-<?php 'a:3:{s:19:\"__mp_cache_contents\";a:1:{i:1;a:2:{s:8:\"model_id\";s:1:\"1\";s:5:\"count\";s:1:\"1\";}}s:18:\"__mp_cache_created\";i:1465984392;s:23:\"__mp_cache_dependencies\";N;}';

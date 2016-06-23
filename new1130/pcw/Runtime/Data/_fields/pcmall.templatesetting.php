@@ -1,1 +1,0 @@
-<?php	return array ( 0 => 'theme', 1 => 'setting', '_autoinc' => false, '_type' => array ( 'theme' => 'varchar(32)', 'setting' => 'text', ), );?>

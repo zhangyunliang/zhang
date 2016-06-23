@@ -1,1 +1,0 @@
-<?php	return array ( 0 => 'template_id', 1 => 'name', 2 => 'theme', 3 => 'photo', 4 => 'is_default', '_autoinc' => true, '_pk' => 'template_id', '_type' => array ( 'template_id' => 'smallint(6) unsigned', 'name' => 'varchar(32)', 'theme' => 'varchar(32)', 'photo' => 'varchar(64)', 'is_default' => 'tinyint(1)', ), );?>

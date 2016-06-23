@@ -1,3 +1,0 @@
-<?php
-//000000086400a:3:{i:2;a:8:{s:7:"city_id";s:1:"2";s:4:"name";s:6:"南京";s:6:"pinyin";s:7:"nanjing";s:7:"is_open";s:1:"1";s:3:"lng";s:9:"118.78333";s:3:"lat";s:8:"32.05000";s:7:"orderby";s:1:"0";s:12:"first_letter";s:1:"N";}i:3;a:8:{s:7:"city_id";s:1:"3";s:4:"name";s:6:"长沙";s:6:"pinyin";s:8:"changsha";s:7:"is_open";s:1:"1";s:3:"lng";s:6:"112.59";s:3:"lat";s:5:"28.12";s:7:"orderby";s:1:"0";s:12:"first_letter";s:1:"C";}i:1;a:8:{s:7:"city_id";s:1:"1";s:4:"name";s:6:"上海";s:6:"pinyin";s:8:"shanghai";s:7:"is_open";s:1:"1";s:3:"lng";s:6:"121.48";s:3:"lat";s:5:"31.22";s:7:"orderby";s:1:"1";s:12:"first_letter";s:1:"S";}}
-?>

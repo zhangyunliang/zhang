@@ -1,1 +1,0 @@
-<?php	return array ( 0 => 'business_id', 1 => 'business_name', 2 => 'area_id', 3 => 'orderby', 4 => 'is_hot', '_autoinc' => true, '_pk' => 'business_id', '_type' => array ( 'business_id' => 'smallint(5) unsigned', 'business_name' => 'varchar(32)', 'area_id' => 'smallint(5)', 'orderby' => 'tinyint(3)', 'is_hot' => 'tinyint(1)', ), );?>
