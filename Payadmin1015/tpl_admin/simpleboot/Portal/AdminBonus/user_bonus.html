@@ -1,0 +1,165 @@
+<admintpl file="header" />
+<body class="J_scroll_fixed">
+<div class="wrap J_check_wrap">
+<!--   <form class="well form-search" method="post" action="{:u('AdminPost/index')}">
+    <div class="search_type cc mb10">
+      <div class="mb10"> 
+        <span class="mr20">分类：
+        <select class="select_2" name="term">
+          	<option value='0' >全部</option>
+          	{$taxonomys}
+        </select>
+        &nbsp;&nbsp;时间：
+        <input type="text" name="start_time" class="input length_2 J_date" value="{$formget.start_time|default=''}" style="width:80px;" autocomplete="off">-<input type="text" class="input length_2 J_date" name="end_time" value="{$formget.end_time}" style="width:80px;" autocomplete="off">
+        
+   &nbsp; &nbsp;关键字：
+        <input type="text" class="input length_2" name="keyword" style="width:200px;" value="{$formget.keyword}" placeholder="请输入关键字...">
+        <input type="submit" class="btn" value="搜索"/>
+        </span>
+      </div>
+    </div>
+  </form> -->
+
+ <form class="J_ajaxForm" action="" method="post" target="_self">
+    <div class="table_list">
+      <table width="100%" class="table table-hover">
+        <thead>
+	          <tr>
+              <if condition="($send_type eq 1) OR ($send_type eq 2) OR ($send_type eq 4) or ($send_type eq 5)">
+
+	            <th width="16"><label><input type="checkbox" class="J_check_all" data-direction="x" data-checklist="J_check_x"></label></th>
+              </if>
+
+           </if>
+	            <th>ID</th>
+	            <th>红包序列号</th>
+	            <th >红包名称</th>
+              <th >红包来源</th>
+              <if condition="$send_type eq 0">
+              <th >充值订单号</th>
+              <th >充值金额</th>
+              </if>
+              <if condition="$send_type eq 3">
+              <th >订单号</th>
+              <th >订单总金额</th>
+              </if>
+              <th >红包金额</th>
+              <th >使用会员</th>
+              <th >是否已领取</th>
+              <th >获取时间</th>
+	            <th >红包状态</th>
+              <if condition="($send_type eq 1) OR ($send_type eq 2) or ($send_type eq 4) or ($send_type eq 5)">
+	            <th>操作</th>
+              </if>
+	          </tr>
+        </thead>
+   <php>
+          $send_type_array = array('充值发送','按用户发送','按商品发送',' 按订单发送','线下发送','凭空发红包');
+          $bonus_status_array = array('正常','已取消');
+          $states = array('已领取','未领取');
+   </php>
+
+        	<foreach name="posts" item="vo">
+
+	        	<tr> 
+            <if condition="($vo['send_type'] neq 0 ) and ($vo['send_type'] neq 3 )">
+              <if condition="$vo['state'] eq 1">
+		            <td><input type="checkbox" class="J_check" data-yid="J_check_y" data-xid="J_check_x" name="ids[]" value="{$vo.cash_id}" ></td>
+              <else />
+                <td> </td> 
+              </if>
+            </if>
+		            <td><a>{$vo.cash_id}</a></td>
+                <td><a>{$vo.cash_sn}</a></td>
+		            <td><span>{$vo.bonus_name}</span></td>
+		            <td>
+                  {$send_type_array[$vo['send_type']]}
+                  <if condition="$send_type eq 3">
+                     	  邀请码:[{$vo.invitation}]
+                  </if>
+                </td>
+                <if condition="$send_type eq 0">
+    	         <td>{$vo.order_sn}</td>
+		           
+		           <td>{$vo.order_amount}</td>
+                </if>
+                <if condition="$send_type eq 3">
+               <td>{$vo.temp_purchase_sn}</td>
+               
+               <td>{$vo.money}</td>
+                </if>
+               <td>￥{$vo.cash_money}元</td>
+
+               <td>{$vo.nick}[手机号：{$vo.temp_buyers_mobile}]</td>
+               <td>{$states[$vo['state']]}</td>
+		           <td>{$vo.cash_time|date='Y-m-d H:i:s',###}</td>
+               
+               <td>{$bonus_status_array[$vo['bonus_status']]}</td>
+               <if condition="($send_type eq 1) OR ($send_type eq 2) or ($send_type eq 4) or ($send_type eq 5)">
+		            <td>
+                  <if condition="$vo['state'] eq 1 ">
+		            	<a href="{:U('AdminBonus/delete',array('cid'=>$vo['cash_id'],'p'=>$_GET['p'],'bid'=>$vo['cash_bonus_id']))}" class="J_ajax_del" >删除红包</a>
+                 <else /> 
+                  <span style='color:#ccc'>删除红包</span>
+                </if>
+					       </td>
+                </if>
+	          	</tr>
+          </foreach>
+          </table>
+          <div class="pagination">{$page}</div>
+     
+    </div>
+    <if condition="($send_type eq 1) OR ($send_type eq 2) or ($send_type eq 4) or($send_type eq 5)">
+    <div class="form-actions">
+        <label class="checkbox inline" for="check_all"><input type="checkbox" class="J_check_all" data-direction="y" data-checklist="J_check_y" id="check_all">全选</label>                
+
+        <!-- <button class="btn J_ajax_submit_btn btn-primary" type="submit" data-action="{:u('AdminBonus/delete',array('p'=>$_GET['p'],'bid'=>$vo['cash_bonus_id']))}" data-subcheck="true" data-msg="你确定删除吗？">删除红包</button> -->
+		<input class="btn btn-primary" type="button" id="J_Content_remove" value="批量删除红包" />
+		<input type="hidden" name="p" value="{$_GET['p']}"/>
+		<input type="hidden" name="bid" value="{$vo['cash_bonus_id']}" />
+      </div>
+    </if>
+  </form>
+</div>
+<script src="__ROOT__/statics/js/common.js"></script>
+<script>
+
+$(function () {
+	
+	setCookie("refersh_time",0);
+    Wind.use('ajaxForm','artDialog','iframeTools', function () {
+        //批量移动
+        $('#J_Content_remove').click(function (e) {
+            var str = 0;
+            var id = tag = '';
+            var p=$("input[name='p']").val();
+            var bid=$("input[name='bid']").val();
+            $("input[name='ids[]']").each(function () {
+                if ($(this).attr('checked')) {
+                    str = 1;
+                    id += tag + $(this).val();
+                    tag = ',';
+                }
+            });
+            if (str == 0) {
+				art.dialog.through({
+					id:'error',
+					icon: 'error',
+					content: '您没有勾选信息，无法进行操作！',
+					cancelVal: '关闭',
+					cancel: true
+				});
+                return false;
+            }
+            var $this = $(this);
+           // art.dialog({ id: 'aa'}).close();
+            location.href="__ROOT__/index.php?g=Portal&m=AdminBonus&a=delete&ids="+id+"&bid="+bid+"&p="+p;
+        });
+    });
+});
+
+
+</script>
+</body>
+</html>
