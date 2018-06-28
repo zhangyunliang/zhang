@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>个人信息</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="cnt">
+			<!--settingCell start-->
+			<div class="settingCells personInfoCells">
+				<a href="javascript:;"  onclick="upHp(this)" tapmode >
+					<span>头像</span>
+					<label>
+						<!--<input type="file"  />-->
+						<img id="memberAvatar" src="../image/hp.jpg"/>
+					</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" tapmode data-url="editNickname_w.html" onclick="toEdit(this)">
+					<span>昵称</span>
+					<label id="memberNick"></label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" tapmode data-url="editTel_w.html" onclick="toEdit(this)">
+					<span>手机号码</span>
+					<label id="memberTel"></label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" tapmode data-url="editpass_w.html" onclick="toEdit(this)">
+					<span>密码管理</span>
+					<label>修改密码</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" onclick="toggleTaobao()" tapmode>
+					<span id="tbname">绑定淘宝帐号</span>
+					<label id="memberTaobao">去授权</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" onclick="toggleWX()" tapmode>
+					<span id="wxname">绑定微信</span>
+					<label id="memberWeixin">去授权</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;" tapmode data-url="bindAlipay_w.html" onclick="toEdit(this)">
+					<span>绑定支付宝</span>
+					<label id="memberAlipay" style="color: #F64580;">立即绑定拿返利</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+
+				<a href="javascript:;" tapmode data-url="addressList_w.html" onclick="toEdit(this)">
+					<span>我的地址</span>
+					<label>地址管理</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+			</div>
+			<!--settingCell end-->
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elMemberAvatar = $api.byId('memberAvatar');
+			var _elMemberNick = $api.byId('memberNick');
+			var _elMemberTel = $api.byId('memberTel');
+			var _elMemberEmail = $api.byId('memberEmail');
+			var _elMemberTaobao = $api.byId('memberTaobao');
+			var _elMemberAlipay = $api.byId('memberAlipay');
+			var memberInfo;
+			apiready = function() {
+				logindUserInfo();
+			}
+
+			function setInfo(data) {
+				$api.text(_elMemberTel, data.mobile);
+				if(data.avatar) {
+					$api.attr(_elMemberAvatar, 'src', data.avatar);
+				}
+				if(data.nickname) {
+					$api.text(_elMemberNick, data.nickname);
+				}
+				//				if(data.email) {
+				//					$api.text(_elMemberEmail, data.email);
+				//				}
+				if(data.userid) {
+					$("#tbname").text('已绑定淘宝（' + data.taobao_name + ')')
+					$("#memberTaobao").text('取消授权');
+				} else {
+					$("#tbname").text('绑定淘宝帐号');
+					$("#memberTaobao").text('去授权');
+				}
+				if(data.weixinid) {
+					$("#wxname").text('已绑定微信');
+					$("#memberWeixin").text('取消授权');
+				} else {
+					$("#wxname").text('绑定微信');
+					$("#memberWeixin").text('去授权');
+				}
+				if(data.zhifubao_name) {
+					$api.text(_elMemberAlipay, data.zhifubao_name);
+				}
+
+			}
+
+			function toEdit(e) {
+				openNewWin(e, null, memberInfo);
+			}
+
+			//加载用户信息
+			function logindUserInfo() {
+				getApiJson('member/get.html', {
+					mid: $api.getStorage("memberId")
+				}, function(loginret) {
+					console.log(JSON.stringify(loginret));
+					memberInfo = loginret.data;
+					printObj(memberInfo);
+					setInfo(loginret.data);
+				});
+				var jsfun = 'hkfnChangeLogin()';
+				api.execScript({
+					name: 'root',
+					frameName: 'my_fr',
+					script: jsfun
+				});
+			}
+
+			//绑定淘宝
+			function bindTaobao() {
+				var alibaichuan = api.require('alibaichuan');
+				var _postData;
+				alibaichuan.getUserInfo(function(userret, err) {
+
+					if(userret) {
+						memberInfo.avatar = memberInfo.avatar ? memberInfo.avatar : userret.avatarUrl;
+						memberInfo.nickname = memberInfo.nickname ? memberInfo.nickname : userret.userNick;
+						_postData = {
+							mid: $api.getStorage('memberId'),
+							avatar: memberInfo.avatar,
+							nickname: memberInfo.nickname,
+							userid: userret.userId,
+							taobao_name: userret.userNick
+						}
+						$.post(apiUrl + 'member/setUser.html', objPass(_postData), function(bdret) {
+							if(bdret.code.toString() == '1') {
+								logindUserInfo();
+								api.toast({
+									msg: '绑定成功'
+								});
+								var jsfunoo = 'lodingData()';
+								api.execScript({
+									name: 'jifen_w',
+									frameName: 'jifen_f',
+									script: jsfunoo
+								});
+							} else {
+								alert('绑定过于频繁，请稍候片刻再次绑定');
+							}
+						}, 'json')
+					} else {
+						alibaichuan.showLogin(function(rea, err2) {
+							if(rea) {
+								memberInfo.avatar = memberInfo.avatar ? memberInfo.avatar : rea.avatarUrl;
+								memberInfo.nickname = memberInfo.nickname ? memberInfo.nickname : rea.userNick;
+								_postData = {
+									mid: $api.getStorage('memberId'),
+									avatar: memberInfo.avatar,
+									nickname: memberInfo.nickname,
+									userid: rea.userId,
+									taobao_name: rea.userNick
+								}
+								$.post(apiUrl + 'member/setUser.html', objPass(_postData), function(bdret) {
+									if(bdret.code.toString() == '1') {
+										logindUserInfo();
+										api.toast({
+											msg: '绑定成功'
+										});
+										var jsfunoo = 'lodingData()';
+										api.execScript({
+											name: 'jifen_w',
+											frameName: 'jifen_f',
+											script: jsfunoo
+										});
+									} else {
+										alert('绑定过于频繁，请稍候片刻再次绑定');
+									}
+								}, 'json')
+							} else {
+								alert('绑定过于频繁，请稍候片刻再次绑定');
+							}
+						});
+					}
+				});
+
+			}
+
+			//解绑淘宝
+			function unbindTaobao() {
+
+				var alibaichuan = api.require('alibaichuan');
+				alibaichuan.getUserInfo(function(ret, err) {
+					if(ret) {
+						alibaichuan.logout(function(exitret, err) {});
+					}
+				});
+				var _postData = {
+					mid: $api.getStorage('memberId'),
+					userid: '',
+					taobao_name: ''
+				}
+				$.post(apiUrl + 'member/setUser.html', objEncrypt(_postData), function(bdret) {
+					if(bdret.code.toString() == '1') {
+						logindUserInfo();
+						api.toast({
+							msg: '解除绑定成功'
+						});
+
+					}
+				}, 'json')
+
+			}
+			//切换绑定淘宝
+			function toggleTaobao() {
+				if($('#memberTaobao').text() == '取消授权') { //取消授权绑定
+					unbindTaobao();
+				} else {
+					bindTaobao();
+				}
+			}
+			//切换绑定微信
+			function toggleWeixin() {
+				if($('#memberWeixin').text() == '取消授权') { //取消授权绑定
+				} else {}
+			}
+
+			//上传用户头像
+			function upHp(e) {
+				e=$(e).find("img");
+				api.getPicture({
+					sourceType: 'library',
+					encodingType: 'jpg',
+					mediaValue: 'pic',
+					destinationType: 'url',
+					allowEdit: true,
+					quality: 50,
+					saveToPhotoAlbum: false
+				}, function(ret, err) {
+					printObj(ret);
+					if(ret) {
+						if(ret.data) {
+							$(e).attr('src', ret.data);
+							uploadImg(e, ret.data, function(res) {
+								printObj($(e).attr('data-img'));
+								getApiJson('member/setUser.html', {
+									mid: $api.getStorage('memberId'),
+									avatar: $(e).attr('data-img')
+								}, function() {
+									api.toast({
+										msg: '修改成功',
+										location: 'middle'
+									});
+									logindUserInfo();
+									var jsfun = 'hkfnChangeLogin()';
+									api.execScript({
+										name: 'root',
+										frameName: 'my_fr',
+										script: jsfun
+									});
+									var jsfunoo = 'lodingData()';
+									api.execScript({
+										name: 'jifen_w',
+										frameName: 'jifen_f',
+										script: jsfunoo
+									});
+
+								})
+							});
+
+						}
+
+					} else {
+						//						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			//切换绑定微信
+			function toggleWX() {
+				if($('#memberWeixin').text() == '取消授权') { //取消授权绑定
+					unbindWx();
+				} else {
+					bindWx();
+				}
+			}
+
+			function bindWx() {
+				api.pageParam.type = 'weixin';
+				var wx = api.require('wx');
+				wx.auth(function(reb, erb) { //登录
+					if(reb.status) {
+						wx.getToken({ //登录成功后获取授权
+							code: reb.code
+						}, function(rec, erc) {
+							if(rec.status) {
+								wx.getUserInfo({ //获取授权成功后获取用户信息
+									accessToken: rec.accessToken,
+									openId: rec.openId
+								}, function(ret, err) {
+									if(ret.status) {
+										var _postData = {
+											mid: $api.getStorage('memberId'),
+											weixinid: ret.openid
+										}
+										$.post(apiUrl + 'member/setUser.html', objPass(_postData), function(bdret) {
+											if(bdret.code.toString() == '1') {
+												logindUserInfo();
+												api.toast({
+													msg: '绑定成功'
+												});
+												var jsfunoo = 'lodingData()';
+												api.execScript({
+													name: 'jifen_w',
+													frameName: 'jifen_f',
+													script: jsfunoo
+												});
+
+											} else {
+												alert('绑定过于频繁，请稍候片刻再次绑定');
+											}
+										}, 'json')
+									} else {
+										alert(err.code);
+									}
+								});
+
+							} else {
+								alert('操作过于频繁，请稍候片刻再次绑定');
+							}
+						});
+					} else {
+						alert('操作过于频繁，请稍候片刻再次绑定');
+					}
+				});
+			}
+
+			function unbindWx() {
+				var _postData = {
+					mid: $api.getStorage('memberId'),
+					weixinid: ''
+				}
+				$.post(apiUrl + 'member/setUser.html', objEncrypt(_postData), function(bdret) {
+					if(bdret.code.toString() == '1') {
+						logindUserInfo();
+						api.toast({
+							msg: '解除绑定成功'
+						});
+
+					}
+				}, 'json')
+			}
+		</script>
+	</body>
+
+</html>

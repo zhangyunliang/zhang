@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单发布</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="factReleaseBox">
+			<div class="settingCells withdrawalCell factTypeCell">
+				<div class="row">
+					<label>晒单标题：</label>
+					<input name="title" type="text" value="" placeholder="最多不超过30个字" />
+				</div>
+				<div class="row">
+					<label>晒单简介：</label>
+					<input name="introduction" type="text" value="" placeholder="请输入晒单简介" />
+				</div>
+			</div>
+
+			<div class="factBody">
+				<ul id="items">
+					<li class="row text">
+						<div class="paragraphInput">
+							<textarea name="" placeholder="请填写晒单内容"></textarea>
+						</div>
+						<div class="inputType hidden">
+							<img src="" data-img='' />
+						</div>
+						<div class="paragraphOp">
+							<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+							<i class="iconfont icon-order"></i>
+						</div>
+					</li>
+					<li class="row photo">
+						<div class="inputType">
+							<img src="../image/photo.png" onclick="getPicture(this)" data-img='' />
+						</div>
+						<div class="paragraphInput">
+							<textarea placeholder="请填写晒单内容"></textarea>
+						</div>
+						<div class="paragraphOp">
+							<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+							<i class="iconfont icon-order"></i>
+						</div>
+					</li>
+					<li class="row link">
+						<div class="inputType" onclick="pastLink(this)">
+							<i class="iconfont icon-lianjie"></i>
+							<label>粘贴链接</label>
+						</div>
+						<div class="inputType" onclick="showOrder(this)">
+							<i class="iconfont icon-shangpin1"></i>
+							<label>选择商品</label>
+						</div>
+						<div class="hidden">
+							<img src="" data-img='' />
+						</div>
+						<div class="paragraphInput">
+							<textarea placeholder="请填写商品链接"></textarea>
+						</div>
+						<div class="paragraphOp">
+							<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+							<i class="iconfont icon-order"></i>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="hideRow" style="display: none;">
+			<li class="row text">
+				<div class="paragraphInput">
+					<textarea name="" placeholder="请填写晒单内容"></textarea>
+				</div>
+				<div class="inputType hidden">
+					<img src="" data-img='' />
+				</div>
+				<div class="paragraphOp">
+					<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+					<i class="iconfont icon-order"></i>
+				</div>
+			</li>
+			<li class="row photo">
+				<div class="inputType">
+					<img src="../image/photo.png" onclick="getPicture(this)" data-img='' />
+				</div>
+				<div class="paragraphInput">
+					<textarea placeholder="请填写晒单内容"></textarea>
+				</div>
+				<div class="paragraphOp">
+					<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+					<i class="iconfont icon-order"></i>
+				</div>
+			</li>
+			<li class="row link">
+				<div class="inputType" onclick="pastLink(this)">
+					<i class="iconfont icon-lianjie"></i>
+					<label>粘贴链接</label>
+				</div>
+				<div class="inputType" onclick="showOrder(this)">
+					<i class="iconfont icon-shangpin1"></i>
+					<label>选择商品</label>
+				</div>
+				<div class="hidden">
+					<img src="" data-img='' />
+				</div>
+				<div class="paragraphInput">
+					<textarea placeholder="请填写商品链接"></textarea>
+				</div>
+				<div class="paragraphOp">
+					<i class="iconfont icon-delete" onclick="delRow(this)"></i>
+					<i class="iconfont icon-order"></i>
+				</div>
+			</li>
+		</div>
+
+		<div class="goodChioseBox">
+			<div class="goodChiose">
+				<div class="goodHead">
+					<i class="iconfont icon-close_light" onclick="hideOrder()"></i>
+					<p>我的订单</p>
+				</div>
+				<div class="orderList">
+					<!--<div class="goodRow" data-goodlink="1">
+						<img src="../image/fact.jpg" />
+						<div>
+							<label>订单编号:</label>
+							<p>商品标题</p>
+						</div>
+						<i class="iconfont icon-round"></i>
+					</div>-->
+				</div>
+				<div class="orderNull">
+					<p>您暂时没有交易成功的订单</p>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elRowBox = $api.dom('.factBody');
+			var _elText = $api.dom('.hideRow .text');
+			var _elPhoto = $api.dom('.hideRow .photo');
+			var _elLink = $api.dom('.hideRow .link');
+			var _dx;
+			apiready = function() {
+				lodingMyOrder();
+			}
+
+			//加载拖动排序插件
+			var el = document.getElementById('items');
+			var sortable = Sortable.create(el, {
+				animation: 150,
+				handle: ".icon-order",
+				scroll: false,
+				onStart: function() {
+					api.setFrameAttr({
+						name: 'baskSingleRelease_f',
+						bounces: false
+					});
+				},
+				onEnd: function() {
+					api.setFrameAttr({
+						name: 'baskSingleRelease_f',
+						bounces: true
+					});
+				}
+
+			});
+
+			//添加文本
+			function addText() {
+				var _el = document.createElement('li');
+				_el.setAttribute('class', 'row text');
+				_el.innerHTML = $api.html(_elText);
+				sortable.el.appendChild(_el);
+			}
+			//添加图文
+			function addPhoto() {
+				var _el = document.createElement('li');
+				_el.setAttribute('class', 'row photo');
+				_el.innerHTML = $api.html(_elPhoto);
+				sortable.el.appendChild(_el);
+			}
+			//添加商品链接
+			function addGood() {
+				var _el = document.createElement('li');
+				_el.setAttribute('class', 'row link');
+				_el.innerHTML = $api.html(_elLink);
+				sortable.el.appendChild(_el);
+			}
+			//删除行
+			function delRow(e) {
+				var _elParent = $api.closest(e, '.row');
+				$api.remove(_elParent);
+			}
+
+			//确认发布
+			function ReleaseFact() {
+				var _fact = {
+					uid: $api.getStorage('memberId'),
+					pic: $(".factTitle").attr('data-img'),
+					title: $("input[name='title']").val(),
+					introduction: $("input[name='introduction']").val(),
+					list: {}
+				};
+
+				$('#items .row').each(function(key, domEle) {
+
+					if($(domEle).hasClass('link')) {
+
+						_fact.list[$(this).index()] = {
+							link: $(domEle).find('textarea').val(),
+							content: $(domEle).find('textarea').val(),
+							pic: $(domEle).find('img').attr('data-img')
+						};
+					} else {
+						_fact.list[$(this).index()] = {
+							link: '',
+							content: $(domEle).find('textarea').val(),
+							pic: $(domEle).find('img').attr('data-img')
+						};
+					}
+				});
+
+				$.post(apiUrl + 'shaidan/release.html', _fact, function(data) {
+					console.log(JSON.stringify(_fact));
+					if(data.code == '1') {
+						api.toast({
+							msg: '发布成功，正在跳转',
+							location: 'middle'
+						});
+						var jsfunoo = 'lodingData()';
+									api.execScript({
+										name: 'jifen_w',
+										frameName: 'jifen_f',
+										script: jsfunoo
+									});
+
+						var jsfun = 'lodingFactList()';
+						api.execScript({
+							name: 'root',
+							frameName: 'baskSingleList_fr',
+							script: jsfun
+						});
+						api.closeToWin({
+							name: 'root'
+						});
+					} else {
+						api.toast({
+							msg: '发布失败，' + data.msg,
+							location: 'middle'
+						});
+					}
+
+				}, 'json');
+
+			}
+
+			function getPicture(e) {
+				api.getPicture({
+					sourceType: 'library',
+					encodingType: 'jpg',
+					mediaValue: 'pic',
+					destinationType: 'url',
+					allowEdit: true,
+					quality: 50,
+					saveToPhotoAlbum: false
+				}, function(ret, err) {
+					if(ret) {
+						//alert(JSON.stringify(ret.data));
+						if(ret.data) {
+							$(e).attr('src', ret.data);
+							uploadImg(e, ret.data);
+						}
+
+					} else {
+						//						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			function getPicture2(e) {
+				api.getPicture({
+					sourceType: 'library',
+					encodingType: 'jpg',
+					mediaValue: 'pic',
+					destinationType: 'url',
+					allowEdit: true,
+					quality: 50,
+					saveToPhotoAlbum: false
+				}, function(ret, err) {
+					if(ret) {
+						if(ret.data) {
+							$('.factTitle').css('background-image', 'url(' + ret.data + ')');
+							uploadImg($('.factTitle'), ret.data);
+						}
+
+					} else {
+						//						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			function pastLink(e) {
+
+				var clipBoard = api.require('clipBoard');
+				clipBoard.get(function(ret, err) {
+					if(ret) {
+						$(e).parents('.link').find('textarea').val(ret.value);
+						//						alert(JSON.stringify(ret));
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			function hideOrder() {
+				$('.goodChioseBox').css('display', 'none');
+			}
+
+			function showOrder(_e) {
+				var _pageH = parseInt($(".factReleaseBox").css("height"));
+				var _bdH = parseInt($("body").css("height"));
+				if(_pageH < _bdH) {
+					_pageH = _bdH;
+				}
+				api.setFrameAttr({
+					name: 'factRelease_f',
+					bounces: false
+				});
+				_dx = $(_e).parents('.row');
+				$('.goodChioseBox').css('height', _pageH + "px");
+				$('.goodChioseBox').css('display', 'block');
+			}
+			$(".goodChioseBox,.goodChioseBox *").on("click", function(e) {
+				if($(e.target).hasClass("goodChioseBox")) {
+					hideOrder();
+				}
+			})
+			$('.orderList').on('click', '.icon-round', function(e) {
+				$(".icon-roundcheckfill").removeClass("icon-roundcheckfill").addClass("icon-round");
+				$(this).removeClass("icon-round").addClass("icon-roundcheckfill");
+				var _goodlink = $(this).parents('.goodRow').attr("data-goodlink");
+				_dx.find("textarea").val(_goodlink);
+				hideOrder();
+			})
+
+			function lodingMyOrder() {
+				$.post(apiUrl + "Order/orderList.html", {
+					mid: $api.getStorage("memberId")
+				}, function(ret) {
+					if(ret.code.toString() == '1') {
+						var _html = '';
+						$.each(ret.data, function(key, val) {
+							_html = '<div class="goodRow" data-goodlink="' + val.shop_url + '">' +
+								'<img src="' + val.image_url_local + '" />' +
+								'<div>' +
+								'<label>订单编号:' + val.oid + '</label>' +
+								'<p>' + val.title + '</p>' +
+								'</div>' +
+								'<i class="iconfont icon-round"></i>' +
+								'</div>'
+						});
+						$(".orderList").html(_html);
+
+					} else {
+						$(".orderNull").css('display', 'block');
+					}
+
+				}, "json")
+			}
+		</script>
+	</body>
+
+</html>

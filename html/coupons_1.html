@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="couponsBox">
+			<!--<div class="row">
+				<div class="cpInfo" style="padding-top:10px;">
+					<div class="jfb">
+						<span>500</span>
+						<label>集分宝</label>
+					</div>
+					<div class="tiaojian">累计提现满500元赠送</div>
+				</div>
+				<div class="cpOp active">
+					<i class="iconfont icon-redpacket_fill"></i>
+					<span>已使用</span>
+				</div>
+			</div>-->
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			apiready = function() {
+				var _cp = new Coupons();
+				_cp.getListOld(1, function(ret) {
+					_cp.addOldDom($(".couponsBox"), ret);
+				})
+			}
+		</script>
+	</body>
+
+</html>

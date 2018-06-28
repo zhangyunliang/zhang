@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>登录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>登录</span>
+			<a class="btn btn-warring" href="javascript:;" data-url="registered_w.html" tapmode onclick="openNewWin(this)">注册</a>
+		</header>
+		<!--header end-->
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				api.addEventListener({
+					name: 'setStatuBarDark'
+				}, function(ret, err) {
+					api.setStatusBarStyle({
+						style: 'dark'
+					});
+				});
+				setHeaderH();
+				openNewFrame("login_f.html", 45, 0, api.pageParam);
+				
+			}
+			function changeTiele(){
+				$('#header span').text('绑定手机号');
+			}
+		</script>
+	</body>
+
+</html>

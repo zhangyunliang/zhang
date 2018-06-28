@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<div class="cnt">
+			<div class="miaoshaList">
+
+				<!--<div class="row">
+					<div class="miaoshaImg">
+						<img src="../image/good2.jpg" />
+					</div>
+					<div class="miaoshaInfo">
+						<p class="title">百合花苗香水百合种秋套装百合花苗香水百合种秋套装</p>
+						<div class="priceBox">
+							<p>
+								<span>到手价:</span>
+								<label>￥9.6</label>
+							</p>
+							<p class="jfb">返300集分宝</p>
+						</div>
+						<div class="shuliangBox">
+							<p>
+								<span>0</span>
+								<label>/100份</label>
+							</p>
+							<a href="javascript:;">开抢中</a>
+						</div>
+					</div>
+				</div>-->
+
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				lodingDate();
+				//点击进入详情
+				$(".miaoshaList").on("click", ".row", function(e) {
+					var _id = $(this).attr("data-id");
+					openNewWin(null, 'miaoshaDetail_w.html', {
+						miaoshaId: _id,
+					});
+				});
+
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					lodingDate();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+
+				function lodingDate() {
+					var _ms = new MiaoSha();
+					_ms.getList(function(ret) {
+						console.log(JSON.stringify(ret));
+						_ms.addDom($(".miaoshaList"), ret);
+					});
+
+				}
+			}
+		</script>
+	</body>
+
+</html>

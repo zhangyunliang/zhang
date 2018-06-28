@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="withDrowHead yuguHead">
+			<div>时间</div>
+			<div>预估收益</div>
+			<div>订单号</div>
+		</div>
+		<div class="withDrowList yuguList">
+			<!--<li class="row _type" data-id='_id'>
+				<span>2017年11月8日 17:17:29</span>
+				<span>500集分宝</span>
+				<span>123456879123456</span>
+			</li>-->
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+		
+			apiready = function() {
+				var _od=new Order();
+				_od.getYuguList({
+					mid:$api.getStorage("memberId")
+				},function(ret){
+					_od.addMyYuguDom($(".yuguList"),ret.orderList);
+				})
+			}
+		</script>
+	</body>
+
+</html>

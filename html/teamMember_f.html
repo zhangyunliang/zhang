@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>团队成员</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="teamMember cnt">
+			<!--<div class="row" data-id='_mid'>
+				<div class="memberImg">
+					<img src="../image/hp.jpg" />
+				</div>
+				<div class="memberInfo">
+					<p><span>_mobile</span></p>
+					<label>_nickname</label>
+				</div>
+				<div class="zhuceshijian">
+					<span>注册时间：</span>
+					<label>2017-10-17 18:03:47</label>
+				</div>
+				<div class="hisMember">
+					<label>_guanxi</label>
+				</div>
+			</div>-->
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elParent = $api.dom('.teamMember');
+			var _strModel = $api.html(_elParent);
+
+			var _guanxi = new Array();
+			_guanxi['0'] = '自己';
+			_guanxi['-1'] = '上级';
+			_guanxi['1'] = '一级';
+			_guanxi['2'] = '二级';
+			_guanxi['3'] = '三级';
+
+			apiready = function() {
+				$api.html(_elParent, '');
+				getApiJson('Member/tuandui.html', {
+					mid: $api.getStorage('memberId')
+				}, function(rst) {
+					addRow(rst.data);
+				})
+			}
+
+			function addRow(data) {
+				var _html = '';
+
+				for(var i = 0; i < data.length; i++) {
+					data[i].nickname = data[i].nickname ? data[i].nickname : data[i].mobile;
+					data[i].avatar = data[i].avatar ? data[i].avatar : '../image/hp.jpg';
+
+					_html += '<div class="row">' +
+						'<div class="memberImg">' +
+						'<img src="' + data[i].avatar + '" />' +
+						'</div>' +
+						'<div class="memberInfo">' +
+						'<p><span>' + data[i].nickname + '</span></p>' +
+						'<label>' + data[i].mobile + '</label>' +
+						'</div>';
+					if(parseInt(data[i].guanxi) > 0) {
+						_html += '<div class="zhuceshijian">' +
+							'<span>注册时间：</span>' +
+							'<label>' + data[i].addtime + '</label>' +
+							'</div>';
+					}
+
+					_html += '<div class="hisMember">' +
+						'<label>' + _guanxi[data[i].guanxi.toString()] + '</label>' +
+						'</div>' +
+						'</div>';
+				}
+				$api.html(_elParent, _html);
+			}
+		</script>
+	</body>
+
+</html>

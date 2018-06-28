@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>开发</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+			button {
+				font-size: 14px;
+				border: 1px solid #666666;
+				padding: 5px 20px;
+				margin: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="empty">
+			<button onclick="act1()">获取图片</button>
+			<button>用户注册</button>
+			<button>获取分类</button>
+			<button>通过分类ID获取商品列表</button>
+			<button>通过ID获取商品详情</button>
+			<button onclick="act2()">支付宝付款</button>
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+
+			}
+
+			function act1() {
+				api.getPicture({
+					sourceType: 'library',
+					encodingType: 'jpg|png',
+					mediaValue: 'pic',
+					destinationType: 'url',
+					allowEdit: true,
+					quality: 50,
+					targetWidth: 100,
+					targetHeight: 100,
+					saveToPhotoAlbum: false
+				}, function(ret, err) {
+					if(ret) {
+						alert(JSON.stringify(ret));
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+
+			function act2() {
+				var aliPayTrade = api.require('aliPayTrade');
+				aliPayTrade.payOrder({
+					orderInfo: 'partner="2088421478835875"&seller_id="m18932281947@163.com"&out_trade_no="0819145412-6177"&subject="测试"&body="测试测试"&total_fee="0.01"&notify_url="http://notify.msp.hk/notify.htm"&service="mobile.securitypay.pay"&payment_type="1"&_input_charset="utf-8"&it_b_pay="30m"&sign="lBBK%2F0w5LOajrMrji7DUgEqNjIhQbidR13GovA5r3TgIbNqv231yC1NksLdw%2Ba3JnfHXoXuet6XNNHtn7VE%2BeCoRO1O%2BR1KugLrQEZMtG5jmJIe2pbjm%2F3kb%2FuGkpG%2BwYQYI51%2BhA3YBbvZHVQBYveBqK%2Bh8mUyb7GM1HxWs9k4%3D"&sign_type="RSA"'
+				}, function(ret, err) {
+					api.alert({
+						title: '支付结果',
+						msg: ret.code,
+						buttons: ['确定']
+					});
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>注册</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="editBox cnt">
+			<div class="codeBox">
+				<input id="telNumber" name="tel" type="number" placeholder="请输入手机号" autofocus="autofocus" />
+			</div>
+			
+			<div class="codeBox">
+				<input id="msgCode" type="number" placeholder="请输入验证码" />
+				<input class="getCode" type="button" value="发送验证码" onclick="acv()" />
+			</div>
+			<div class="codeBox">
+				<input id="imgCode" type="text" placeholder="请输入右侧验证码" />
+				<i  onclick="getImgCode()" class="iconfont icon-refresh_light sxYzm"></i>
+				<img id="codeimg" src="../image/hp.jpg"  style="width: 39.5%; height: 36px;margin-left: 5px;border:1px solid #f0f0f0 ; ">
+			</div>
+			<div class="codeBox">
+				<input id="tuijianren" type="number" placeholder="请输入推荐人ID(选填)" />
+			</div>
+			<input type="button" value="下一步" data-url="setpass_w.html" tapmode onclick="ck(this)" />
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var c = 120;
+			var _isSend = false;
+			var t, _elTelNumber, _elSecShow, _elMsgCode, _telNumber, _msgCode;
+			apiready = function() {
+				_elSecShow = $api.dom('.getCode');
+				_elMsgCode = $api.byId('msgCode');
+				_elTelNumber = $api.byId('telNumber');
+				_elTelNumber.focus();
+				getImgCode();
+			}
+			
+			
+			function acv() {
+				_isSend = true;
+				_telNumber = $api.val(_elTelNumber);
+				if(checkMobile(_telNumber)) {
+					var _mb = new Member();
+					_mb.isReg(_telNumber, function(redt) {
+						if(redt.code.toString() == '1') {
+							alert("该用户已存在，请直接登录");
+							api.closeWin();
+						}else if($("#imgCode").val().length!=4){
+							_api_showToast("请输入合法的图片验证码");
+						} else{
+							_elMsgCode.focus();
+							getApiJson('msg/sends.html?ck=2ba93670732f1a4f5bff67fcb75b5d68', {
+								mobile: _telNumber,
+								verify:$api.getStorage("imgCode"),
+								verify_code:$("#imgCode").val()
+							}, function() {
+								_isSend = true;
+								timedCount();
+								api.toast({
+									msg: '短信验证码已发送，请注意查收',
+									location: 'middle'
+								});
+							});
+						}
+					});
+
+				}
+			}
+			//发送验证码按钮定时操作
+			function timedCount() {
+				t = setTimeout("timedCount()", 1000);
+				c = c - 1;
+				$api.removeAttr(_elSecShow, 'onclick');
+				$api.val(_elSecShow, c + "秒后重发");
+				$api.css(_elSecShow, 'background-color', '#757575');
+				if(c == 0) {
+					clearTimeout(t); //关闭定时器
+					c = 120; //时间重置
+					//时间走完之后的操作
+					$api.attr(_elSecShow, 'onclick', 'acv()');
+					$api.val(_elSecShow, "发送验证码");
+					$api.css(_elSecShow, 'background-color', '#ffffff');
+
+				}
+			}
+
+			function ck(e) {
+				if(_isSend) {
+					_msgCode = $api.val(_elMsgCode);
+					//检查短信验证码
+					getApiJson('msg/check.html', {
+						mobile: _telNumber,
+						code: _msgCode
+					}, function() {
+						//是否是第三方登录
+						if(api.pageParam.type == 'taobao') { //淘宝登录
+							$.post(apiUrl + 'Member/bangding.html', {
+								uid: api.pageParam.taobao.userId,
+								mobile: _telNumber,
+								type: api.pageParam.type,
+								code: _msgCode
+							}, function(bdrst) {
+								if(bdrst.code == '2') { //新用户
+									openNewWin(e, null, {
+										mobile: _telNumber,
+										code: _msgCode,
+										referee: $api.trim($('#tuijianren').val()),
+										isNew: true,
+										taobao: api.pageParam.taobao,
+										regType: api.pageParam.type
+									})
+								} else if(bdrst.code == '1') { //已注册用户
+									$('.editBox .codeBox:last-child').css('display', 'none');
+									bdrst.data.avatar = bdrst.data.avatar ? bdrst.data.avatar : api.pageParam.taobao.avatarUrl;
+									bdrst.data.nickname = bdrst.data.nickname ? bdrst.data.nickname : api.pageParam.taobao.userNick;
+									$.post(apiUrl + 'member/setUser.html', {
+										mid: bdrst.data.id,
+										avatar: bdrst.data.avatar,
+										nickname: bdrst.data.nickname,
+										userid: api.pageParam.taobao.userId,
+										taobao_name: api.pageParam.taobao.userNick
+									}, function() {
+										$api.setStorage("memberId", bdrst.data.id);
+										var jsfun = 'hkfnChangeLogin()';
+										api.execScript({
+											name: 'root',
+											frameName: 'my_fr',
+											script: jsfun
+										});
+										api.closeToWin({
+											name: 'root'
+										});
+
+									}, 'json')
+
+								} else {
+									alert('登录错误' + bdrst.msg);
+								}
+							}, 'json')
+						} else if(api.pageParam.type == 'weixin') { //////微信登陆
+							$.post(apiUrl + 'Member/bangding.html', {
+								uid: api.pageParam.wx.openid,
+								mobile: _telNumber,
+								type: api.pageParam.type,
+								code: _msgCode
+							}, function(bdrst) {
+								if(bdrst.code == '2') { //新用户
+									openNewWin(e, null, {
+										mobile: _telNumber,
+										code: _msgCode,
+										referee: $api.trim($('#tuijianren').val()),
+										isNew: true,
+										wx: api.pageParam.wx,
+										regType: api.pageParam.type
+									})
+								} else if(bdrst.code == '1') { //已注册用户
+									$('.editBox .codeBox:last-child').css('display', 'none');
+									bdrst.data.avatar = bdrst.data.avatar ? bdrst.data.avatar : api.pageParam.wx.headimgurl;
+									bdrst.data.nickname = bdrst.data.nickname ? bdrst.data.nickname : api.pageParam.wx.nickname;
+									$.post(apiUrl + 'member/setUser.html', {
+										mid: bdrst.data.id,
+										avatar: bdrst.data.avatar,
+										nickname: bdrst.data.nickname,
+										weixinid: api.pageParam.wx.openid
+									}, function() {
+										$api.setStorage("memberId", bdrst.data.id);
+										var jsfun = 'hkfnChangeLogin()';
+										api.execScript({
+											name: 'root',
+											frameName: 'my_fr',
+											script: jsfun
+										});
+										api.closeToWin({
+											name: 'root'
+										});
+
+									}, 'json')
+
+								} else {
+									alert('获取绑定信息失败' + bdrst.msg);
+								}
+							}, 'json')
+						} else if(api.pageParam.type == 'qq') { ////////QQ登录
+							console.log('apipage' + JSON.stringify(api.pageParam));
+							$.post(apiUrl + 'Member/bangding.html', {
+								uid: api.pageParam.openid,
+								mobile: _telNumber,
+								type: api.pageParam.type,
+								code: _msgCode
+							}, function(bdrst) {
+								if(bdrst.code == '2') { //新用户
+									openNewWin(e, null, {
+										mobile: _telNumber,
+										code: _msgCode,
+										referee: $api.trim($('#tuijianren').val()),
+										isNew: true,
+										QQinfo: api.pageParam.QQinfo,
+										regType: api.pageParam.type,
+										QQopenId: api.pageParam.openid
+									})
+								} else if(bdrst.code == '1') { //已注册用户
+									$('.editBox .codeBox:last-child').css('display', 'none');
+									bdrst.data.avatar = bdrst.data.avatar ? bdrst.data.avatar : api.pageParam.QQinfo.figureurl_2;
+									bdrst.data.nickname = bdrst.data.nickname ? bdrst.data.nickname : api.pageParam.QQinfo.nickname;
+									var _seldata = {
+										mid: bdrst.data.id,
+										avatar: bdrst.data.avatar,
+										nickname: bdrst.data.nickname,
+										qqid: api.pageParam.openid
+									}
+									$.post(apiUrl + 'member/setUser.html', objPass(_seldata), function() {
+										$api.setStorage("memberId", bdrst.data.id);
+										var jsfun = 'hkfnChangeLogin()';
+										api.execScript({
+											name: 'root',
+											frameName: 'my_fr',
+											script: jsfun
+										});
+										api.closeToWin({
+											name: 'root'
+										});
+
+									}, 'json')
+
+								} else {
+									alert('获取绑定信息失败' + bdrst.msg);
+								}
+							}, 'json')
+						} else {
+							openNewWin(e, null, {
+								mobile: _telNumber,
+								code: _msgCode,
+								referee: $api.trim($('#tuijianren').val()),
+								isNew: true
+							})
+						}
+
+					});
+				} else {
+					api.toast({
+						msg: '请获取并输入验证码后再进行下一步',
+						location: 'middle'
+					});
+				}
+			}
+		</script>
+	</body>
+
+</html>

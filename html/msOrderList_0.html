@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="factList myOrderBox msOrdercnt cnt">
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				lodingData();
+				
+				api.setFrameAttr({
+					name: 'msOrderList_0',
+					bounces: true
+				});
+				//设置下拉刷新
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					lodingData();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+				
+			}
+			function lodingData(){
+				var _mid = $api.getStorage('memberId');
+				var _msOd = new MSOrder();
+				_msOd.getList(_mid, function(ret) {
+					_msOd.addDom($(".msOrdercnt"), ret);
+				});
+			}
+			
+			//去购买商品
+			$(".msOrdercnt").on("click", ".byGood", function() {
+				var _goodId = $(this).attr("data-goodId");
+				var _isgy=$(this).attr("data-isgy");
+				if(_isgy.toString()=='1'){
+					var _baichuan=new BaiChuan();
+					_baichuan.openOldId(_goodId);
+				}else{
+					var _baichuan=new BaiChuan();
+					_baichuan.openId(_goodId);
+				}
+				
+				
+			});
+
+			//去填写淘宝订单号
+			$(".msOrdercnt").on("click", ".inputTbOrder", function() {
+				var _orderId = $(this).parents(".factRow").attr('data-id');
+				openNewWin(null, 'msInputOrder_w.html', {
+					oid: _orderId
+				});
+			});
+
+			//去填写个人信息
+			$(".msOrdercnt").on("click", ".inputMember", function() {
+				var _orderId = $(this).parents(".factRow").attr('data-id');
+				openNewWin(null, 'miaoshaState_w.html', {
+					oid: _orderId,
+					code:1,
+					msType:2
+				});
+			});
+
+			//去上传图片
+			$(".msOrdercnt").on("click", ".postImg", function() {
+				var _orderId = $(this).parents(".factRow").attr('data-id');
+				openNewWin(null, 'msPostImg_w.html', {
+					oid: _orderId
+				});
+			});
+
+			//确认收货
+			$(".msOrdercnt").on("click", ".shureGood", function() {
+				var _orderId = $(this).parents(".factRow").attr('data-id');
+				
+			});
+
+			//去选择地址
+			$(".msOrdercnt").on("click", ".selectAdd", function() {
+				var _orderId = $(this).parents(".factRow").attr('data-id');
+				openNewWin(null, 'miaoshaState_w.html', {
+					oid: _orderId,
+					code:1,
+					msType:1
+				});
+
+			});
+		</script>
+	</body>
+
+</html>

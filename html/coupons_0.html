@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="couponsBox">
+
+		</div>
+		<script type="text/javascript" src="../src/concat/all.js"></script>
+		<!--<script type="text/javascript" src="../dist/js/all.js" ></script>-->
+		<script>
+			apiready = function() {
+				var _cp = new Coupons();
+				_cp.getCouponsList(function(ret) {
+					_cp.addDom($(".couponsBox"), ret);
+				})
+			}
+			$(".couponsBox").on("click", ".row", function() {
+				console.log($(this).find(".cpOp").find('span').html());
+				if($(this).find(".cpOp").find('span').html() == '点击打开') {
+					var _cp = new Coupons();
+					_id=$(this).attr("data-id");
+					_cp.hexiaoById(_id, function() {
+						_api_showToast("打开成功，集分宝已充值到您的账户中");
+						location.reload();
+					});
+				} else {
+
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>填写验证码</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="editBox cnt">
+			<div class="codeBox">
+				<input id="telNumber" name="tel" type="number" placeholder="请输入手机号" autofocus="autofocus" />
+			</div>
+			<div class="codeBox">
+				<input id="msgCode" type="number" placeholder="请输入验证码" />
+				<input class="getCode" type="button" value="发送验证码" onclick="acv()" />
+			</div>
+			<div class="codeBox">
+				<input id="imgCode" type="text" placeholder="请输入右侧验证码" />
+				<i onclick="getImgCode()" class="iconfont icon-refresh_light sxYzm"></i>
+				<img id="codeimg" src="../image/hp.jpg" style="width: 39.5%; height: 36px;margin-left: 5px;border:1px solid #f0f0f0 ; ">
+
+			</div>
+			<input type="button" value="下一步" data-url="setpass_w.html" tapmode onclick="ck(this)" />
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var c = 120;
+			var _isSend = false;
+			var t, _elTelNumber, _elSecShow, _elMsgCode, _telNumber, _msgCode;
+			apiready = function() {
+				_elSecShow = $api.dom('.getCode');
+				_elMsgCode = $api.byId('msgCode');
+				_elTelNumber = $api.byId('telNumber');
+				_elTelNumber.focus();
+				getImgCode();
+			}
+
+			function acv() {
+				_telNumber = $api.val(_elTelNumber);
+				if(checkMobile(_telNumber)) {
+					if($("#imgCode").val().length != 4) {
+						_api_showToast("请输入合法的图片验证码");
+					} else {
+						_elMsgCode.focus();
+						timedCount();
+						getApiJson('msg/sends.html?ck=2ba93670732f1a4f5bff67fcb75b5d68', {
+							mobile: _telNumber
+						}, function() {
+							_isSend = true;
+							api.toast({
+								msg: '短信验证码已发送，请注意查收',
+								location: 'middle'
+							});
+						});
+					}
+
+				}
+
+			}
+			//发送验证码按钮定时操作
+			function timedCount() {
+				t = setTimeout("timedCount()", 1000);
+				c = c - 1;
+				$api.removeAttr(_elSecShow, 'onclick');
+				$api.val(_elSecShow, c + "秒后重发");
+				$api.css(_elSecShow, 'background-color', '#757575');
+				if(c == 0) {
+					clearTimeout(t); //关闭定时器
+					c = 120; //时间重置
+					//时间走完之后的操作
+					$api.attr(_elSecShow, 'onclick', 'acv()');
+					$api.val(_elSecShow, "发送验证码");
+					$api.css(_elSecShow, 'background-color', '#ffffff');
+
+				}
+			}
+
+			function ck(e) {
+				if(_isSend) {
+					_msgCode = $api.val(_elMsgCode);
+					getApiJson('msg/check.html', {
+						mobile: _telNumber,
+						code: _msgCode
+					}, function() {
+						api.pageParam.mobile = _telNumber;
+						api.pageParam.code = _msgCode;
+						openNewWin(e, null, api.pageParam)
+					});
+				} else {
+					api.toast({
+						msg: '请获取并输入验证码后再进行下一步',
+						location: 'middle'
+					});
+				}
+			}
+		</script>
+	</body>
+
+</html>

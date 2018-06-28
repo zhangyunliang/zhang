@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>商品分类</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body style="background-color: #FFFFFF;">
+		<div class="newGoodDetail" style="border-bottom: 1px solid #DBD6D6;">
+			<img id="goodzhutu" src="" />
+			<div class="row">
+				<i class="iconfont shopType"></i>
+				<p class="goodT">商品标题</p>
+			</div>
+			<div class="row">
+				<div class="qhjia">
+					<label>券后价：￥</label>
+					<span id="qh">24.9</span>
+				</div>
+				<div class="shoujia">
+					<label>售价：￥</label>
+					<span id="sj">29.9</span>
+				</div>
+				<div class="quanjia">
+					<i class="iconfont icon-ticket"></i>
+					<span id="quan">5</span>
+					<label>元券</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="tklBox ">
+			<p style="font-size: 1.4rem;">一键复制下面的淘口令，打开[手机淘宝]领券</p>
+			<div id="tkl"></div>
+			<span class="copyBtn" onclick="copyTkl()">一键复制淘口令</span>
+		</div>
+
+		<div class="tuijianliyou"></div>
+
+		<div class="tklBox ">
+			<span class="copyBtn cktw">查看图文详情</span>
+		</div>
+
+		<div class="spxq hidden">
+		</div>
+		<!--html2canvas容器-->
+		<div id="htmlBox" class="googCVSBox hidden">
+			<img id="CVSimg" src="" />
+			<div class="goodF">
+				<div class="gdInfo">
+					<p id="CVStitle" class="CVStitle">
+						<i id="cvsshopType" class="iconfont shopType"></i>
+					</p>
+					<div id="CVSprice">
+						<span id="CVSyuanjia"></span>
+						<p id="CVSquanhou">
+							<label>券后：￥</label>
+							<span>￥35.0</span>
+						</p>
+					</div>
+					<p class="quan"><span>领券</span><span id="CVSquan">减10</span></p>
+				</div>
+				<div class="erweima">
+					<img id="qr"></img>
+					<p>长按二维码购买</p>
+				</div>
+			</div>
+		</div>
+		<div class="btmByBtn" onclick="goYhq()">领券购买</div>
+		<!--分享按钮组-->
+		<div class="shareCnt hidden">
+			<div class="shareMenuBox">
+				<div class="wenan">
+					<p id="waTitle">商品标题</p>
+					<p id="waYuanjia">【原价】99.0元</p>
+					<p id="waQUan">【券后价】99.0元</p>
+					<p>------------------</p>
+					<p id="waTuijian">推荐理由：</p>
+					<p>------------------</p>
+					<p id="waHref">购买链接：</p>
+				</div>
+				<div class="shareGroup">
+					<div class="shareIetm">
+						<img src="../image/wenan.png" onclick="copyWenAn()" />
+						<span>复制上面文案</span>
+					</div>
+					<div class="shareIetm" onclick="saveImg(true,'')">
+						<img src="../image/tuiguang.png" />
+						<span>保存推广图片</span>
+					</div>
+					<div class="shareIetm" onclick="copyByHref()">
+						<img src="../image/copy.png" />
+						<span>复制链接</span>
+					</div>
+					<div class="shareIetm" onclick="saveImg(false,'PYQ')">
+						<img src="../image/friend.png" />
+						<span>朋友圈</span>
+					</div>
+					<div class="shareIetm" onclick="saveImg(false,'WX')">
+						<img src="../image/weifriend.png" />
+						<span>微信</span>
+					</div>
+					<div class="shareIetm" onclick="saveImg(false,'QQ')">
+						<img src="../image/QQ.png" />
+						<span>QQ</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var yhqHref = '';
+			var shopType = new Array();
+			shopType['C'] = 'icon-mobiletao';
+			shopType['B'] = 'icon-tmall';
+			apiready = function() {
+				_api_ShowProgress('数据加载中...', true);
+				getDetail();
+				getInfo();
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: ''
+				}, function(ret, err) {
+					if(ret) {
+//						alert('已复制该商品文案');
+					}
+				});
+			}
+
+			function getInfo() {
+				var _id = api.pageParam.goodId;
+				if(api.pageParam.coupons) {
+					getGaoyong(_id, api.pageParam.coupons, function(ret) {
+						addDom(ret);
+					});
+				} else {
+					goDetail(_id, function(ret) {
+						addDom(ret);
+					})
+				}
+				$.post(apiUrl + 'Goods/show.html', {
+					item_id: _id
+				}, function(res) {
+					if(res.code.toString()=='1'){
+						$("#qh").html(res.data.data.price_final);
+						$("#sj").html(res.data.data.price_original);
+						$("#quan").html(res.data.data.coupon_value);
+						$(".shopType").addClass(shopType[res.data.data.shop_type]);
+						$(".tuijianliyou").html(res.data.data.copywriter);
+						$("#CVSquanhou span").html(res.data.data.price_final);
+						$("#CVSyuanjia").html('原价' + res.data.data.price_original);
+						$("#CVSquan").html("立减" + res.data.data.coupon_value + "元");
+						$("#waYuanjia").html('【原价】￥' + res.data.data.price_original);
+						$("#waQUan").html('【券后价】￥' + res.data.data.price_final);
+						$("#waTuijian").html("推荐理由：" + res.data.data.copywriter);
+						var qr = new QRious({
+							element: document.getElementById('qr'),
+							value: _GS_goodUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.goodId,
+							size: api.winWidth * 0.35
+						});
+						_api_HideProgress();
+					}else{
+						_api_HideProgress();
+						_api_showToast("获取商品详情失败，请重新加载");
+					}
+					
+				}, 'json')
+			}
+
+			function getDetail() {
+				var _id = api.pageParam.goodId;
+				$.get('https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?&data={%22item_num_id%22:' + _id + '}&type=json', function(ret) {
+					var _list = ret.data.images;
+					var _html = '';
+					$.each(_list, function(key, val) {
+						_html += '<img src="' + val + '" />'
+					});
+					$(".spxq").html(_html);
+				})
+			}
+			$(".cktw").on("click", function() {
+				var _h = $(document).scrollTop();
+				if($(".spxq").hasClass("hidden")) {
+					$(".spxq").removeClass("hidden");
+					$("body").animate({
+						scrollTop: _h + api.frameHeight
+					}, 500);
+					$(".cktw").text("隐藏图文详情");
+
+				} else {
+					$(".spxq").addClass("hidden");
+					$(".cktw").text("查看图文详情");
+
+				}
+
+			});
+			//弹出分享组
+			function showShareBox() {
+				$(".shareCnt").removeClass("hidden");
+				$("#htmlBox").removeClass("hidden");
+			}
+			//隐藏分享组
+			$(".shareCnt").on("click", function(e) {
+				if($(e.target).is(".shareIetm")) {
+
+				} else {
+					$(".shareCnt").addClass("hidden");
+					$("#htmlBox").addClass("hidden");
+					$("#waHref").html("购买链接：" + _GS_goodUrl + "mid=" + $api.getStorage("memberId") + "&gid=" + api.pageParam.goodId);
+
+				}
+
+			});
+
+			//去购买
+			function goYhq() {
+				var _id = api.pageParam.goodId;
+				var baichuan = new BaiChuan();
+				baichuan.openId(_id);
+			}
+
+			function copyTkl() {
+				$("#waHref").html("复制这条信息，" + $("#tkl").html() + '打开【手机淘宝】即可领券');
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: $(".wenan").html().replace(/<[^>]*>/g, '').replace('&amp;', '&').replace(/[\f\r\t\v]/g, "")
+				}, function(ret, err) {
+					if(ret) {
+
+						alert('已复制该商品的淘口令');
+					}
+				});
+			}
+
+			function copyByHref() {
+				$("#htmlBox").addClass("hidden");
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: _GS_goodUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.goodId
+				}, function(ret, err) {
+					if(ret) {
+
+						alert('已复制该商品的购买链接');
+					}
+				});
+			}
+			//复制文案
+			function copyWenAn() {
+				$("#htmlBox").addClass("hidden");
+				var dd = $(".wenan").html().replace(/<[^>]*>/g, '').replace('&amp;', '&').replace(/[\f\r\t\v]/g, "");
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: dd
+				}, function(ret, err) {
+					if(ret) {
+						alert('已复制该商品文案');
+					}
+				});
+			}
+
+			function saveImg(_n, _type) {
+				_api_ShowProgress("正在生成分享图片", true);
+				$("body").scrollTop(0).promise().then(function() {
+					setTimeout(function(){
+						$("#htmlBox").removeClass("hidden");
+						addCvs();
+					},500);
+				});
+				
+				function addCvs(){
+					var _dom = document.getElementById("htmlBox");
+					var _imgName = Date.parse(new Date()) + ".png";
+					var _thisW = $("#htmlBox").width();
+					var _thisH = $("#htmlBox").height();
+					console.log("w:"+_thisW);
+					var cavs = document.createElement("canvas"); //创建一个canvas节点
+					var scale = window.devicePixelRatio; //定义任意放大倍数 支持小数
+					cavs.width = _thisW * scale; //定义canvas 宽度 * 缩放
+					cavs.height = _thisH * scale; //定义canvas高度 *缩放
+					cavs.style.width = _thisW;
+					cavs.style.height = _thisH;
+					cavs.getContext("2d").scale(scale, scale); //获取context,设置scale
+					html2canvas(_dom, {
+						canvas: cavs,
+						allowTaint: true,
+						async: false
+					}).then(function(canvas) {
+						var _url = canvas.toDataURL(); //图片地址
+						var trans = api.require('trans');
+						trans.saveImage({
+							base64Str: _url.replace('data:image/png;base64,', ''),
+							album: _n,
+							imgPath: "fs://img/",
+							imgName: _imgName
+						}, function(ret, err) {
+							$("#htmlBox").addClass("hidden");
+							_api_HideProgress();
+							if(ret.status) {
+								if(_type == 'QQ') {
+									var _qq = new QQPlusSDK();
+									_qq.isInstalled(function() {
+										_qq.shareImg('fs://img/' + _imgName);
+									});
+								} else if(_type == 'WX') {
+									qfImg('fs://img/' + _imgName,'wxFriend');
+								} else if(_type == 'PYQ') {
+									qfImg('fs://img/' + _imgName,'wxCircle');
+								} else {
+									_api_showToast("保存成功");
+								}
+							} else {
+								_api_showToast("生成分享图片失败")
+							}
+						});
+					})
+				}
+
+			}
+
+			function addDom(ret) {
+				
+				$("#tkl").html(ret.data.token); //淘口令
+				$("#goodzhutu").attr("src", ret.data.taobao_item_image); //主图
+				$(".goodT").html(ret.data.taobao_item_title); //商品标题
+				$("#CVSimg").attr("src", ret.data.taobao_item_image);
+				$("#CVStitle").append(ret.data.taobao_item_title); //商品标题
+				$("#waTitle").html(ret.data.taobao_item_title); //商品标题
+				$.get(apiUrl + 'Ad/auto.html?type=taokouling', function(rets) {
+					if(rets.data.taokouling.toString() == '1') {
+						$("#waHref").html("淘口令：" + ret.data.token);
+					} else {
+						$("#waHref").html("购买链接：" + _GS_goodUrl + "mid=" + $api.getStorage("memberId") + "&gid=" + api.pageParam.goodId);
+					}
+				});
+			}
+			
+			function qfImg(_img,_type){
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _img,
+						app: _type
+					}
+				} else {
+					_pm = {
+						sendPattern: 'ONLY',
+						imgPaths: _img,
+						app: _type
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功")
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>意见反馈</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="editBox cnt">
+			<textarea id="potTxt" rows="5"></textarea>
+			<input type="button" value="提交" onclick="postFankui()" />
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var memberInfo;
+			apiready = function() {
+
+				getApiJson('member/get.html', {
+					mid: $api.getStorage('memberId')
+				}, function(ret) {
+					memberInfo = ret.data;
+				})
+
+			}
+
+			function postFankui() {
+				var _txt = $api.trim($('#potTxt').val());
+				if(_txt) {
+					getApiJson('Ad/fankui.html', {
+						mid: memberInfo.id,
+						mobile: memberInfo.mobile,
+						content: _txt
+					}, function(ret) {
+						api.toast({
+							msg: '谢谢您反馈的意见，我们努力做的更好',
+							location: 'middle'
+						});
+						api.closeToWin({
+							name: 'root'
+						});
+					});
+				} else {
+					api.toast({
+						msg: '请输入反馈意见后再提交',
+						location: 'middle'
+					});
+				}
+			}
+		</script>
+	</body>
+
+</html>

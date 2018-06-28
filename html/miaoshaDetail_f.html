@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>关于我们</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="msDetailBox">
+			<!--商品图片-->
+			<div class="msGoodImg">
+				<img src="" />
+			</div>
+			<!--秒杀信息-->
+			<div class="msTimeCnt">
+				<div class="priceBox">
+					<span>到手价:￥</span>
+					<label id="dsj">0</label>
+				</div>
+				<div class="fenshuBox">
+					<span id="oldPrice">￥0</span>
+					<div class="fenshu">
+						<label id="ygf">0</label>
+						<label id="zf">/0份</label>
+					</div>
+				</div>
+				<div class="timeCnt">
+					<div class="start">今天18:00开始</div>
+					<div class="endTime"><span>08</span>:<span>00</span>:<span>00</span></div>
+				</div>
+			</div>
+			<!--title and shoptype-->
+			<div class="msTitleBox">
+				<p class="goodT">商品标题</p>
+			</div>
+
+			<div class="lanmuTitle">活动详情：</div>
+			<div class="msXiangQing">
+				<p>秒杀开始时间：<span id="stTime">0</span></p>
+				<p>秒杀结束时间：<span id="edTime">0</span></p>
+				<p>截至填单时间：<span id="tdTime">0</span></p>
+				<p>所需集分宝：<span id="xyjfb"></span></p>
+				<p>抢购权限：<span id="quanxian"></span></p>
+				<p>普通用户：返<span id="ptfl">0</span>集分宝</p>
+				<p>超级会员：返<span id="hyfl">0</span>集分宝</p>
+				<p>返集分宝审核：<span id="isShenhe">否</span></p>
+				<p>是否需要晒图：<span id="isShaiTu">否</span></p>
+				
+			</div>
+			<div class="lanmuTitle">秒杀详情：</div>
+			<div class="msGoodXiangQing">
+
+			</div>
+		</div>
+
+		<div class="btmByBtn" onclick="toMiaosha()">立即抢购</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _oid, _type, _msTitle, _dsj, _dnj, _vipF, _ptF,_isGaoyong;
+			apiready = function() {
+				_oid = api.pageParam.miaoshaId;
+				var _msDt = new MiaoSha();
+				_msDt.getDetailById(_oid, function(ret) {
+					_type = ret.type;
+					_msTitle = ret.title;
+					$(".goodT").html(ret.title);
+					$(".msGoodImg img").attr("src", ret.thumb);
+					$("#xyjfb").html((parseFloat(ret.money)).toFixed(0));
+					$("#zf").html('/' + ret.shop_number + '份');
+					$("#ygf").html(ret.shop_number_wfc);
+					$("#stTime").html(ret.start_time_ymd);
+					$("#edTime").html(ret.end_time_ymd);
+					$("#tdTime").html(datepattern(ret.order_pulltime, 'yyyy-MM-dd HH:mm:ss'));
+					if(ret.shop_state.toString() == '1') {
+						rightTime(ret.end_time);
+					} else if(ret.shop_state.toString() == '2') {
+						leftTimer(ret.start_time);
+					} else if(ret.shop_state.toString() == '3') {
+						$(".timeCnt").html('<span class="qgl">已结束</span>');
+					}else if(ret.shop_state.toString() == '4'){
+						$(".timeCnt").html('<span class="qgl">已抢完</span>');
+					}
+					if(ret.vip){
+						$("#quanxian").html("仅VIP会员可以抢购")
+					}else{
+						$("#quanxian").html("无限制")
+					}
+					
+					if(ret.type.toString() == '3') {
+						_dsj = ret.price;
+						_dnj = ret.ol_price;
+						_vipF = (parseFloat(ret.pebate_price_vip)).toFixed(0);
+						_ptF = (parseFloat(ret.pebate_price)).toFixed(0);
+						_isGaoyong=ret.is_gaoyong;
+						$("#dsj").html(ret.price);
+						$("#oldPrice").html('￥' + ret.ol_price);
+						$("#ptfl").html((parseFloat(ret.pebate_price)).toFixed(0));
+						$("#hyfl").html((parseFloat(ret.pebate_price_vip)).toFixed(0));
+						var _id = ret.item_id;
+						$.get('https://hws.m.taobao.com/cache/mtop.wdetail.getItemDescx/4.1/?&data={%22item_num_id%22:' + _id + '}&type=json', function(ret) {
+							var _list = ret.data.images;
+							var _html = '';
+							$.each(_list, function(key, val) {
+								_html += '<img src="' + val + '" />'
+							});
+							$(".msGoodXiangQing").html(_html);
+						})
+						if(ret.rengong.toString() == '1') {
+							$("#isShenhe").html('人工审核');
+						} else {
+							$("#isShenhe").html('机器审核');
+						}
+						if(ret.jietu.toString() == '1') {
+							$("#isShaiTu").html('需要上传截图');
+						} else {
+							$("#isShaiTu").html('不需要');
+						}
+					} else {
+						$("#ptfl").parent().hide();
+						$("#hyfl").parent().hide();
+						$("#isShenhe").parent().hide();
+						$("#isShaiTu").parent().hide();
+						$(".priceBox span").html("所需集分宝:");
+						$("#dsj").html((parseFloat(ret.money)).toFixed(0)+'个');
+						$("#oldPrice").css("text-decoration","none").html('抢完即止');
+					}
+
+					if(ret.type.toString() != '3') {
+						$(".msGoodXiangQing").append(ret.content.toString());
+
+					} else {
+						$(".msXiangQing").append(ret.content.toString());
+					}
+
+				});
+
+			}
+
+			function toMiaosha() {
+				if($api.getStorage("memberId")) {
+					var _ms = new MiaoSha();
+					_ms.miaosha(_oid, function(ret) {
+						var _postData = {
+							oid: ret.ordersn,
+							msType: _type,
+							code: ret.code,
+							msTitle: _msTitle,
+							daoshoujia: _dsj,
+							oldPirce: _dnj,
+							vipFanli: _vipF,
+							ptFanli: _ptF,
+							retMsg: ret.msg,
+							goodId: ret.data.item_id,
+							isGaoyong:_isGaoyong
+						}
+						console.log(JSON.stringify(_postData));
+						openNewWin(null, 'miaoshaState_w.html', _postData)
+
+					});
+				} else {
+
+				}
+			}
+		</script>
+	</body>
+
+</html>

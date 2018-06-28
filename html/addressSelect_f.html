@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<div class="cnt">
+			<div class="addressList">
+
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				getAddList();
+
+			}
+
+			function getAddList() {
+				var _add = new Address();
+				_add.getList(function(ret) {
+					_add.addSelectListDom($(".addressList"), ret, api.pageParam.selectId);
+				});
+			}
+
+			$(".addressList").on("click", ".weixuanze, .fc-b", function(event) {
+				$(".fc-m").addClass("fc-b").removeClass("fc-m").removeClass("icon-squarecheckfill").addClass("icon-square");
+				$(".yixuanz").addClass("weixuanze").removeClass("yixuanz").html("未选择");
+				if($(this).is("i")) {
+					$(this).addClass("fc-m").removeClass("fc-b").removeClass("icon-square").addClass("icon-squarecheckfill");
+					$(this).next("span").addClass("yixuanz").removeClass("weixuanze").html("已选择");
+				} else {
+					$(this).prev("i").addClass("fc-m").removeClass("fc-b").removeClass("icon-square").addClass("icon-squarecheckfill");
+					$(this).addClass("yixuanz").removeClass("weixuanze").html("已选择");
+
+				}
+				var _id = $(this).parents(".row").attr("data-id");
+				var jsfun = 'getInfoById(' + _id + ');';
+				api.execScript({
+					name: 'miaoshaState_w',
+					frameName: 'miaoshaState_sw',
+					script: jsfun
+				});
+				api.closeWin();
+
+			});
+
+			$(".addressList").on("click", ".deladd, .icon-delete", function() {
+				var _id = $(this).parents(".row").attr("data-id");
+				var _add = new Address();
+				_add.delAddress(_id, function() {
+					api.toast({
+						msg: "删除成功"
+					});
+					getAddList();
+				});
+			});
+
+			//编辑地址
+			$(".addressList").on("click", ".editadd, .icon-edit", function() {
+				var _id = $(this).parents(".row").attr("data-id");
+				openNewWin(null, 'addressEdit_w.html', {
+					addressId: _id,
+					isSeltct:true
+				});
+			})
+		</script>
+	</body>
+
+</html>

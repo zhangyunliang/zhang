@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<!--header start-->
+		<header id="header">
+			<!--<a id="pageBack" href="javascript:;">
+				<i class="iconfont icon-back"></i>
+			</a>-->
+			<span>晒单</span>
+			<a class="btn btn-warring hidden" href="javascript:;" data-url='baskSingleRelease_w.html' onclick="openNewPage(this)" tapmode>我来晒单</a>
+		</header>
+		<!--header end-->
+
+		<!--baskSingleList start-->
+		<div class="baskList cnt-hastop ">
+			<!--<div class="baskRow" data-url="baskSingleDetail_w.html" onclick="openNewWin(this)" tapmode>
+				<div class="baskAuthor">
+					<img src="../image/hp.jpg" />
+					<span>_nickname</span>
+				</div>
+				<h3>_title</h3>
+				<p>_introduction</p>
+				<div class="baskImgBox">
+					<div style="background-image: url(../image/good1.jpg);"></div>
+					<div style="background-image: url(../image/good2.jpg);"></div>
+					<div style="background-image: url(../image/good3.jpg);">
+						<p>共9张</p>
+					</div>
+				</div>
+				<div class="baskAttr">
+					<span>_createtime</span>
+					<div>
+						<i class="iconfont icon-message"></i>
+						<label>_liuyan</label>
+						<i class="iconfont icon-appreciate"></i>
+						<label>_zan</label>
+						<i class="iconfont icon-zhi"></i>
+						<label>_zhi%</label>
+					</div>
+				</div>
+			</div>-->
+		</div>
+		<!--baskSingleList end-->
+		<div class="lodindGood">
+			<i class="iconfont icon-pullup"></i>
+			<span>上拉加载更多商品</span>
+		</div>
+		<div class="loding">
+			<i class="iconfont icon-loading"></i>
+			<span>正在加载中...</span>
+		</div>
+		<script type="text/javascript" src="../src/concat/all.js" ></script>
+		<script>
+			var _elFactBox = $api.dom('.baskList');
+			var _strMode = $api.html(_elFactBox);
+			//			$api.html(_elFactBox,'');
+
+			var listData;
+			var _page=1;
+			var _logindMore = $api.dom('.lodindGood');
+			var _loding = $api.dom('.loding');
+			apiready = function() {
+				if(api.systemType == 'ios') {
+					$api.fixStatusBar($api.dom("#header"));
+					$('.cnt-hastop').css('top', api.safeArea.top+60+'px');
+				} else {
+					$('.cnt-hastop').css('top', '75px');
+				}
+				getReleaseIs(function(ret){
+					if(ret.code.toString()=='1'){
+						if(ret.data.toString()=='0'){
+							$("#header .btn").addClass("hidden");
+						}else{
+							$("#header .btn").removeClass("hidden");
+						}
+					}
+				},function(err){
+					$("#header .btn").addClass("hidden");
+				});
+				lodingFactList();
+				//下拉刷新
+				api.setFrameAttr({
+					name: 'baskSingleList_fr',
+					bounces: true
+				});
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					location.reload();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+				api.addEventListener({
+					name: 'setStatuBarDark'
+				}, function(ret, err) {
+					api.setStatusBarStyle({
+						style: 'dark'
+					});
+				});
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					lodingFactList();
+					$api.css(_logindMore, 'display:none;');
+					$api.css(_loding, 'display:flex;');
+				});
+				
+				
+			}
+
+			function openNewPage(e) {
+				if($api.getStorage('memberId')) {
+					openNewWin(e);
+				} else {
+					openNewWin(null, 'login_w.html', {
+						toWin: 'root'
+					});
+				}
+			}
+			
+
+			function lodingFactList() {
+				$api.css(_logindMore, 'display:flex;');
+					$api.css(_loding, 'display:none;');
+				var _html = '';
+				getApiJson('shaidan/lists_v2.html', {page:_page}, function(ret) {
+					_page=_page+1;
+					listData = ret.data;
+					var _html = '';
+					$.each(ret.data, function(key, val) {
+
+						if(val.uid == "admin") {
+							val.nickname = '官方';
+						} else {
+							val.nickname = val.nickname ? val.nickname : val.mobile;
+						}
+						val.avatar = val.avatar ? val.avatar : '../image/hp.jpg';
+						_html += '<div class="baskRow" data-url="baskSingleDetail_w.html" onclick="toFactDetail(this)" data-id="'+val.id+'" tapmode>' +
+							'<div class="baskAuthor">' +
+							'<img src="' + val.avatar + '" />' +
+							'<span>' + val.nickname + '</span>' +
+							'</div>' +
+							'<h3>' + val.title + '</h3>' +
+							'<p>' + val.introduction + '</p>' +
+							'<div class="baskImgBox">';
+						$.each(val.imgall, function(index, value) {
+
+							if(val.imgall.length > 3) {
+
+								if(index < 2) {
+									console.log(index);
+									_html += '<div style="background-image: url(' + value.pic + '!atr);"></div>';
+								} else if(index == 2) {
+									_html += '<div style="background-image: url(' + value.pic + '!atr);">' +
+										'<p>共' + val.imgall.length + '张</p></div>';
+								}
+							} else {
+								_html += '<div style="background-image: url(' + value.pic + '!atr);">';
+								if(index == val.imgall.length - 1) {
+									_html += '<p>共' + val.imgall.length + '张</p>';
+								}
+								_html += '</div>';
+							}
+
+						});
+						_html += '</div>' +
+							'<div class="baskAttr">' +
+							'<span>' + val.createtime + '</span>' +
+							'<div>' +
+							'<i class="iconfont icon-message"></i>' +
+							'<label>' + val.liuyan + '</label>' +
+							'<i class="iconfont icon-appreciate"></i>' +
+							'<label>' + val.zan + '</label>' +
+							'<i class="iconfont icon-zhi"></i>' +
+							'<label>' + val.zhi + '%</label>' +
+							'</div>' +
+							'</div>' +
+							'</div>';
+					});
+					$(".baskList").append(_html);
+
+				});
+			}
+
+			function toFactDetail(e) {
+				var _index = $(e).attr("data-id");
+				openNewWin(null, 'baskSingleDetail_w.html', {
+					id:_index
+				});
+			}
+		</script>
+	</body>
+
+</html>

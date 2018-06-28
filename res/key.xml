@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+<item name="appName" value="生活美"/>
+<item name="appDescribe" value="生活美是一款手机智慧购物软件，通过用户间的分享、讨论，让你及时掌握各平台的折扣、促销、内部优惠活动，真实的用户分享、互助让你最短时间买到最具性价比的商品！"/>
+<item name="apiPath" value="https://tps.dy82.cn/v1/"/>
+<item name="sign" value="111"/>
+<item name="uploadImgName" value="shmapp.b0.upaiyun.com"/>
+<item name="uploadImgPath" value="https://shmapp.b0.upaiyun.com/"/>
+<item name="shareUrl" value="http://www.miufa.com/shm/index.html?id="/>
+<item name="pagePath" value="http://appdown.miufa.com"/>
+</security>

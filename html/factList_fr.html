@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>开发</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<!--header start-->
+		<header id="header">
+			<span>热门爆料</span>
+			<a class="btn btn-warring hidden" href="javascript:;" data-url="factRelease_w.html" onclick="openNewPage(this)" tapmode>我来爆料</a>
+
+		</header>
+		<!--header end-->
+
+		<!--factList start-->
+		<div class="factList cnt-hastop">
+			<!--row start-->
+			<!--<div class="factRow" data-id="_id" tapmode onclick="toFactDetail(this)">
+				<div class="factHead">
+					<i class="iconfont _ictype"></i>
+					<span>_type</span>
+				</div>
+				<div class="factDtBox">
+					<div class="factImgBox">
+						<img src="_pic" style="height: _factHHpx;" />
+					</div>
+					<div class="factDt">
+						<h2>_title</h2>
+						<p>_introduction</p>
+						<div class="factAttrBox">
+							<div class="factATB">
+								<span>_nickname</span>
+								<span>_createtime</span>
+							</div>
+							<div class="factATB">
+								<i class="iconfont icon-message"></i>
+								<label>_liuyan</label>
+								<i class="iconfont icon-appreciate"></i>
+								<label>_zan</label>
+								<i class="iconfont icon-zhi"></i>
+								<label>_zhi%</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>-->
+			<!--row end-->
+
+		</div>
+		<!--factList end-->
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elFactBox = $api.dom('.factList');
+			var _strMode = $api.html(_elFactBox);
+			//			$api.html(_elFactBox,'');
+			var _page=1;
+			var _logindMore = $api.dom('.lodindGood');
+			var _loding = $api.dom('.loding');
+			var listData;
+			var factType = new Array();
+			factType['1'] = '好价';
+			factType['2'] = '好物';
+			factType['3'] = '好文';
+
+			var iconType = new Array();
+			iconType['1'] = 'icon-rechargefill';
+			iconType['2'] = 'icon-shangpin';
+			iconType['3'] = 'icon-wenzhang';
+
+			apiready = function() {
+				if(api.systemType == 'ios') {
+					$api.fixStatusBar($api.dom("#header"));
+					$('.cnt-hastop').css('top', api.safeArea.top+60+'px');
+				} else {
+					$('.cnt-hastop').css('top', '75px');
+				}
+				getReleaseIs(function(ret){
+					if(ret.code.toString()=='1'){
+						if(ret.data.toString()=='0'){
+							$("#header .btn").addClass("hidden");
+						}else{
+							$("#header .btn").removeClass("hidden");
+						}
+					}
+				},function(err){
+					$("#header .btn").addClass("hidden");
+				});
+				lodingFactList();
+				api.setFrameAttr({
+					name: 'factList_fr',
+					bounces: true
+				});
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					location.reload();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+				
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					lodingFactList();
+					$api.css(_logindMore, 'display:none;');
+					$api.css(_loding, 'display:flex;');
+				});
+			}
+
+			function openNewPage(e) {
+				if($api.getStorage('memberId')) {
+					openNewWin(e);
+				} else {
+					openNewWin(null, 'login_w.html', {
+						toWin: 'root'
+					});
+				}
+			}
+
+			function lodingFactList() {
+				$api.css(_logindMore, 'display:flex;');
+				$api.css(_loding, 'display:none;');
+				var imgH = (api.winWidth - 40) * 0.3 - 10;
+				var _html = '';
+				var _string='';
+				getApiJson('baoliao/lists_v2.html', {page:_page}, function(ret) {
+					_page=_page+1;
+					var list = ret.data;
+					listData = list;
+					for(var i = 0; i < list.length; i++) {
+						if(list[i].uid == 'admin') {
+							list[i].nickname =list[i].bindname;
+						} else {
+							if(list[i].nickname) {
+								list[i].nickname = list[i].nickname.slice(0, 10);
+							} else {
+								list[i].nickname = list[i].mobile;
+							}
+						}
+						_html += '<div class="factRow" data-id="' + list[i].id + '" tapmode onclick="toFactDetail(this)">' +
+							'<div class="factHead">' +
+							'<i class="iconfont ' + factType[list[i].type.toString()] + '"></i>' +
+							'<span>' + factType[list[i].type.toString()] + '</span>' +
+							'</div>' +
+							'<div class="factDtBox">' +
+							'<div class="factImgBox">' +
+							'<img src="' + list[i].pic.toString() + '!atr" style="height: ' + imgH + 'px;" />' +
+							'</div>' +
+							'<div class="factDt">' +
+							'<h2>' + list[i].title + '</h2>' +
+							'<p>' + list[i].introduction + '</p>' +
+							'<div class="factAttrBox">' +
+							'<div class="factATB">' +
+							'<span>' + list[i].nickname + '</span>' +
+							'<span>' + list[i].createtime.slice(5, -3) + '</span>' +
+							'</div>' +
+							'<div class="factATB">' +
+							'<i class="iconfont icon-message"></i>' +
+							'<label>'+list[i].liuyan+'</label>' +
+							'<i class="iconfont icon-appreciate"></i>' +
+							'<label>'+list[i].zan+'</label>' +
+							'<i class="iconfont icon-zhi"></i>' +
+							'<label>'+list[i].zhi+'%</label>' +
+							'</div></div></div></div></div>';
+					}
+					$(".factList").append(_html);
+				});
+			}
+
+			function toFactDetail(e) {
+				var _id=$(e).attr("data-id");
+				openNewWin(null, 'factDetail_w.html', {id:_id});
+			}
+		</script>
+	</body>
+
+</html>

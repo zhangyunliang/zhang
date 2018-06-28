@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="withDrowHead">
+			<div>时间</div>
+			<div>集分宝</div>
+			<div>说明</div>
+		</div>
+		<div class="withDrowList">
+			<!--<li class="row _type" data-id='_id'>
+				<span>_addtime</span>
+				<span>￥_money</span>
+				<span>_typeText</span>
+			</li>-->
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _yjType = new Array();
+			_yjType['5'] = 'handling';
+			_yjType['4'] = 'success';
+
+			var _yjTxt = new Array();
+			_yjTxt['5'] = '邀请入账';
+			_yjTxt['4'] = '奖励入账';
+
+			var _strModel = $('.withDrowList').html();
+			apiready = function() {
+				getApiJson('Member/yongjinLog_v2.html', {
+					mid: $api.getStorage('memberId')
+				}, function(ret) {
+					var _html = '';
+					for(var i = 0; i < ret.data.length; i++) {
+						
+						_html+='<li >'+
+									'<span>'+ret.data[i].addtime+'</span>'+
+									'<span>'+ret.data[i].money+'</span>'+
+									'<span style="color:'+ret.data[i].color+';">'+ret.data[i].remark+'</span></li>';
+					}
+					$('.withDrowList').html(_html);
+				});
+			}
+		</script>
+	</body>
+
+</html>

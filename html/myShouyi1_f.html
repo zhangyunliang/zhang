@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="withDrowHead">
+			<div>时间</div>
+			<div>集分宝</div>
+			<div>说明</div>
+		</div>
+		<div class="withDrowList">
+			<!--<li class="row _type" data-id='_id'>
+				<span>_addtime</span>
+				<span>￥_money</span>
+				<span>_typeText</span>
+			</li>-->
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			
+
+			var _strModel = $('.withDrowList').html();
+			apiready = function() {
+				getApiJson('Member/shoujiList.html', {
+					mid: $api.getStorage('memberId'),
+					type:1
+				}, function(ret) {
+					console.log(JSON.stringify(ret) );
+					var _html = '';
+					for(var i = 0; i < ret.data.list.length; i++) {
+						
+						_html+='<li >'+
+									'<span>'+ datepattern(ret.data.list[i].addtime,'yyyy-MM-dd HH:mm:ss')+'</span>'+
+									'<span>'+parseFloat(ret.data.list[i].money*100).toFixed(0) +'</span>'+
+									'<span style="color:'+ret.data.list[i].color+';">'+ret.data.list[i].remark+'</span></li>';
+					}
+					$('.withDrowList').html(_html);
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>购买会员</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="personInfoBox vipUserInfo">
+			<a href="javascript:;" data-url="personInfo_w.html" tapmode onclick="openNewWin(this)">
+				<img id="memberAvatar" src="../image/hp.jpg" />
+			</a>
+			<div>
+				<p class="title">未登录</p>
+				<div class="promote">
+					<label>用户ID:</label>
+					<span id="memberId">30</span>
+				</div>
+			</div>
+
+		</div>
+		<div class="vipBox">
+			<img src="../image/vip.jpg" />
+			<div class="vipInfo">
+				<p id="title"></p>
+				<span id="money"></span>
+				<label id="day"></label>
+			</div>
+		</div>
+		
+		<div style="margin: 5px 0;">
+			<img id="invite" src=""  />
+		</div>
+		<div class="vipPay" style="padding-bottom: 45px;">
+			<p>支付方式</p>
+			<div class="payRadio">
+				<div class="row">
+					<i class="iconfont icon-rectangle390" style="color: #2299ed;"></i>
+					<label>支付宝</label>
+					<i class="iconfont icon-roundcheckfill"></i>
+				</div>
+			</div>
+		</div>
+
+		<!--<div class="accept" data-url='serverAgreement_w.html' onclick="openNewWin(this)" >
+			<i class="iconfont icon-squarecheckfill"></i>
+			<label>《代理购买协议》</label>
+		</div>-->
+
+		<a class="fixedbtn" href="javascript:;" onclick="alipay()">立即购买</a>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elMid = $api.byId('memberId');
+			var _elmemberAvatar = $api.byId('memberAvatar');
+			apiready = function() {
+				$api.text(_elMid, $api.getStorage('memberId'));
+				$.post(apiUrl + 'Ad/auto.html', {
+					type: 'vipqy'
+				}, function(ret) {
+					$('#invite').attr('src',ret.data.vipqy.toString());
+				}, 'json');
+				hkfnChangeLogin();
+
+				
+			}
+
+			function getVipConfig(isVip,viptime) {
+				if(isVip){
+					$('#title').text('状态：VIP会员');
+					$('#money').css('display','none');
+					$('#day').text('有效期：' + viptime);
+					
+				}else{
+					getApiJson('Member/getVipConfig.html', {}, function(ret) {
+						$('#title').text(ret.data.title);
+						$('#money').text('￥' + ret.data.money);
+						$('#day').text('使用期限：' + ret.data.day + '天');
+
+					});
+				}
+				
+			}
+
+			function hkfnChangeLogin() {
+				//加载用户信息
+				getApiJson('member/get.html', {
+					mid: $api.getStorage('memberId')
+				}, function(data) {
+					$api.text(_elMid, data.data.id);
+					data.data.nickname = data.data.nickname ? data.data.nickname : data.data.mobile;
+					data.data.avatar = data.data.avatar ? data.data.avatar : '../image/hp.jpg';
+					$('.title').text(data.data.nickname);
+					$("#memberAvatar").attr('src', data.data.avatar);
+					if(data.data.level.toString()!='0'){
+						var _vip = '<i class="iconfont icon-vip" style="margin-left: 3px; color: white; font-size: 14px;"></i>';
+						$('.title').append(_vip);
+						$(".fixedbtn").text("立即续费");
+						getVipConfig(true,datepattern(data.data.vip_overtime,'yyyy-MM-dd'));
+					}else{
+						getVipConfig(false);
+					}
+					
+				});
+			}
+			
+
+			function alipay() {
+				getApiJson('Member/payvip.html', {
+					mid: $api.getStorage('memberId')
+				}, function(res) {
+					var aliPayTradePlus = api.require('aliPayTradePlus');
+					aliPayTradePlus.payOrder({
+						orderInfo: res.alipay.toString()
+					}, function(ret, err) {
+						if(ret.code.toString() == '9000') {
+							api.alert({
+								title: '支付结果',
+								msg: '开通会员成功',
+								buttons: ['确定']
+							});
+							var jsfun = 'hkfnChangeLogin()';
+							api.execScript({
+								name: 'root',
+								frameName: 'my_fr',
+								script: jsfun
+							});
+							api.closeToWin({
+								name: 'root'
+							});
+						} else {
+
+						}
+
+					});
+				})
+			}
+		</script>
+	</body>
+
+</html>

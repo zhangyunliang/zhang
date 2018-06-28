@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+			#title{
+				
+			}
+			#content{
+				font-size: 1.4rem;
+				margin: 10px 0;
+			}
+			#addtime{
+				font-size: 1.2rem;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="baskSingleDetail">
+			<h3 id="title"></h3>
+			<p id="content"></p>
+			<p id="addtime"></p>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				lodingMessageDt(api.pageParam.id);
+			}
+
+			function lodingMessageDt(_id) {
+				getApiJson('Ad/xiaoxishow.html', {
+					id: _id
+				}, function(ret) {
+					$('#title').html(ret.data.title);
+					$('#content').html(ret.data.content);
+					$('#addtime').html('时间：'+datepattern(ret.data.addtime,'yyyy-MM-dd hh:mm:ss'));
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>关于我们</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<div class="cnt" style=" padding: 10px 15px; font-size: 1.6rem;line-height: 30px;">
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				$.post(apiUrl + 'Ad/auto.html', {
+					type: 'gywm'
+				}, function(ret) {
+					$('.cnt').html(ret.data.gywm);
+
+				}, 'json');
+			}
+		</script>
+	</body>
+
+</html>

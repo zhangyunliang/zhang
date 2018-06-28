@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>收支明细</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header" class="relativeBox">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>我的红包</span>
+		</header>
+		<!--header end-->
+		<div class="commissionTab relativeBox">
+			<div class="commissionItem active" data-url="coupons_0.html" onclick="fnSetCommissionTabIndex(0)" tapmode>未使用</div>
+			<div class="commissionItem"  data-url="coupons_1.html" onclick="fnSetCommissionTabIndex(1)" tapmode>已使用</div>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				setHeaderH();
+				var list = $api.domAll(".commissionItem");
+
+				var frames = [];
+				for(var i = 0; i < list.length; i++) {
+					var thisUrl = $api.attr(list[i], 'data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				}
+				var _y=90;
+				
+				api.openFrameGroup({
+					name: 'myCouponsGroup',
+					scrollEnabled: true,
+					rect: {
+						x: 0,
+						y: _y+api.safeArea.top,
+						w: 'auto',
+						h: 'auto'
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetCommissionTabActive(ret.index);
+				});
+			}
+
+			function fnSetCommissionTabActive(_index) {
+				var list = $api.domAll(".commissionItem");
+				for(var i = 0; i < list.length; i++) {
+					if(_index == i) {
+						$api.addCls(list[i], 'active');
+					} else {
+						$api.removeCls(list[i], 'active');
+					}
+
+				}
+			}
+
+			function fnSetCommissionTabIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'myCouponsGroup',
+					index: _index,
+					scroll: true
+				});
+			}
+		</script>
+	</body>
+
+</html>

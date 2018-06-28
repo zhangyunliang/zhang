@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="baskSingleDetail">
+			<h3 id="title">爆料标题</h3>
+			<div class="author">
+				<div class="authorImg">
+					<img id="memberAvatar" src="../image/hp.jpg" />
+				</div>
+				<div class="authorInfo">
+					<span id="memberNick">admin</span>
+					<label id="createtime"></label>
+				</div>
+			</div>
+			<div class="detailBody">
+				<div class="factDTBody">
+					<!--<div class="goodShowBox">
+						<img src="../image/fact.jpg" />
+						<div class="goodShowTitle">商品标题商品标题商品标题商品标题商品标题商品标题标题商品标题标题商品标题</div>
+						<div class="goodShowRow">
+							<span class="yuanjia">原价:￥99.00</span>
+							<span class="quanhoujia">券后价:￥99.00</span>
+						</div>
+						<div class="goodShowRow">
+							<a href="#" class="btnGoumai">去购买</a>
+						</div>
+					</div>-->
+				</div>
+			</div>
+			<div class="zanAndZhiBox">
+				<div id="zan">
+					<i class="iconfont icon-appreciate"></i>
+					<label id="zanval"></label>
+					<span>赞一下</span>
+				</div>
+				<div id="zhi">
+					<i class="iconfont icon-favor"></i>
+					<label id="zhival"></label>
+					<span>有价值</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="commentsBox cnt-btmbar">
+			<div class="title">
+				<span>晒单评论</span>
+				<div></div>
+			</div>
+
+			<div class="commentsList">
+				<!--<div class="row">
+					<div class="userImg">
+						<img src="../image/fact.jpg" />
+					</div>
+					<div class="commentsDetail">
+						<p><span>用户名称</span><label>7月15日</label></p>
+						<p>评论内容评论内容评论内容评论内容评论内容评论内容评论内容</p>
+						<div class="replyBox">
+							<p><span>作者回复</span><label>7月15日</label></p>
+							<p>回复内容</p>
+						</div>
+					</div>
+				</div>-->
+			</div>
+		</div>
+		<!--<div class="sendMsgBox">
+			<p class="hidden"></p>
+			<div>
+				<input id="replaytxt" type="text" placeholder="请输入评论/回复内容" />
+				<button onclick="replay()">确认</button>
+			</div>
+		</div>-->
+
+		<script type="text/javascript" src="../src/concat/all.js"></script>
+		<script>
+			var _cmtModel = $('.commentsList').html();
+			var _fid = 0; //上级留言ID
+			var _cmttype = 1; //留言默认类型为爆料
+			var inputField;
+
+			apiready = function() {
+				lodingFactDt();
+				inputField = api.require('inputField');
+				getReleaseIs(function(ret){
+					if(ret.code.toString()=='1'){
+						if(ret.data.toString()=='0'){
+							$(".title").addClass("hidden");
+						}else{
+							$(".title").removeClass("hidden");
+							openInput();
+							getComment();
+						}
+					}
+				},function(err){
+					$(".title").addClass("hidden");
+				});
+				getZan();
+				getZhi();
+
+			}
+
+			function lodingFactDt() {
+				getApiJson('Baoliao/get.html', {
+					id: api.pageParam.id
+				}, function(ret) {
+					printObj(ret);
+					$('#title').text(ret.data.title);
+					$("#createtime").html(ret.data.createtime);
+					var _html = '';
+					for(var i = 0; i < ret.data.attr.length; i++) {
+						if(ret.data.attr[i].pic) {
+							_html = _html + '<img src="' + ret.data.attr[i].pic + '" />'
+						}
+						if(ret.data.attr[i].content) {
+							_html = _html + '<p>' + ret.data.attr[i].content + '</p>'
+						}
+						if(ret.data.attr[i].link) {
+
+							_html = _html + '<a data-money="'+ret.data.attr[i].money+'" data-couponmoney="'+ret.data.attr[i].coupon_money+'" data-couponurl="'+ret.data.attr[i].coupon_url+'" data-href="'  + ret.data.attr[i].link + '" data-url="page_w.html" href="javascript:;" onclick="openLink(this)" tapmode>' + ret.data.attr[i].link + '</a>';
+						}
+					}
+					$('.factDTBody').html(_html);
+					if(ret.data.uid.toString() == 'admin') {
+						$('#memberAvatar').attr('src', '../image/loog.png');
+						$("#memberNick").html(ret.data.bindname);
+					} else {
+						$.post(apiUrl + 'member/get.html', {
+							mid: ret.data.uid.toString()
+						}, function(memberInfo) {
+							memberInfo.data.avatar = memberInfo.data.avatar ? memberInfo.data.avatar : '../image/hp.jpg';
+							$("#memberAvatar").attr("src", memberInfo.data.avatar);
+							$("#memberNick").html(memberInfo.data.nickname);
+						}, 'json');
+					}
+
+				});
+
+				
+				
+				setTimeout(function() {
+						changeLinkToGood()
+				}, 1000);
+			}
+			
+			//获取评论
+			function getComment(){
+				
+				getApiJson('Comment/getComment.html', {
+					cid: api.pageParam.id,
+					type: 1
+				}, function(ret) {
+					var _html2='';
+
+					$.each(ret.data, function(index, val) {
+						val.nickname = val.nickname ? val.nickname : val.mobile;
+						val.avatar = val.avatar ? val.avatar : '../image/hp.jpg';
+						val.addtime = datepattern(val.addtime, 'MM月dd日 HH:mm');
+						_html2 += '<div class="row" data-fid="' + val.id + '">' +
+							'<div class="userImg">' +
+							'<img src="' + val.avatar + '" />' +
+							'</div>' +
+							'<div class="commentsDetail">' +
+							'<p><span class="memberName">' + val.nickname + '</span><label>' + val.addtime + '</label></p>' +
+							'<p class="cmtContent">' + val.content + '</p>';
+						$.each(val.attr, function(key, value) {
+							value.nickname = value.nickname ? value.nickname : value.mobile;
+							value.avatar = value.avatar ? value.avatar : '../image/hp.jpg';
+							value.addtime = datepattern(value.addtime, 'MM月dd日 HH:mm');
+							_html2 += '<div class="replyBox" data-fid="' + value.id + '">' +
+								'<p><span>' + value.nickname + '</span><label>' + value.addtime + '</label></p>' +
+								'<p>' + value.content + '</p>' +
+								'</div>';
+						});
+						_html2 += '</div>' +
+							'</div>';
+					});
+					$('.commentsList').html(_html2);
+				});
+				
+			}
+			$('.commentsList').on('click', '.row', function(e) {
+				var _thisP = $(this);
+				_fid = _thisP.attr("data-fid");
+				inputField.setPlaceholder({
+					placeholder: '回复' + _thisP.find('.memberName').text() + '：'
+				});
+				inputField.becomeFirstResponder(function(ret, err) {
+					if(ret.status) {} else {}
+				});
+			});
+
+			function replay(_txt) {
+				if($api.getStorage('memberId')) {
+
+					if(!$api.trim(_txt)) {
+						api.toast({
+							msg: '请输入留言内容再提交',
+							location: 'middle'
+						});
+					} else {
+						var _postData = {
+							mid: $api.getStorage('memberId'),
+							type: _cmttype,
+							content: _txt,
+							cid: api.pageParam.id,
+							fid: _fid
+						}
+						getApiJson('Comment/write.html', objPass(_postData), function(ret) {
+							api.toast({
+								msg: '留言成功',
+								location: 'middle'
+							});
+							var jsfunoo = 'lodingData()';
+							api.execScript({
+								name: 'jifen_w',
+								frameName: 'jifen_f',
+								script: jsfunoo
+							});
+
+							lodingFactDt();
+							inputField.setMsg({
+								msg: ''
+							}, function(ret, err) {
+								if(ret.status) {
+									//									alert(JSON.stringify(ret));
+								} else {
+									//									alert(JSON.stringify(err));
+								}
+							});
+						});
+					}
+				} else {
+					toLogin();
+				}
+
+			}
+
+			function toLogin() {
+				openNewWin(null, 'login_w.html', {
+					toWin: 'factDetail_w'
+				});
+			}
+
+			function openInput() {
+				inputField.open({
+					bgColor: '#f0f0f0',
+					lineColor: '#e5e5e5',
+					fileBgColor: '#fff',
+					borderColor: '#e5e5e5',
+					fixedOn: api.frameName,
+					placeholder: '请输入留言或评论内容',
+					sendBtn: {
+						bg: '#f5547a', //字符串类型；发送按钮常态背景色
+						bgHighlight: '#f5547a', //字符串类型；发送按钮点击时的高亮背景色
+						title: '发送', //字符串类型；发送按钮的标题
+						titleSize: 12, //数字类型；发送按钮的标题字体大小
+						titleColor: '#fff', //字符串类型；发送按钮标题文字颜色  
+						corner: 5 //数字类型；发送按钮圆角大小
+					}
+				}, function(ret, err) {
+					if(ret) {
+						replay(ret.msg);
+					} else {
+						alert('输入框加载失败，请重新打开页面试试');
+					}
+				});
+			}
+
+			function openLink(e) {
+				if($api.getStorage("memberId")) {
+					if($(e).hasClass("btnGoumai")) {
+						var _id = $(e).attr("data-id");
+						api.pageParam.goodId = _id;
+						openNewWin(null, 'detail_w.html', api.pageParam);
+					} else {
+						toPage(e);
+					}
+
+				} else {
+					toLogin();
+				}
+			}
+
+			function changeLinkToGood() {
+				$("a[data-href]").each(function(key, val) {
+					var _thisLink = $(this);
+					var _yuanjia=$(this).attr("data-money");
+					var _quanhoujia=$(this).attr("data-couponmoney");
+					var _couponsUrl=$(this).attr("data-couponurl");
+					var _postData={
+						request_url: _thisLink.attr("data-href"),
+						mid: $api.getStorage("memberId")
+					}
+					if(_couponsUrl && _couponsUrl!='null' && _couponsUrl!='undefined'){
+						_postData.coupon=_couponsUrl
+					}
+					$.post(apiUrl + 'Goods/getUrl.html', _postData, function(res) {
+						if(res.data && res.data.url_type.toString() == '1') {
+							$.ajax({
+								type: "post",
+								url: apiUrl + 'Goods/show.html',
+								async: false,
+								data: {
+									item_id: res.data.taobao_item_id
+								},
+								success: function(red) {
+									printObj(red);
+									if(red.code.toString() == '1') {
+										if(_yuanjia && _yuanjia!='null' && _yuanjia!='undefined'){
+											red.data.data.price_original=_yuanjia;
+										}
+										if(_quanhoujia && _quanhoujia!='null'&& _quanhoujia!='undefined'){
+											red.data.data.price_final=_quanhoujia;
+										}
+										var _html = '<div class="goodShowBox">' +
+											'<img src="' + res.data.taobao_item_image + '" />' +
+											'<div class="goodShowTitle">' + red.data.data.item_title + '</div>' +
+											'<div class="goodShowRow">' +
+											'<span class="yuanjia">原价:￥' + red.data.data.price_original + '</span>' +
+											'<span class="quanhoujia">券后价:￥' + red.data.data.price_final + '</span>' +
+											'</div>' +
+											'<div class="goodShowRow">' +
+											'<a href="javascript:;" data-id="' + res.data.taobao_item_id + '"  data-href="' + res.data.click_url + '" class="btnGoumai"  onclick="openLink(this)">去购买</a>' +
+											'</div>' +
+											'</div>';
+										_thisLink.after(_html);
+										_thisLink.css("display", "none");
+									}
+
+								}
+							});
+
+						}
+
+					}, 'json');
+				})
+			}
+			//获取文章点赞值
+			function getZan() {
+				var postData = {
+					mid: $api.getStorage("memberId"),
+					id: api.pageParam.id,
+					type: 1
+				}
+				$.post(apiUrl + 'Comment/getLote.html', postData, function(ret) {
+					console.log(JSON.stringify(ret));
+					if(ret.code.toString() == '1') {
+						$("#zanval").text(ret.data.number)
+						if(ret.data.click.toString() == 'yes') {
+							$("#zan i").removeClass("icon-appreciate").addClass("icon-appreciatefill");
+						}
+					} else {
+
+					}
+
+				}, 'json')
+			}
+
+			//获取文章点值值
+			function getZhi() {
+				var postData = {
+					mid: $api.getStorage("memberId"),
+					id: api.pageParam.id,
+					type: 4
+				}
+				$.post(apiUrl + 'Comment/getLote.html', postData, function(ret) {
+					if(ret.code.toString() == '1') {
+						$("#zhival").text(ret.data.number)
+						if(ret.data.click.toString() == 'yes') {
+							$("#zhi i").removeClass("icon-favor").addClass("icon-favorfill");
+						}
+					} else {
+
+					}
+
+				}, 'json')
+			}
+			//爆料点赞
+			$("#zan").on("click", function() {
+				isZhi = 1;
+				if($api.getStorage('memberId')) {
+					var postData = {
+						mid: $api.getStorage("memberId"),
+						cid: api.pageParam.id,
+						type: isZhi
+					};
+
+					$.post(apiUrl + 'Comment/uplote.html', objPass(postData), function(ret) {
+						if(ret.code.toString() == "1") { //点赞成功
+							api.toast({
+								msg: '点赞成功'
+							});
+							$("#zanval").text(parseInt($("#zanval").html()) + 1);
+							$("#zan i").removeClass("icon-appreciate").addClass("icon-appreciatefill");
+						} else if(ret.code.toString() == "0") {
+							api.toast({
+								msg: '您已赞过这篇文章，请不要重复点赞'
+							});
+						} else {
+							api.toast({
+								msg: '点赞失败，请稍后尝试'
+							});
+						}
+					}, 'json');
+				} else {
+					toLogin();
+				}
+
+			});
+			//晒单点值
+			$("#zhi").on("click", function() {
+				isZhi = 4;
+				if($api.getStorage('memberId')) {
+					var postData = {
+						mid: $api.getStorage("memberId"),
+						cid: api.pageParam.id,
+						type: isZhi
+					};
+
+					$.post(apiUrl + 'Comment/uplote.html', objPass(postData), function(ret) {
+						if(ret.code.toString() == "1") { //点值成功
+							api.toast({
+								msg: '点值成功'
+							});
+							$("#zhival").text(parseInt($("#zhival").html()) + 1);
+							$("#zhi i").removeClass("icon-favor").addClass("icon-favorfill");
+						} else if(ret.code.toString() == "0") {
+							api.toast({
+								msg: '您已点值过这篇文章，请不要重复点值'
+							});
+						} else {
+							api.toast({
+								msg: '点值失败，请稍后尝试'
+							});
+						}
+					}, 'json');
+				} else {
+					toLogin();
+				}
+
+			});
+			//分享到微信朋友圈
+			function shareFactQuan() {
+				var _wx = new WXPlus();
+				_wx.sharePageToQuer({
+					title: $("#title").html(),
+					desc: $(".factDTBody p").eq(0).html(),
+					href: _GS_factUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.id,
+					imgUrl: $(".factDTBody img").eq(0).attr("src")?$(".factDTBody img").eq(0).attr("src"):_GS_shareImg
+				})
+			}
+			//分享到微信好友
+			function shareFactHaoyou() {
+				var _wx = new WXPlus();
+				_wx.sharePageToFriend({
+					title: $("#title").html(),
+					desc: $(".factDTBody p").eq(0).html(),
+					href: _GS_factUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.id,
+					imgUrl: $(".factDTBody img").eq(0).attr("src")?$(".factDTBody img").eq(0).attr("src"):_GS_shareImg
+				})
+			}
+			//分享到QQ好友
+			function shareFactQQ() {
+				var _qq = new QQPlusSDK();
+				_qq.shareNewsToFriend({
+					title: $("#title").html(),
+					desc: $(".factDTBody p").eq(0).html(),
+					href: _GS_factUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.id,
+					imgUrl: $(".factDTBody img").eq(0).attr("src")?$(".factDTBody img").eq(0).attr("src"):_GS_shareImg
+				});
+			}
+
+			function copyaFactLink() {
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: _GS_factUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + api.pageParam.id
+				}, function(ret, err) {
+					if(ret) {
+						_api_showToast('链接复制成功');
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

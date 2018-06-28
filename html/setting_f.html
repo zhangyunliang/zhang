@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>开发</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="cnt">
+			<!--settingCell start-->
+
+			<div class="settingCells " style="margin-top: 10px;">
+				<!--<a href="#">
+					<i class="iconfont icon-anquancopy"></i>
+					<label>账户安全</label>
+					<i class="iconfont icon-right"></i>
+				</a>-->
+				<a href="javascript:;" data-url='postOpinion_w.html' onclick="openNewWin(this)" tapmode>
+					<i class="iconfont icon-yijian"></i>
+					<label>意见反馈</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				
+				<a href="javascript:;" onclick="openNewWin(this)" data-url="serverAgreement_w.html" tapmode>
+					<i class="iconfont icon-text"></i>
+					<label>服务协议</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+				<a href="javascript:;">
+					<i class="iconfont icon-question"></i>
+					<label>当前版本</label>
+					<span id="banbenV"></span>
+					<span class="xiufuID"></span>
+				</a>
+			</div>
+			<div class="settingCells " style="margin-top: 10px;">
+				<a href="javascript:;" onclick="clearHc()">
+					<i class="iconfont icon-delete"></i>
+					<label id="cache">清空缓存</label>
+					<i class="iconfont icon-right"></i>
+				</a>
+			</div>
+			<!--settingCell end-->
+
+			<a class="exitBtn" href="javascript:;" tapmode data-url="login_w.html" onclick="exitLogin(this)">退出登录</a </div>
+
+			<script type="text/javascript" src="../dist/js/all.js" ></script>
+			<script>
+				var alibaichuan;
+				apiready = function() {
+					initSDK();
+					$("#banbenV").text(api.appVersion);
+					if($api.getStorage("xiufuID")){
+						$(".xiufuID").html('-'+$api.getStorage("xiufuID"));
+					}
+				}
+
+				function exitLogin(e) {
+					$api.rmStorage('memberId');
+					alibaichuan = api.require('alibaichuan');
+					alibaichuan.logout(function(ret, err) {
+						if(ret) {
+
+						} else {
+
+						}
+					});
+					var qq = api.require('QQPlus');
+					qq.logout(function(ret, err) {
+						if(ret.status) {} else {}
+					});
+					var jsfun = 'showLogin()';
+					api.execScript({
+						name: 'root',
+						frameName: 'my_fr',
+						script: jsfun
+					});
+					var jsfun2 = 'clearLogin()';
+					api.execScript({
+						name: 'root',
+						frameName: 'my_fr',
+						script: jsfun2
+					});
+					//关闭至主窗体
+					api.closeToWin({
+						name: 'root'
+					});
+
+				}
+
+				function clearHc() {
+					api.clearCache(function() {
+						api.toast({
+							msg: '清除完成'
+						});
+					});
+				}
+
+				function initSDK() {
+					alibaichuan = api.require('alibaichuan');
+					var param = {
+						isvcode: "feelinglife"
+					};
+					alibaichuan.initTaeSDK(param, function(ret, err) {
+						if(ret) {
+							//							alert(JSON.stringify(ret));
+						} else {
+							alert(JSON.stringify(err));
+						}
+					});
+				}
+
+				function clearHc() {
+					api.clearCache(function() {
+						api.toast({
+							msg: '清除完成'
+						});
+					});
+				}
+			</script>
+	</body>
+
+</html>

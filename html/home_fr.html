@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>首页</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<!--searchBar start-->
+		<div class="searchBar">
+			<!--<a href="javascript:;" data-url="taskCenter_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-redpacket"></i>
+				<span>福利</span>
+			</a>-->
+			<div class="searchGroup">
+				<i class="iconfont icon-search"></i>
+				<label id="search" type="search">输入关键字或复制淘宝产品标题搜索拿返利</label>
+			</div>
+			<a href="javascript:;" data-url="messageCenter_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-mark"></i>
+				<span>消息</span>
+				<label class="newMsg hidden"></label>
+			</a>
+		</div>
+		<!--searchBar end-->
+
+		<!--swiper start-->
+		<div class="swiper-container" id="swiper">
+			<div class="swiper-wrapper">
+			</div>
+			<!-- 如果需要分页器 -->
+			<div class="swiper-pagination"></div>
+		</div>
+		<!--swiper end-->
+
+		<!--recommendPostion start-->
+		<div class="recommendBox ">
+			<!--<li data-url="_link" onclick="openNewWin(this)" tapmode>
+				<h3>_name</h3>
+				<p>_description</p>
+				<img src="../image/recommend4.jpg" />
+			</li>
+			<li data-url="_link" onclick="openNewWin(this)" tapmode>
+				<h3>_name</h3>
+				<p>_description</p>
+				<img src="" />
+			</li>
+			<li data-url="_link" onclick="openNewWin(this)" tapmode>
+				<h3>_name</h3>
+				<p>_description</p>
+				<img src="" />
+			</li>
+			<li data-url="_link" onclick="openNewWin(this)" tapmode>
+				<h3>_name</h3>
+				<p>_description</p>
+				<img src="" />
+			</li>-->
+		</div>
+		<!--recommendPostion end-->
+
+		<!--滚动字幕 start-->
+		<div class="gunDongCnt">
+			<div id="gundong" class="swiper-wrapper">
+			</div>
+			<img class="toutiao" src="../image/toutiao.png" />
+		</div>
+
+		<!--滚动字幕 end-->
+		<!--滚动商品组 start-->
+		<div class="GoodsGroupTitle">
+			<div class="centerTitle"><span>今日必买·</span>BUY</div>
+			
+			<div class="rightMore" data-url="shareMake_w.html" tapmode onclick="openNewWin(this)">
+				<span>更多</span>
+				<i class="iconfont icon-roundrightfill"></i>
+			</div>
+		</div>
+		<div class="GoodsGroup">
+			<div class="swiper-wrapper goodsGroupCnt">
+
+			</div>
+			
+		</div>
+		<!--滚动商品组 end-->
+
+		<!--indexFactList start-->
+		<div class="indexFactList">
+			<!--<div class="factRow" data-id="_id" tapmode onclick="toFactDetail(this)">
+				<div class="factHead">
+					<i class="iconfont _ictype"></i>
+					<span>_type</span>
+				</div>
+				<div class="factDtBox">
+					<div class="factImgBox">
+						<img src="_pic" style="height: _factHHpx" />
+					</div>
+					<div class="factDt">
+						<h2>_title</h2>
+						<p>_introduction</p>
+						<div class="factAttrBox">
+							<div class="factATB">
+								<span>_nickname</span>
+								<span>_createtime</span>
+							</div>
+							<div class="factATB">
+								<i class="iconfont icon-message"></i>
+								<label>_liuyan</label>
+								<i class="iconfont icon-appreciate"></i>
+								<label>_zan</label>
+								<i class="iconfont icon-zhi"></i>
+								<label>_zhi%</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>-->
+		</div>
+		<!--indexFactList end-->
+
+		<!--listTitle start-->
+		<div class="listTitleBox">
+			<div>
+				<i class="iconfont icon-shangpin1"></i>
+				<span class="listTitle">热销商品</span>
+			</div>
+			<div>
+				<a href="javascript:;" data-url="goodsKind_w.html" tapmode onclick="openNewWin(this)">
+					<span>更多</span>
+					<i class="iconfont icon-roundrightfill"></i>
+				</a>
+
+			</div>
+		</div>
+		<!--listTitle end-->
+		<!--indexGoodsList start-->
+		<div class="indexGoodsList">
+			<!--row start-->
+			<!--<div class="goodsRow">
+				<a href="javascript:;" data-id="taobao_item_id" tapmode onclick="toDetail(this)">
+					<div class="goodsImgBox" style="height: _imgHpx;background-image: url(image_url_local);">
+					</div>
+					<p>title_short</p>
+					<div class="priceBox">
+						<div>
+							<label>券后</label>
+							<span>￥price_final</span>
+						</div>
+						<div>
+							<label>返利</label>
+							<span>￥coupon_value</span>
+						</div>
+					</div>
+					<div class="goodTagBox">
+						<div class="goodsSales">
+							<label>销量:</label>
+							<span>sales_num</span>
+						</div>
+						<div class="goodsSource">
+							<i class="iconfont shop_type"></i>
+						</div>
+					</div>
+				</a>
+			</div>-->
+			<!--row end-->
+
+		</div>
+		<!--indesGoodsList end-->
+		<div class="lodindGood">
+			<i class="iconfont icon-pullup"></i>
+			<span>上拉加载更多商品</span>
+		</div>
+		<div class="loding">
+			<i class="iconfont icon-loading"></i>
+			<span>正在加载中...</span>
+		</div>
+		<div id="goTopBtn"></div>
+
+		<div class="tanchuangBox hidden">
+
+			<div class="tanchuangCNT">
+				<i id="tanchuangCLose" class="iconfont icon-roundclose"></i>
+				<img id="tcimg" data-url="page_w.html" data-href="" src="../image/1.jpg" onclick="toPage(this)" />
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="../src/concat/all.js" ></script>
+		<script>
+			var goodPage = 1; //精选商品分页
+			var _elParent = $api.dom('.indexGoodsList'); //精选商品容器
+			var _strModel = $api.html(_elParent); //精选商品模版
+			var _logindMore = $api.dom('.lodindGood');
+			var _loding = $api.dom('.loding');
+
+			var _elRcdBox = $api.dom('.recommendBox'); //推荐位容器
+			var _strRcd = $api.html(_elRcdBox); //推荐位模版
+
+			var _elSwiperBox = $api.dom('.swiper-wrapper'); //轮播图容器
+			var _strSwiper = $api.html(_elSwiperBox); //轮播图模版
+
+			$api.html(_elParent, '');
+			$api.html(_elRcdBox, '');
+			$api.html(_elSwiperBox, '');
+
+			var _elFactBox = $api.dom('.indexFactList');
+			var _strFct = $api.html(_elFactBox);
+			var listFct;
+
+			var listData;
+			var factType = new Array();
+			factType['1'] = '好价';
+			factType['2'] = '好物';
+			factType['3'] = '好文';
+
+			var iconType = new Array();
+			iconType['1'] = 'icon-rechargefill';
+			iconType['2'] = 'icon-shangpin';
+			iconType['3'] = 'icon-wenzhang';
+
+
+
+			//监听页面滚动，改变搜索栏背景
+			var _y = 0,
+				_x = 0;
+			window.onscroll = function() {
+				var t = document.documentElement.scrollTop || document.body.scrollTop;
+				var left = document.getElementById("left");
+				var searchBar = document.querySelector(".searchBar");
+				var searchInput = document.querySelector(".searchGroup");
+				_y = (getScrollTop() / 180).toFixed(1);
+				_x = parseFloat(_y) + 0.6;
+				searchBar.style.backgroundColor = 'rgba(246,69,128,' + _y + ')';
+				searchInput.style.backgroundColor = 'rgba(255,255,255,' + _x + ')';
+				if(t > 600) {
+					$("#goTopBtn").css("display", "block");
+				} else {
+					$("#goTopBtn").css("display", "none");
+				}
+
+			}
+
+			apiready = function() {
+				if(api.systemType == 'ios') {
+					var _hd=$api.dom(".searchBar")
+					$api.fixStatusBar(_hd);
+				} else {
+					$('.searchBar').css('padding-top', '25px');
+				}
+				getDialogAd();
+				lodingData();
+				//加载爆料
+				lodingFact();
+				checkNewMsg();
+				//监听滚动到底部事件
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					lodingGoods(goodPage);
+					$api.css(_logindMore, 'display:none;');
+					$api.css(_loding, 'display:flex;');
+				});
+
+				api.setFrameAttr({
+					name: 'home_fr',
+					bounces: true
+				});
+				//设置下拉刷新
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					checkNewMsg();
+					lodingData();
+					//加载精选商品
+					lodingGoods(goodPage);
+					//加载爆料
+					lodingFact();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+				//				api.hideProgress();
+
+				if(api.systemType = 'ios') {
+					api.addEventListener({
+						name: 'noticeclicked'
+					}, function(ret, err) {
+						console.log(JSON.stringify(ret));
+						if(ret && ret.value) {
+							var ajpush = ret.value;
+							var content = ajpush.content;
+							var extra = ajpush.extra;
+						}
+					})
+				} else {
+					api.addEventListener({
+						name: 'appintent'
+					}, function(ret, err) {
+						console.log(JSON.stringify(ret));
+						if(ret && ret.appParam.ajpush) {
+							var ajpush = ret.appParam.ajpush;
+							var id = ajpush.id;
+							var title = ajpush.title;
+							var content = ajpush.content;
+							var extra = ajpush.extra;
+						}
+					})
+				}
+			}
+			$(".GoodsGroup").on("click",".swiper-slide",function(){
+				openNewWin(null,'shareMake_w.html');
+			});
+			function lodingData() {
+				var sp = new MySwiper().loding();
+				var rcd = new Recommend().loding();
+				lodingGoods(goodPage);
+				var _gd = new GunDong();
+				_gd.getList(function(ret) {
+					_gd.addDom($("#gundong"), ret);
+				});
+
+				var _idxGoodsGp = new IndexSwiper();
+				_idxGoodsGp.getList(function(ret) {
+					_idxGoodsGp.addDom($(".goodsGroupCnt"), ret);
+				})
+
+			}
+
+			//加载首页精选商品
+			function lodingGoods(index) {
+				var gd = new Good();
+				var _postData = {
+					page: index
+				};
+				//				console.log(JSON.stringify(_postData));
+				gd.getJXList(_postData, function(ret) {
+					gd.addDom($('.indexGoodsList'), ret, function() {
+						$api.css(_logindMore, 'display:flex;');
+						$api.css(_loding, 'display:none;');
+					});
+				});
+				goodPage += 1;
+
+			}
+
+			//加载首页推荐爆料
+			function lodingFact() {
+				var imgH = api.winWidth * 0.3 - 10;
+				getApiJson('Baoliao/tuijian.html', {}, function(ret) {
+					var list = ret.data;
+					listFct = list;
+					var _html = '';
+					$.each(ret.data, function(_key, _val) {
+						if(_val.uid == 'admin') {
+							_val.nickname =_val.bindname;;
+						} else {
+							_val.nickname = _val.nickname ? _val.nickname.slice(0, 10) : _val.mobile;
+						}
+						_html += '<div class="factRow" data-id="' + _val.id + '" tapmode onclick="toFactDetail(this)">' +
+							'<div class="factDtBox">' +
+							'<div class="factImgBox">' +
+							'<span>' + factType[_val.type.toString()] + '</span>' +
+							'<img src="' + _val.pic + '!atr" style="height: ' + imgH + '" />' +
+							'</div>' +
+							'<div class="factDt">' +
+							'<h2>' + _val.title + '</h2>' +
+							'<p>' + _val.introduction + '</p>' +
+							'<div class="factAttrBox">' +
+							'<div class="factATB">' +
+							'<span>' + _val.nickname + '</span>' +
+							'<span>' + _val.createtime.slice(5, -3) + '</span>' +
+							'</div>' +
+							'<div class="factATB">' +
+							'<i class="iconfont icon-message"></i>' +
+							'<label>' + _val.liuyan + '</label>' +
+							'<i class="iconfont icon-appreciate"></i>' +
+							'<label>' + _val.zan + '</label>' +
+							'<i class="iconfont icon-zhi"></i>' +
+							'<label>' + _val.zan + '%</label>' +
+							'</div></div></div></div></div>';
+						$api.html(_elFactBox, _html);
+					});
+
+				});
+			}
+
+			function toFactDetail(e) {
+				var _index = $(e).index();
+				openNewWin(null, 'factDetail_w.html', listFct[_index]);
+			}
+
+			//跳转到商品详情
+			function toDetail(e) {
+				if($api.getStorage('memberId')) {
+
+					var _id = $api.attr(e, 'data-id');
+					api.pageParam.goodId = _id;
+					openNewWin(null, 'detail_w.html', api.pageParam);
+					//					var baichuan = new BaiChuan();
+					//					baichuan.openId(_id);
+				} else {
+					openNewWin(null, 'login_w.html', {
+						toWin: 'root'
+					});
+				}
+			}
+
+			//点击搜索框跳转到搜索页
+			$("#search").on("click", function(e) {
+				openNewWin(null, 'search_w.html', api.pageParam);
+			});
+
+			$("#goTopBtn").click(function() {
+				var sc = $(window).scrollTop();
+				$('body,html').animate({
+					scrollTop: 0
+				}, 500);
+			})
+
+			function loginOpen(e) {
+				if($api.getStorage("memberId")) {
+					openNewWin(e);
+				} else {
+					openNewWin(null, 'login_w.html', {
+						runJS: 'hkfnChangeLogin()',
+						runWin: 'root',
+						runFrame: 'my_fr',
+						toWin: 'root'
+					});
+				}
+			}
+
+			function showNewMsg() {
+				$(".newMsg").removeClass("hidden");
+			}
+
+			function hideNewMsg() {
+				$(".newMsg").addClass("hidden");
+			}
+			$("#tanchuangCLose").on("click",function(){
+				$(".tanchuangBox").addClass("hidden");
+			});
+
+			function cshGood(){
+				$('.indexGoodsList').html('');
+				goodPage=1;
+				lodingGoods(1);
+			}
+		</script>
+	</body>
+
+</html>

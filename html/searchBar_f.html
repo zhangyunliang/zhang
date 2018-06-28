@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>搜索框</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>搜索结果</span>
+		</header>
+		<!--header end-->
+		<div class="goodRankBox" style="top: 65px;">
+			<div class="rankItemBox active" data-rank="new" data-longrank="queryType=0" onclick="rankGood(this)">
+				<span>默认</span>
+			</div>
+			<div class="rankItemBox priceRank">
+				<span class="priceRankText">按价格排序</span>
+				<span class="priceRankType hidden" data-rank="price_desc" data-longrank="queryType=0&sortType=3" onclick="rankGood(this)">价格高→低</span>
+				<span class="priceRankType hidden" data-rank="price_asc" data-longrank="queryType=0&sortType=4" onclick="rankGood(this)">价格低→高</span>
+			</div>
+			<div class="rankItemBox" data-rank="sales_num_desc" data-longrank="queryType=0&sortType=9" onclick="rankGood(this)">
+				<span>按销量排序</span>
+			</div>
+			<div class="rankItemBox" data-rank="commission_rate_desc" data-longrank="queryType=0&sortType=1" onclick="rankGood(this)">
+				<span>按返佣比率</span>
+			</div>
+		</div>
+		<div class="indexGoodsList" style="margin-top: 105px;">
+
+		</div>
+
+		<div class="lodindGood">
+			<i class="iconfont icon-pullup"></i>
+			<span>上拉加载更多商品</span>
+		</div>
+		<div class="loding">
+			<i class="iconfont icon-loading"></i>
+			<span>正在加载中...</span>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var pageIndex = 1;
+			var _loding = $api.dom('.loding');
+			var _logindMore = $api.dom('.lodindGood');
+			var rankType = null;
+			var longRankType = 'queryType=0';
+			var longSearchPage=1;
+			apiready = function() {
+				setHeaderH();
+				api.addEventListener({
+					name: 'closeThisWin'
+				}, function(ret, err) {
+					api.closeWin();
+				});
+				if(api.systemType == 'ios') {
+					$('.goodRankBox').css('top', 65 + api.safeArea.top + "px");
+
+				} else {
+					$('.goodRankBox').css('top', '70px');
+
+				}
+				if(api.pageParam.searchName.length < 7) {
+
+					lodingGoods(pageIndex);
+				} else {
+
+					lodingTaokeGood(longSearchPage);
+				}
+
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					if(api.pageParam.searchName.length < 7) {
+						lodingGoods(pageIndex);
+					} else {
+						lodingTaokeGood(longSearchPage);
+					}
+					$api.css(_logindMore, 'display:none;');
+					$api.css(_loding, 'display:flex;');
+				});
+			}
+
+			//加载商品
+			function lodingGoods(index) {
+				var gd = new Good();
+				var _postData = {
+					page: index,
+					q: api.pageParam.searchName,
+					sortType: rankType
+
+				};
+				gd.getList(_postData, function(ret) {
+					if(ret.length < 1) {
+						lodingTaokeGood(longSearchPage);
+					} else {
+						gd.addDom($('.indexGoodsList'), ret, function() {
+
+							$api.css(_logindMore, 'display:flex;');
+							$api.css(_loding, 'display:none;');
+						});
+					}
+
+				});
+				pageIndex += 1;
+
+			}
+
+			//跳转到商品详情
+			function toDetail(e) {
+				if($api.getStorage('memberId')) {
+					var _id = $api.attr(e, 'data-id');
+					api.pageParam.goodId = _id;
+					openNewWin(null, 'detail_w.html', api.pageParam);
+					//					var baichuan = new BaiChuan();
+					//					baichuan.openId(_id);
+				} else {
+					openNewWin(null, 'login_w.html', {
+						toWin: 'searchBar_f'
+					});
+				}
+			}
+			//接口排序
+			function rankGood(e) {
+				$(".indexGoodsList").html("");
+				rankType = $api.attr(e, 'data-rank');
+				longRankType = $api.attr(e, 'data-longrank');
+				pageIndex = 1;
+				longSearchPage=1;
+				if(api.pageParam.searchName.length < 7) {
+					lodingGoods(pageIndex);
+				} else {
+					lodingTaokeGood(longSearchPage);
+				}
+
+			}
+
+			//长文本查询接口获取数据
+			function lodingTaokeGood(index) {
+				var searchStr = 'q=' + api.pageParam.searchName + '&toPage=' + index + '&' + longRankType + '&yxjh=-1';
+				var goodList;
+				var _html = '';
+				var imgH = (api.winWidth - 20) * 0.485;
+				var shopType = new Array(); //商品来源店铺类型
+				shopType['1'] = 'icon-tianmao5';
+				shopType['0'] = 'icon-taobao1';
+				console.log(searchStr);
+				$.ajax({
+					type: "get",
+					url: "http://pub.alimama.com/items/search.json?" + searchStr,
+					async: false,
+					dataType: 'json',
+					success: function(ret) {
+						if(ret.data && ret.data.pageList) {
+							goodList = ret.data.pageList;
+							for(var i = 0; i < goodList.length; i++) {
+								$.ajax({
+									type: "get",
+									url: apiUrl + 'Goods/getmoney.html?money=' + goodList[i].tkCommFee,
+									async: false,
+									dataType: 'json',
+									success: function(red) {
+										_html += '<div class="goodsRow">' +
+											'<a href="javascript:;" data-id="' + goodList[i].auctionId + '" tapmode onclick="toDetail(this)">' +
+											'<div class="goodsImgBox" style="height:' + imgH + 'px;background-image: url(http:' + goodList[i].pictUrl + ');">' +
+											'</div>' +
+											'<p>' + goodList[i].title + '</p>' +
+											'<div class="goodfljg"><span>券后</span><label>￥' + parseFloat((parseFloat(goodList[i].zkPrice) - parseFloat(goodList[i].couponAmount))).toFixed(2) + '</label></div>';
+										_html += '<div class="goodTagBox">';
+											if(parseInt(goodList[i].couponAmount) != 0) {
+												_html += '<div class="goodsSource">' +
+													'<label>领券</label>' +
+													'<span>减' + parseInt(goodList[i].couponAmount) + '</span>' +
+													'</div>';
+											}
+										_html += '<div class="goodsSales">' +
+											'<span>' + goodList[i].biz30day + '人已买</span>' +
+											'<i class="iconfont ' + shopType[goodList[i].userType] + '"></i>' +
+											'</div></div>';
+
+										if($api.getStorage("peizhi") == 'fanli') {
+											_html += '<div class="priceBox">' +
+												'<div class="ddt">' +
+												'<label>返集分宝</label>' +
+												'<span>' + parseInt(red.money * 100) + '</span>' +
+												'</div>' +
+												'<div class="ddt">' +
+												'<label>VIP返集分宝</label>' +
+												'<span>' + parseInt(red.vip_money * 100) + '</span>' +
+												'</div>' +
+												'</div>';
+										}
+										_html += '</a></div>';
+
+									}
+
+								});
+
+							}
+							$(".indexGoodsList").append(_html);
+						} else {
+							api.toast({
+								msg: '未搜到任何相关数据'
+							})
+						}
+
+					}
+				});
+				longSearchPage += 1;
+
+			}
+		</script>
+	</body>
+
+</html>

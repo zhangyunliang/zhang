@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--personInfo start-->
+		<div id="loginUser" class="personInfoBox hidden">
+			<a href="javascript:;" data-url="personInfo_w.html" tapmode onclick="toInfo(this)">
+				<img id="memberAvatar" src="../image/hp.jpg" />
+			</a>
+			<p class="userName" id="userNickname" data-url="personInfo_w.html" tapmode onclick="toInfo(this)">用户名</p>
+			<p class="promote">
+				<label>推广ID</label>
+				<span id="memberId"></span>
+			</p>
+			<div class="welfare" data-url="jifen_w.html" onclick="toOpenVip(this)">
+				<span>签到福利中心</span>
+			</div>
+			<div class="setAndMsg">
+				<a href="javascript:;" data-url="setting_w.html" onclick="openNewWin(this)">
+					<i class="iconfont icon-settings"></i>
+				</a>
+				<a href="javascript:;" data-url="messageCenter_w.html" onclick="openNewWin(this)">
+					<i class="iconfont icon-mark"></i>
+					<label class="newMsgmy hidden"></label>
+				</a>
+
+			</div>
+		</div>
+		<div id="noLoginUser" class="personInfoBox unLogin">
+			<a href="javascript:;" data-url="login_w.html" tapmode onclick="toLogin(this)">
+				<i class="iconfont icon-my_light"></i>
+			</a>
+			<p class="userName" data-url="login_w.html" tapmode onclick="toLogin(this)">未登录</p>
+			<button data-url="login_w.html" tapmode onclick="toLogin(this)">点击登录</button>
+		</div>
+		<!--personInfo end-->
+		<!--滚动字幕 start-->
+		<div class="gunDongCnt">
+			<div id="gundong" class="swiper-wrapper">
+
+			</div>
+			<img class="toutiao" src="../image/toutiao.png" />
+		</div>
+		<!--滚动字幕 end-->
+		<!--withdrawal start-->
+		<div class="withdrawalBox hidden">
+			<div class="withdrawalItem" data-url="myYugu_w.html" onclick="toOpenVip(this)">
+				<label>本月预估</label>
+				<span id="ygShouRu">0</span>
+			</div>
+			<div class="withdrawalItem" tapmode data-url="myKtx_w.html" onclick="toOpenVip(this)">
+				<label>可提现集分宝</label>
+				<span id="ktxShouRu">0</span>
+			</div>
+			<div class="withdrawalItem">
+				<a href="javascript:;" tapmode data-url="withDrawal_w.html" onclick="toWithDrawal()">马上提现</a>
+			</div>
+		</div>
+		<!--withdrawal end-->
+
+		<!--orderAndIntegral start-->
+		<div class="orderAndIntegral hidden">
+			<a href="javascript:;" data-url="myOrder_w.html" tapmode onclick="toOpenVip(this)">
+				<label>我的订单和推广</label>
+				<span>查看全部</span>
+				<i class="iconfont icon-right"></i>
+			</a>
+			<div class="IntegralBox">
+				<div class="IntegralItem">
+					<a href="javascript:;">
+						<span id="myIntegral">0</span>
+						<label>我的积分</label>
+					</a>
+				</div>
+				<div class="IntegralItem">
+					<a href="javascript:;" tapmode onclick="toOpenVip(this)" data-url='teamMember_w.html'>
+						<span id="tjRenShu">0</span>
+						<label>我的团队</label>
+					</a>
+				</div>
+				<div class="IntegralItem">
+					<a href="javascript:;" tapmode onclick="toOpenVip(this)" data-url='myCommission_w.html'>
+						<span id="ljYongJin">0</span>
+						<label>累计集分宝</label>
+					</a>
+				</div>
+			</div>
+		</div>
+		<!--orderAndIntegral end-->
+
+		<!--adBanner start-->
+		<div class="adBanner" data-url="page_w.html" data-name="" onclick="toPage(this)">
+			<img src="../image/mybanner.jpg" />
+		</div>
+		<!--adBanner end-->
+
+		<!--gruidMenu start-->
+		<div class="gruidMenu">
+			<a href="javascript:;" tapmode data-url="personInfo_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-people" style="color: #b3d465;"></i>
+				<span>个人信息</span>
+			</a>
+			<a id="wodevip" href="javascript:;" data-url="openVip_w.html" tapmode onclick="toOpenVip(this)">
+				<i class="iconfont icon-vip" style="color:#ffa94a;"></i>
+				<span>我的VIP</span>
+			</a>
+			<!--<a id="shujuzhongxin" href="javascript:;" tapmode data-url="distributionCenter_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-fenxiao" style="color:#827ff4;"></i>
+				<span>数据中心</span>
+			</a>-->
+			<a href="javascript:;" tapmode data-url="miaosha_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-countdown" style="color:#ec6941;"></i>
+				<span>秒杀中心</span>
+			</a>
+			<a id="wodemiaosha" href="javascript:;" tapmode data-url="msOrderList_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-countdown" style="color:#7ecef4;"></i>
+				<span>我的秒杀</span>
+			</a>
+			<!--<a id="shouzhimingxi" href="javascript:;" tapmode data-url="myCommission_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-shouzhimingxi" style="color:#f67766;"></i>
+				<span>收支明细</span>
+			</a>-->
+			<a href="javascript:;" tapmode data-url="jifen_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-jifen" style="color: #ffa94a;"></i>
+				<span>任务中心</span>
+			</a>
+
+			<a href="javascript:;" tapmode data-url="invite_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-friend" style="color: #7ecef4;"></i>
+				<span>邀请好友</span>
+			</a>
+			<a href="javascript:;" tapmode data-url="coupons_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-redpacket" style="color: #ec6941;"></i>
+				<span>我的红包</span>
+			</a>
+			<a href="javascript:;" tapmode onclick="openMyTaoBaoOrder()">
+				<i class="iconfont icon-mobiletao" style="color:#ffa94a;"></i>
+				<span>淘宝订单</span>
+			</a>
+			<a href="javascript:;" tapmode data-url="messageCenter_w.html" onclick="toOpenVip(this)">
+				<i class="iconfont icon-renwu" style="color: #f39800;"></i>
+				<span>消息中心</span>
+			</a>
+			<a href="javascript:;" tapmode data-url="customerService_w.html" onclick="openNewWin(this)">
+				<i class="iconfont icon-phone" style="color: #9fcc3e;"></i>
+				<span>客服中心</span>
+			</a>
+			<a href="javascript:;" tapmode data-url="auoutUs_w.html" onclick="openNewWin(this)">
+				<i class="iconfont icon-comment" style="color: #7ec2f3;"></i>
+				<span>关于我们</span>
+			</a>
+
+		</div>
+		<!--gruidMenu end-->
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var userInfo;
+			var userTJinfo;
+			var userFXinfo;
+			var alibaichuan;
+
+			//初始化加载
+			apiready = function() {
+				if(api.systemType == 'ios') {
+					$api.fixStatusBar($api.dom(".personInfoBox"));
+					$(".setAndMsg").css("top",api.safeArea.top+'px');
+				} else {
+					$('.personInfoBox').css('padding-top', '25px');
+				}
+				getGundong();
+				//检查用户是否已登录
+				if($api.getStorage('memberId')) {
+
+					hkfnChangeLogin();
+					logindShouRu();
+					logindTuiJian();
+				}
+				alibaichuan = api.require('alibaichuan');
+				var param = {
+					isvcode: "feeling"
+				};
+				alibaichuan.initTaeSDK(param, function(ret, err) {
+					if(ret) {
+						//						console.log(JSON.stringify(ret));
+					} else {
+						//						console.log(JSON.stringify(err));
+					}
+				});
+				api.setFrameAttr({
+					name: 'my_fr',
+					bounces: true
+				});
+				//设置下拉刷新
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					//检查用户是否已登录
+					if($api.getStorage('memberId')) {
+						hkfnChangeLogin();
+						logindShouRu();
+						logindTuiJian();
+
+					}
+					getGundong();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+
+			}
+
+			function hkfnChangeLogin() {
+				//加载用户信息
+				var _memberId = $api.getStorage('memberId');
+				var _postData = {
+					mid: _memberId
+				}
+				$.post(apiUrl + 'member/get.html', objPass(_postData), function(data) {
+					if(data.code.toString() == '1') {
+						userInfo = data.data;
+						lodingMemberInfo(data.data);
+						//显示登陆后用户信息，隐藏未登录状态
+						$("#loginUser").removeClass("hidden");
+						$("#noLoginUser").addClass("hidden");
+						logindShouRu();
+						logindTuiJian();
+					} else {
+						api.toast({
+							msg: '用户未登录'
+						});
+					}
+				}, 'json');
+
+				$.post(apiUrl + 'Ad/auto.html', {
+					type: 'peizhi',
+					mid: $api.getStorage("memberId")
+				}, function(ret) {
+					printObj(ret);
+					if(ret.code.toString() == '1') {
+						$api.setStorage("peizhi", ret.data.toString());
+						refreshIndex();
+						if($api.getStorage('peizhi') == 'daogou') {
+							$(".withdrawalBox").addClass("hidden");
+							$(".orderAndIntegral").addClass("hidden");
+						} else {
+							$(".withdrawalBox").removeClass("hidden");
+							$(".orderAndIntegral").removeClass("hidden");
+						}
+					}
+				}, 'json');
+
+			}
+
+			function toWithDrawal() {
+				if($api.getStorage('memberId')) {
+					getApiJson('member/get.html', {
+						mid: $api.getStorage('memberId')
+					}, function(data) {
+						userTJinfo = data.data;
+						lodingMemberInfo(data.data);
+						if(userTJinfo.realname && userTJinfo.zhifubao_name) {
+							openNewWin(null, 'withDrawal_w.html', userTJinfo);
+						} else {
+							api.pageParam.isBindAlipay = false;
+							openNewWin(null, 'bindAlipay_w.html', userTJinfo);
+						}
+					});
+
+				} else {
+					toLogin(null);
+				}
+
+			}
+
+			//登录成功后修改字段
+			function lodingMemberInfo(data) {
+				var _elMemberNickname = $api.dom('.userName');
+				var _elMemberAvatar = $api.byId('memberAvatar');
+				var _elMemberId = $api.byId('memberId');
+				var _elmyIntegral = $api.byId('myIntegral');
+				if(data.nickname) {
+					$api.text(_elMemberNickname, data.nickname);
+				} else {
+					$api.text(_elMemberNickname, data.mobile);
+				}
+				if(data.avatar) {
+					$api.attr(_elMemberAvatar, 'src', data.avatar);
+				}
+				if(data.integral) {
+					$api.text(_elmyIntegral, data.integral);
+				}
+				if(data.level.toString() == '1') {
+					var _vip = '<i class="iconfont icon-vip" style="margin-left: 3px; color: #f3d422; font-size: 20px;"></i>';
+					$('#userNickname').append(_vip);
+				}
+				$api.text(_elMemberId, data.id);
+				//				bingUser($api.getStorage('memberId'),_elMemberNickname);
+
+			}
+
+			function toInfo(e) {
+				openNewWin(e, null, userInfo);
+			}
+
+			//显示未登录状态
+			function showLogin() {
+				$("#loginUser").addClass("hidden");
+				$("#noLoginUser").removeClass("hidden");
+			}
+
+			//去分销页面
+			function tofenXiao(e) {
+				if($api.getStorage('memberId')) {
+					openNewWin(e);
+				} else {
+					toLogin(e);
+				}
+			}
+
+			function logindShouRu() {
+				//加载预估收入
+				getApiJson('Member/shouru.html', {
+					mid: $api.getStorage('memberId'),
+					type: 'yugu'
+				}, function(ret) {
+					var _yugu = $api.byId('ygShouRu');
+					if(ret.data) {
+						$api.text(_yugu, parseInt(parseFloat(ret.data) * 100));
+					}
+				});
+				//加载可提现收入
+				getApiJson('Member/shouru.html', {
+					mid: $api.getStorage('memberId'),
+					type: 'shouru'
+				}, function(ret) {
+					var _yugu = $api.byId('ktxShouRu');
+					if(ret.data) {
+						$api.text(_yugu, parseInt(parseFloat(ret.data) * 100));
+					}
+				});
+
+			}
+
+			//加载推荐信息
+			function logindTuiJian() {
+				getApiJson('Member/tuijian.html', {
+					mid: $api.getStorage('memberId')
+				}, function(ret) {
+					var _elTJ = $api.byId('tjRenShu');
+					var _elYJ = $api.byId('ljYongJin');
+					if(ret.data.count) {
+						$api.text(_elTJ, ret.data.count);
+					}
+					if(ret.data.money) {
+						$api.text(_elYJ, parseInt(parseFloat(ret.data.money) * 100));
+					}
+				});
+			}
+
+			//去登录页
+			function toLogin(e) {
+				openNewWin(null, 'login_w.html', {
+					runJS: 'hkfnChangeLogin()',
+					runWin: 'root',
+					runFrame: 'my_fr',
+					toWin: 'root'
+				});
+			}
+
+			//去开通VIP页面
+			function toOpenVip(e) {
+				if($api.getStorage('memberId')) {
+					openNewWin(e, null, api.pageParam);
+				} else {
+					toLogin(e);
+				}
+			}
+
+			function openTaobaoCar() {
+				var alibaichuan = api.require('alibaichuan');
+				var param = {
+					isvcode: "feeling",
+					nativeview: false
+				};
+				alibaichuan.getUserInfo(function(res, err) {
+					if(res.isLogin) {
+						alibaichuan.openMyCart(param, function(ren, err) {});
+					} else {
+						alert("请先登录手淘");
+						alibaichuan.showLogin(function(ret, err) {
+							if(ret.isLogin) {
+								alibaichuan.openMyCart(param, function(rel, err) {});
+							} else {
+								alert("登录出错:" + JSON.stringify(ret));
+							}
+						});
+					}
+				});
+			}
+
+			function clearLogin() {
+				$('#ygShouRu').text('0');
+				$('#ktxShouRu').text('0');
+				$('#myIntegral').text('0');
+				$('#tjRenShu').text('0');
+				$('#ljYongJin').text('0');
+			}
+
+			function openTest() {
+
+				api.openWin({
+					name: 'page1',
+					url: 'http://192.168.1.107:3000/shmyun/page/public/header.html',
+					pageParam: {
+						name: 'test'
+					}
+				});
+			}
+
+			function showNewMsg() {
+				$(".newMsgmy").removeClass("hidden");
+			}
+
+			function hideNewMsg() {
+				$(".newMsgmy").addClass("hidden");
+			}
+
+			function refreshIndex() {
+				var jsfun = 'cshGood()';
+				api.execScript({
+					name: 'root',
+					frameName: 'home_fr',
+					script: jsfun
+				});
+			}
+
+			function getGundong() {
+				var _gd = new GunDong();
+				_gd.getList(function(ret) {
+					_gd.addDom($("#gundong"), ret);
+				});
+				getMyBanner(function(ret) {
+					if(ret.data.guanggao && ret.code.toString() == "0") {
+						$(".adBanner img").attr("src", ret.data.guanggao.photo);
+						$(".adBanner").attr("data-href", ret.data.guanggao.link);
+						$(".adBanner").removeClass("hidden");
+					} else {
+						$(".adBanner").addClass("hidden");
+
+					}
+
+				});
+			}
+
+			function openMyTaoBaoOrder() {
+				var alibaichuan = api.require('alibaichuan');
+				var param = {
+					status: 0,
+					isAllOrder: true,
+					nativeview: false
+				};
+				alibaichuan.myOrdersPage(param, function(ret, err) {
+					if(ret) {
+						
+					} else {
+						
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

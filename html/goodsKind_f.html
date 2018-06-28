@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>商品分类</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="goodsKind">
+			<div class="kindItem" data-id='_kindId' onclick="acv(this)">
+				<span class="kindName">category_name</span>
+				<div class="kindImg">
+					<img src="category_image_url" />
+				</div>
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				getApiJson('category/index.html',null, function(rest) {
+					addClass(rest.data);
+				})
+				getReleaseIs(function(ret){
+					if((!ret) || (ret.data.toString()!=1)){
+						$(".goodsKind").css("padding-top","35px");
+					}else{
+						$(".goodsKind").css("padding-top","10px");
+					}
+				},function(err){
+					$(".goodsKind").css("padding-top","35px");
+				})
+			}
+
+			function addClass(data) {
+				var elParent = $api.dom('.goodsKind');
+				var strModel = $api.html(elParent);
+				$api.html(elParent, '');
+				var html = '';
+				for(var i = 0; i < data.length; i++) {
+					html = html + strModel.replace('_kindId', data[i].id)
+					.replace('category_name',data[i].category_name)
+					.replace('category_image_url', '../image/'+(i+1)+'.jpg');
+				}
+				$api.html(elParent, html);
+
+			}
+
+			function acv(e) {
+				var kindName = $api.eq(e, 1);
+				openNewWin(e, 'goodsList_w.html', {
+					KindId: $api.attr(e, 'data-id'),
+					KindName: $api.text(kindName)
+				});
+			}
+		</script>
+	</body>
+
+</html>

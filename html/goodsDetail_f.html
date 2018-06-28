@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>商品分类</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		
+		<div class="goodDetailBox">
+			<h2>商品标题</h2>
+			<h3>副标题，推荐文字等</h3>
+			<div class="detailBody">
+				<p>商品图文描述</p>
+				<img src="../image/banner2.jpg" />
+			</div>
+		</div>
+		
+		
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var UIScrollPicture;
+			apiready = function() {
+				UIScrollPicture = api.require('UIScrollPicture');
+				openUIScrollPicture();
+				var goodDetailBox=$api.dom('.goodDetailBox');
+				$api.css(goodDetailBox,"margin-top:"+api.winWidth+"px;");
+			}
+
+			function openUIScrollPicture() {
+				UIScrollPicture.open({
+					rect: {
+						x: 0,
+						y: 0,
+						w: api.winWidth,
+						h: api.winWidth
+					},
+					data: {
+						paths: [
+							'widget://image/good1.jpg',
+							'widget://image/good2.jpg',
+							'widget://image/good3.jpg',
+						]
+					},
+					styles: {
+						indicator: {
+							align: 'center',
+							color: 'rgba(0,0,0,0.5)',
+							activeColor: '#f64580'
+						}
+					},
+					placeholderImg: 'widget://res/slide1.jpg',
+					contentMode: 'scaleToFill',
+					interval: 3,
+					fixedOn: api.frameName,
+					loop: true,
+					fixed: false
+				}, function(ret, err) {
+//					if(ret) {
+//						alert(JSON.stringify(ret));
+//					} else {
+//						alert(JSON.stringify(err));
+//					}
+				});
+			}
+
+		</script>
+	</body>
+
+</html>

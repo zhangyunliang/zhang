@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>淘宝订单</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="myOrderCnt" style="display: none;">
+			<div class="empty">
+				<div>
+					<i class="iconfont icon-form_light"></i>
+				</div>
+				<p>您还没有相关订单，快去逛逛吧</p>
+				<a class="btn" href="javascript:;" onclick="api.closeWin()">去逛逛</a>
+			</div>
+		</div>
+		<div class="factList myOrderBox cnt">
+			<!--row start-->
+			<!--<div class="factRow" data-id="_id" tapmode onclick="toFactDetail(this)">
+				<div class="factHead">
+					<i class="iconfont icon-wenzhang"></i>
+					<span>订单编号：123456</span>
+					<span>已结算</span>
+				</div>
+				<div class="factDtBox">
+					<div class="factImgBox">
+						<img src="../image/2.jpg" />
+					</div>
+					<div class="factDt">
+						<h2>商品标题</h2>
+						<div>
+							<div>
+								<label>成交金额：</label>
+								<span>0.00</span>
+							</div>
+							<div>
+								<label>预估收益：</label>
+								<span>0.00</span>
+							</div>
+
+						</div>
+						<div class="factAttrBox">
+							<div class="factATB">
+								<span>成交时间：</span>
+								<span>_createtime</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>-->
+			<!--row end-->
+
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				getList();
+				api.setRefreshHeaderInfo({
+					loadingImg: 'widget://image/loading_more.gif',
+					bgColor: '#f64580',
+					textColor: '#fff',
+					textDown: '下拉刷新',
+					textUp: '刷新中...',
+					showTime: false
+				}, function(ret, err) {
+					getList();
+					api.refreshHeaderLoadDone();
+					//在这里从服务器加载数据，加载完成后调用api.refreshHeaderLoadDone()方法恢复组件到默认状态
+
+				});
+			}
+			
+
+			function getList() {
+				$.post(apiUrl + 'Order/orderList.html', {
+					mid: $api.getStorage("memberId"),
+					state:0
+				}, function(ret) {
+					if(ret.code.toString() == '1') {
+						var _html = '';
+						var orderState=new Array();
+						orderState['0']='已付款';
+						orderState['1']='已结算';
+						orderState['2']='已失效';
+						var StateWords=new Array();
+						StateWords['1']='结算收益';
+						StateWords['0']='预估收益';
+						var orderStateColor=new Array();
+						orderStateColor['1']='jiesuan';
+						orderStateColor['0']='weijiesuan';
+						$.each(ret.data, function(key, val) {
+							if(val.item_id == null&&val.state!='2') {
+								_html = _html + '<div class="factRow"  >' +
+									'<div class="factDtBox">' +
+									'<div class="userOrder">' +
+									'<i class="iconfont icon-time" style="color: orange;"></i>' +
+									'<p>' +
+									'<span>该订单正在处理中</span>' +
+									'<label style="color: orange;">请您过半个小时左右再来查看详情哦</label>' +
+									'</p>' +
+									'</div>' +
+									'</div></div>'
+							} else if(val.item_id == null&&val.state=='2') {
+								_html = _html + '<div class="factRow"  >' +
+									'<div class="factDtBox">' +
+									'<div class="userOrder">' +
+									'<i class="iconfont icon-roundclose"></i>' +
+									'<p>' +
+									'<span>该订单已失效</span>' +
+									'<label>系统未能查到该订单的相关信息</label>' +
+									'</p>' +
+									'</div>' +
+									'</div></div>'
+							}else{
+								_html = _html + '<div class="factRow" data-id="' + val.item_id + '" tapmode onclick="toGoodDetail(this)">' +
+									'<div class="factDtBox">' +
+									'<div class="factImgBox">' +
+									'<img src="' + val.image_url_local + '" />' +
+									'</div>' +
+									'<div class="factDt">' +
+									'<h2>' + val.title + '</h2>' +
+									'<div class="orderMoneyBox">' +
+									'<div class="orderMoneyItem">' +
+									'<label>成交金额：</label>' +
+									'<span>￥' + parseFloat(val.price_final) + '</span>' +
+									'</div>' +
+									'<div class="orderMoneyItem">' +
+									'<label>' + StateWords[val.state.toString()] + '：</label>' +
+									'<span>' + parseInt(parseFloat(val.money_yugu) * 100) + '集分宝</span>' +
+									'</div>' +
+									'</div>' +
+									'<div class="factAttrBox">' +
+									'<div class="factATB">' +
+									'<span>成交时间：'+datepattern(val.addtime, 'yyyy-MM-dd HH:mm:ss') +'</span>' +
+									'<span class="' + orderStateColor[val.state.toString()] + '">' + orderState[val.state.toString()] + '</span>' +
+									'</div>' +
+									'</div></div></div></div>'
+							}
+						});
+						$(".myOrderBox").html(_html);
+					} else {
+						$('.myOrderCnt').css('display', 'block');
+					}
+				});
+			}
+			function toGoodDetail(e){
+				var _id=$(e).attr('data-id');
+				api.pageParam.goodId=_id;
+				openNewWin(null,'detail_w.html',api.pageParam);
+//				var baichuan=new BaiChuan();
+//				baichuan.openId(_id);
+			}
+		</script>
+	</body>
+
+</html>

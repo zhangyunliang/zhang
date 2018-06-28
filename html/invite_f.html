@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<img id="cvs" src="" />
+		<div class="inviteCnt" id="bgbox">
+			
+			
+			
+			<img id="invite" />
+			<canvas id="qr" ></canvas>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var dialogBox;
+			var imgdata='';
+			apiready = function() {
+				_api_ShowProgress("生成分享图片中");
+				
+				$.post(apiUrl + 'Ad/auto.html', {
+					type: 'yaoqing'
+				}, function(ret) {
+					$('#invite').attr('src', ret.data.yaoqing.toString());
+					
+					
+					$("body").scrollTop(0).promise().then(function() {
+						$("#invite").bind("load", function() {
+							var _bl = 640 / 1008;
+							var _wd = parseInt(ret.data.zuobiao.width);
+							var _left = parseInt(ret.data.zuobiao.x);
+							var _top = parseInt(ret.data.zuobiao.y);
+							console.log("left:"+_left+"-top:"+_top+"-width:"+_wd);
+							$("#qr").css("top", _top ).css("left", _left);
+							
+							var qr = new QRious({
+								element: document.getElementById('qr'),
+								value: shareUrl + $api.getStorage('memberId'),
+								size: _wd,
+							});
+							
+							
+							var _dom = document.getElementById("bgbox");
+
+							var _thisW = api.winWidth;
+							var _thisH = parseFloat(api.winWidth / (640 / 1008)).toFixed(2);
+							var canvas = document.createElement("canvas"); //创建一个canvas节点
+							var scale = window.devicePixelRatio; //定义任意放大倍数 支持小数
+							canvas.width = _thisW * scale; //定义canvas 宽度 * 缩放
+							canvas.height = _thisH * scale; //定义canvas高度 *缩放
+							canvas.style.width = _thisW;
+							canvas.style.height = _thisH;
+							canvas.getContext("2d").scale(scale, scale); //获取context,设置scale
+							html2canvas(_dom, {
+								canvas: canvas,
+								allowTaint: true,
+								async: false
+							}).then(function() {
+								var _url = canvas.toDataURL(); //图片地址
+								imgdata=_url
+								$("#cvs").attr("src", _url);
+								$("#bgbox").addClass("hidden");
+								_api_HideProgress();
+							})
+						})
+					});
+
+				}, 'json')
+			}
+			function saveImg(){
+				closeDia();
+				_api_ShowProgress("图片保存中...");
+				var trans = api.require('trans');
+				var _imgName=Date.parse(new Date())+'.png';
+				console.log();
+				trans.saveImage({
+					base64Str: imgdata.replace('data:image/png;base64,', ''),
+					album: true,
+					imgPath: "fs://img/",
+					imgName: _imgName
+				}, function(ret, err) {
+					
+					if (ret.status) {
+						_api_HideProgress();
+					    _api_showToast('图片保存成功，请到系统相册中查看')
+				    } else {
+						_api_HideProgress();
+				        _api_showToast('图片保存失败，请重新尝试')
+				    }
+				});
+			}
+			
+			function closeDia(){
+				api.execScript({
+					name: 'invite_w',
+					script: 'closeDialog()'
+				});
+			}
+		</script>
+	</body>
+
+</html>

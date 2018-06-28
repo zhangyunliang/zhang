@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>登录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="loginBox cnt">
+			<div class="loginRow">
+				<i class="iconfont icon-people"></i>
+				<input id="telnumber" name="loginname" type="tel" placeholder="请输入手机号" />
+			</div>
+			<div class="loginRow">
+				<i class="iconfont icon-lock"></i>
+				<input id="password" name="loginpass" type="password" placeholder="输入登录密码" />
+				<i class="iconfont icon-attentionfill"></i>
+			</div>
+			<div class="btnArea">
+				<input class="loginBtn" type="button" value="登录" tapmode onclick="fnLogin()" />
+			</div>
+			<a href="javascript:;" onclick="toEditPass()">忘记密码？</a>
+		</div>
+
+		<!--第三方登录-->
+		<div class="thirdPartyLogin">
+			<div class="title">
+				<span>合作平台联合登录</span>
+				<div></div>
+			</div>
+			<div class="thirdPartyBox">
+				<div class="thirdPartyItem" id="QQlogin">
+					<a href="javascript:;" style="background-color: #2299ed;" onclick="QQlogin()">
+						<i class="iconfont icon-qq"></i>
+					</a>
+				</div>
+				<div class="thirdPartyItem" id="WXlogin">
+					<a href="javascript:;" style="background-color: #07cf26;" onclick="WXlogin()">
+						<i class="iconfont icon-weixin"></i>
+					</a>
+				</div>
+				<div class="thirdPartyItem">
+					<a href="javascript:;" style="background-color: #fe5d49;" onclick="taobaoLogin()">
+						<i class="iconfont icon-tao"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var _elTelNumber, _elPassword, _telNumber, _password;
+			var alibaichuan;
+			apiready = function() {
+				_elTelNumber = $api.byId('telnumber');
+				_elPassword = $api.byId('password');
+
+				alibaichuan = api.require('alibaichuan');
+				var param = {
+					isvcode: "feeling"
+				};
+				alibaichuan.initTaeSDK(param, function(ret, err) {
+					if(ret) {
+						//						console.log(JSON.stringify(ret));
+					} else {
+						console.log(JSON.stringify(err));
+					}
+				});
+
+				var qq = api.require('QQPlus');
+				qq.installed(function(ret, err) {
+					if(ret.status) {} else {
+						$("#QQlogin").css("display", 'none');
+					}
+				});
+				var wx = api.require('wx');
+				wx.isInstalled(function(ret, err) {
+					if(ret.installed) {} else {
+						$("#WXlogin").css("display", 'none');
+					}
+				});
+				getReleaseIs(function(ret){
+					if((!ret) || (ret.data.toString()!=1)){
+						$(".thirdPartyLogin").addClass("hidden");
+					}else{
+						$(".thirdPartyLogin").removeClass("hidden");
+					}
+				},function(err){
+					$(".thirdPartyLogin").addClass("hidden");
+				});
+
+			}
+			//完成登录
+			function fnLogin() {
+				_telNumber = $api.val(_elTelNumber);
+				_password = $api.val(_elPassword);
+
+				if(checkMobile(_telNumber)) {
+					_api_showToast("登录中...");
+					$.post(apiUrl+'member/login.html', {
+						mobile: _telNumber,
+						password: _password
+					}, function(ret) {
+						if(ret.code.toString()=='1'){
+							_api_HideProgress();
+							_api_showToast('登录成功，正在跳转');
+							$api.setStorage("memberId", ret.info.id);
+							hkfnScessReg(api.pageParam);
+						}else{
+							_api_showToast(ret.msg);
+							_api_HideProgress();
+						}
+						
+					},'json');
+				}
+
+			}
+
+			//窗体跳转与执行函数
+			function hkfnScessReg(data) {
+				if(data.runJS) {
+					var jsfun = data.runJS;
+					api.execScript({
+						name: data.runWin,
+						frameName: data.runFrame,
+						script: jsfun
+					});
+				}
+				var jsfun2 = 'hkfnChangeLogin()';
+				api.execScript({
+					name: 'root',
+					frameName: 'my_fr',
+					script: jsfun2
+				});
+				if(data.toWin) {
+					api.closeToWin({
+						name: data.toWin
+					});
+				}
+
+			}
+
+			//淘宝登录
+			function taobaoLogin() {
+				//先退出已登录的手淘
+				api.pageParam.type = 'taobao';
+				alibaichuan.getUserInfo(function(userret, err) {
+					if(userret) {
+						$.post(apiUrl + 'Member/uidLogin.html', objPass({
+							uid: userret.userId,
+							type: 'taobao'
+						}), function(res) {
+							if(res.code.toString() == '0') { //未注册用户跳去注册
+								api.pageParam.regType = 'taobao';
+								api.pageParam.taobao = userret;
+								openNewWin(null, 'registered_w.html', api.pageParam);
+							} else { //已注册用户获取用户信息
+								$api.setStorage("memberId", res.info.id); //缓存id
+								$api.setStorage("isLogin", true); //缓存id
+								hkfnScessReg(api.pageParam);
+							}
+						}, 'json');
+					} else {
+						alibaichuan.showLogin(function(reg, err) {
+							if(reg) {
+								//手淘登录成功后，获取第三方登录接口信息
+								$.post(apiUrl + 'Member/uidLogin.html', objPass({
+									uid: reg.userId,
+									type: 'taobao'
+								}), function(res) {
+									if(res.code.toString() == '0') { //未注册用户跳去注册
+										api.pageParam.regType = 'taobao';
+										api.pageParam.taobao = reg;
+										openNewWin(null, 'registered_w.html', api.pageParam);
+									} else { //已注册用户获取用户信息
+										$api.setStorage("memberId", res.info.id); //缓存id
+										hkfnScessReg(api.pageParam);
+									}
+								}, 'json');
+							} else {
+								api.toast({
+									msg: '获取淘宝信息失败，请重新尝试',
+									location: 'middle'
+								});
+							}
+						});
+					}
+				});
+
+			}
+
+			//QQ登录
+			function QQlogin() {
+				api.pageParam.type = 'qq';
+				var qq = api.require('QQPlus');
+				//初始化Qplus
+				//				qq.login(function(ret, err) {
+				//					if(ret.status) {
+				//						qq.getUserInfo(function(ret, err) {
+				//							if(ret.status) {
+				//								api.alert({
+				//									msg: JSON.stringify(ret)
+				//								});
+				//							} else {
+				//								api.alert({
+				//									msg: err.msg
+				//								});
+				//							}
+				//						});
+				//					}
+				//				});
+
+				//登录
+				qq.login(function(reg, err) {
+					console.log('QQ登录信息' + JSON.stringify(reg));
+					if(reg.status) {
+						//登录成功后，获取第三方登录接口信息
+						$.post(apiUrl + 'Member/uidLogin.html', objPass({
+							uid: reg.openId,
+							type: 'qq'
+						}), function(res) {
+							if(res.code.toString() == '0') { //未注册用户跳去注册
+								//获取信息
+								console.log('接口获取三方信息' + JSON.stringify(res));
+								var QQ2 = api.require('QQPlus');
+								QQ2.getUserInfo(function(infores, err) {
+									console.log('QQ信息' + JSON.stringify(infores));
+									if(infores.status) {
+										console.log('OPID:' + reg.openId);
+										api.pageParam.openid = reg.openId
+										api.pageParam.regType = 'qq';
+										api.pageParam.QQinfo = infores.info;
+										openNewWin(null, 'registered_w.html', api.pageParam);
+									} else {
+										api.toast({
+											msg: '获取QQ信息失败，请重新尝试',
+											location: 'middle'
+										});
+									}
+								});
+
+							} else { //已注册用户获取用户信息
+								$api.setStorage("memberId", res.info.id); //缓存id
+								var jsfun = 'hkfnChangeLogin()';
+								api.execScript({
+									name: 'root',
+									frameName: 'my_fr',
+									script: jsfun
+								});
+								api.closeToWin({
+									name: 'root'
+								});
+							}
+						}, 'json');
+					} else {
+						api.toast({
+							msg: 'QQ登录失败，请稍后重新尝试',
+							location: 'middle'
+						});
+					}
+				});
+
+			}
+
+			//wx登录
+			function WXlogin() {
+				api.pageParam.type = 'weixin';
+				var wx = api.require('wx');
+
+				wx.auth(function(reb, erb) { //登录
+					if(reb.status) {
+						wx.getToken({ //登录成功后获取授权
+							code: reb.code
+						}, function(rec, erc) {
+							if(rec.status) {
+								wx.getUserInfo({ //获取授权成功后获取用户信息
+									accessToken: rec.accessToken,
+									openId: rec.openId
+								}, function(ret, err) {
+									if(ret.status) {
+										$.post(apiUrl + 'Member/uidLogin.html', objPass({
+											uid: ret.openid,
+											type: 'weixin'
+										}), function(res) {
+											if(res.code.toString() == '0') { //未注册用户跳去注册
+												api.pageParam.regType = 'weixin';
+												api.pageParam.wx = ret;
+												openNewWin(null, 'registered_w.html', api.pageParam);
+											} else { //已注册用户获取用户信息
+												$api.setStorage("memberId", res.info.id); //缓存id
+												hkfnScessReg(api.pageParam);
+											}
+										}, 'json');
+									} else {
+										api.toast({
+											msg: '获取用户信息失败，请重新尝试',
+											location: 'middle'
+										});
+									}
+								});
+
+							} else {
+								api.toast({
+									msg: '获取微信token失败，请重新尝试',
+									location: 'middle'
+								});
+							}
+						});
+					} else {
+						api.toast({
+							msg: '获取微信授权失败，请重新尝试',
+							location: 'middle'
+						});
+					}
+				});
+
+			}
+
+			//去修改密码页面
+			function toEditPass() {
+				openNewWin(null, 'editpass_w.html');
+
+			}
+
+			
+		</script>
+	</body>
+
+</html>

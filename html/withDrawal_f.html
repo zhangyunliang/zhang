@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>提现</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="settingCells withdrawalCell">
+			<div class="row">
+				<i class="iconfont icon-rectangle390"></i>
+				<label>支付宝帐号：</label>
+				<span id="alipay">123@qq.com</span>
+			</div>
+			<div class="row">
+				<i class="iconfont icon-peoplefill"></i>
+				<label>支付宝姓名：</label>
+				<span id="realname">张三</span>
+			</div>
+			<div class="row">
+				<i class="iconfont icon-rechargefill"></i>
+				<label>提现金额：</label>
+				<input id="txJE" type="number" value="" placeholder="可提现金额:0元" />
+			</div>
+		</div>
+		<div class="withdrawalPrompt">
+			<p id="peizhi">最低提现金额50元</p>
+			<label>*请确认你的支付宝帐号和姓名准确无误，否则将提现失败</label>
+			<label>*100集分宝=1元</label>
+		</div>
+		<div class="withdrawalBtn">
+			<button onclick="withDrawal()">提现</button>
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elRealName = $api.byId('realname');
+			var _elAlipay = $api.byId('alipay');
+			var _elJine = $api.byId('txJE');
+			var ktxJE;
+			var _ml=0;
+
+			apiready = function() {
+				lodingUserInfo();
+			}
+
+			function lodingUserInfo() {
+				$api.text(_elRealName, api.pageParam.realname);
+				$api.text(_elAlipay, api.pageParam.zhifubao_name);
+				$.get(apiUrl+'aD/auto.html?type=tixian',function(ret){
+					printObj(ret);
+					if(ret.code.toString()=='1'){
+						$("#peizhi").html(ret.data.tixian_text);
+						_ml=parseInt(ret.data.tixian);
+					}
+				});
+				
+				getApiJson('Member/shouru.html', {
+					mid: $api.getStorage('memberId'),
+					type: 'shouru'
+				}, function(ret) {
+					if(parseFloat(ret.data) > 0) {
+						ktxJE = parseFloat(ret.data);
+						$api.attr(_elJine, 'placeholder', '可提现金额：' + ktxJE + '元');
+					} else {
+						$api.attr(_elJine, 'placeholder', '暂无可提现金额');
+					}
+
+				});
+				
+			}
+
+			function withDrawal() {
+				var reg = /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/;
+				if(!reg.test($api.val(_elJine))) {
+					api.toast({
+						msg: '请输入正确的金额',
+						location: 'middle'
+					});
+				} else if(parseFloat($api.val(_elJine)) > ktxJE) {
+					api.toast({
+						msg: '余额不足',
+						location: 'middle'
+					});
+
+				} else if(parseFloat($api.val(_elJine)) <_ml) {
+					api.toast({
+						msg: '提现金额不能小于'+_ml,
+						location: 'middle'
+					});
+				} else {
+					getApiJson('Member/tixian.html', {
+						mid: $api.getStorage('memberId'),
+						money: $api.val(_elJine)
+					}, function(ret) {
+						api.alert({
+							msg: '提现成功'
+						});
+						api.closeToWin({
+							name: 'root'
+						});
+					})
+				}
+			}
+		</script>
+	</body>
+
+</html>

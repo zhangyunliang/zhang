@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span></span>
+		</header>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var dialogBox;
+			apiready = function() {
+				setHeaderH();
+				api.addEventListener({
+					name: 'closeThisWin'
+				}, function(ret, err) {
+					api.closeWin();
+				});
+				console.log(JSON.stringify(api.pageParam));
+				if(api.pageParam.pageName) {
+					$("#header span").html(api.pageParam.pageName);
+				}else{
+					$("#header span").html(_GS_shareTitle);
+				}
+				openNewFrame("page_f.html", 45, 0, api.pageParam);
+				
+			}
+		</script>
+	</body>
+
+</html>

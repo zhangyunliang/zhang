@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="msRstSuccess">
+			<i class="iconfont icon-roundcheckfill"></i>
+			<span>秒杀成功</span>
+		</div>
+		<p class="mscgTs">请选择您的收货地址，便于寄送实物：</p>
+		<div class="cgSw" onclick="selectAdd()">
+			<div class="addInfo">
+				<p><span id="name">无姓名</span><span id="tel">无手机号</span></p>
+				<p id="add">当前用户暂无任何地址，请点击添加</p>
+			</div>
+			<i class="iconfont icon-right"></i>
+		</div>
+		
+		<div class="tijiaoMs">提交</div>
+		
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var selectId;
+			var _oid;
+			apiready = function() {
+				_oid=api.pageParam.oid;
+				console.log("oid:"+_oid);
+				var _address=new Address();
+				_address.getList(function(ret){
+					$.each(ret, function(key,val) {
+						if(val.isdefault.toString()=='1'){
+							selectId=val.id;
+							getInfoById(val.id);
+						}
+					});
+					
+				});
+			}
+			function selectAdd(){
+				openNewWin(null,'addressSelect_w.html',{selectId:selectId});
+			}
+			
+			function getInfoById(_id){
+				var _ad=new Address();
+				_ad.getDetailById(_id,function(val){
+					$("#name").html(val.realname);
+					$("#tel").html(val.mobile);
+					$("#add").html(val.province + val.city + val.area + val.address );
+				});
+				selectId=_id;
+			}
+			$(".tijiaoMs").on("click",function(){
+				var _ms=new MSOrder();
+				var _postData={
+					mid:$api.getStorage("memberId"),
+					type:1,
+					addressid:selectId,
+					ordersn:api.pageParam.oid
+				}
+				_ms.postPersonInfo(_postData,function(){
+					_api_showToast("提交成功");
+					api.closeWin();
+				})
+			});
+		</script>
+	</body>
+
+</html>

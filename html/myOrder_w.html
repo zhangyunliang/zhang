@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>我的订单</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+	<body>
+		<header id="header" class="relativeBox">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>订单推广</span>
+		</header>
+		<div class="orderTab relativeBox">
+			<div class="orderTabItem active" data-url="myOrder_0.html" onclick="fnSetTabIndex(0)">全部</div>
+			<div class="orderTabItem" data-url="myOrder_1.html" onclick="fnSetTabIndex(1)">已付款</div>
+			<div class="orderTabItem" data-url="myOrder_2.html" onclick="fnSetTabIndex(2)">已结算</div>
+			<div class="orderTabItem" data-url="myOrder_3.html" onclick="fnSetTabIndex(3)">已失效</div>
+		</div>
+
+		<div class="inputOrderBox relativeBox" >
+			<div class="inputOrderRow" id="putong">
+				<i class="iconfont icon-wenzhang" onclick="toInput()"></i>
+				<div class="row" onclick="toInput()">
+					<!-- <p>订单领取通道>></p> -->
+					<label>订单未自动显示？请点击这里</label>
+				</div>
+			</div>
+			<div id="isVip" class="inputOrderRow kong" onclick="toVIP()"></div>
+			<div id="tips" class="inputOrderRow">（系统会为VIP用户自动同步淘宝订单）</div>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var parentName='myOrder_0.html';
+			apiready = function() {
+				setHeaderH();
+
+				var frames = [];
+				$.each($('.orderTab .orderTabItem'), function(key,val) {
+					var thisUrl = $(this).attr('data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				});
+				var _y;
+				if(api.systemType == 'ios') {
+					_y = 150;
+					
+				} else {
+					_y = 155;
+				}
+				api.openFrameGroup({
+					name: 'myOrderFrameGroup',
+					scrollEnabled: true,
+					rect: {
+						x: 0,
+						y: _y+api.safeArea.top,
+						w: 'auto',
+						h: 'auto'
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetTabActive(ret.index);
+				});
+				getVipText();
+
+			}
+
+			function fnSetTabActive(_index) {
+				var orderType = $api.domAll(".orderTabItem");
+				for(var i = 0; i < orderType.length; i++) {
+					if(_index == i) {
+						$api.addCls(orderType[i], 'active');
+					} else {
+						$api.removeCls(orderType[i], 'active');
+					}
+				}
+			}
+
+			function fnSetTabIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'myOrderFrameGroup',
+					index: _index,
+					scroll: true
+				});
+				parentName='myOrder_'+_index+'.html';
+			}
+
+			function toInput(){
+				api.pageParam.parentW=parentName;
+				openNewWin(null,"inputOrder_w.html",api.pageParam);
+			}
+			function toVIP(){
+				openNewWin(null,"openVip_w.html",api.pageParam);
+			}
+			function getVipText(){
+				var postData={
+					mid:$api.getStorage("memberId")
+				}
+				$.post(apiUrl+'Ad/getText.html',postData,function(ret){
+					if(ret.msg.toString()){
+						// $("#isVip").text(ret.msg.toString());
+						$("#isVip").text("点击升级VIP，享受超高优惠券和下单奖励！");
+					}else{
+						// $("#isVip").css("display","none");
+//						$("#putong").addClass("hidden");
+						$("#isVip").text("尊敬的VIP用户，您正在享受超高优惠券和下单奖励！");
+						$("#tips").text("（自动同步淘宝订单，请下单30分钟后查看订单和奖励）");						
+					}
+				},"json")
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,89 +1,322 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
-    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>Hello APP</title>
-    <link rel="stylesheet" type="text/css" href="./css/api.css" />
-    <style type="text/css">
-        html,
-        body {
-            height: 100%;
-        }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>底部导航</title>
+		<link rel="stylesheet" href="font/iconfont.css" />
+		<link rel="stylesheet" href="dist/css/allMin.css" />
+		<link rel="stylesheet" href="dist/css/styleMin.css" />
+		<style>
 
-        .wrap {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-flex-flow: column;
-        }
+		</style>
+	</head>
 
-        header {
-            height: 44px;
-            width: 100%;
-            text-align: center;
-            background-color: #81a9c3;
-            color: #fff;
-            line-height: 44px;
-            font-size: 20px;
-        }
+	<body>
+		<!--footer-nav start-->
+		<footer id="footer" class="footer">
+			<ul>
+				<li class="menu active" data-url="https://lhb.gaimaime.com" tapmode onclick="fnSetMenuIndex(0)">
+					<i class="iconfont icon-shouye"></i>
+					<span>首页</span>
+				</li>
+				<li id="fxz" class="menu" data-url="html/shareMake_w.html" tapmode onclick="openFxz()">
+					<i class="iconfont icon-moneybag" style="font-size: 2.4rem!important;"></i>
+					<span>分享赚</span>
+				</li>
+				<li class="menu" data-url="html/search_f.html" tapmode onclick="fnSetMenuIndex(2)">
+					<i class="iconfont icon-search"></i>
+					<span>搜索</span>
+				</li>
+				<li class="menu" data-url="html/miaosha_w.html" tapmode onclick="fnSetMenuIndex(3)">
+					<i class="iconfont icon-time"></i>
+					<span>秒杀</span>
+				</li>
+				<li class="menu" data-url="html/my_fr.html" tapmode onclick="fnSetMenuIndex(4)">
+					<i class="iconfont icon-wode"></i>
+					<span>个人中心</span>
+				</li>
+			</ul>
+		</footer>
+		<!--footer-nav end-->
 
-        .flex-1 {
-            -webkit-box-flex: 1;
-            -webkit-flex: 1;
-        }
+		<script type="text/javascript" src="src/concat/all.js"></script>
+		<script type="text/javascript">
+			apiready = function() {
+				_api_ShowProgress("加载中...");
+				getReleaseIs(function(ret) {
+					if((!ret) || (ret.data.toString() != 1)) {
+						$("#fxz").attr("data-url", "html/miaosha_w.html");
+						$("#fxz").attr("onclick", "openNewWin(this)");
+						$("#fxz span").html("秒杀");
+						//$("#sd").attr("data-url", "html/goodsKind_f.html");
+						//$("#sd span").html("分类");
+						lodingFrame();
+					} else {
+						$("#fxz").attr("data-url", "html/shareMake_w.html");
+						$("#fxz span").html("分享赚");
+						lodingFrame();
+					}
+				}, function(err) {
+					$("#fxz").attr("data-url", "html/miaosha_w.html");
+					$("#fxz").attr("onclick", "openNewWin(this)");
+					$("#fxz span").html("秒杀");
+					//$("#sd").attr("data-url", "html/goodsKind_f.html");
+					//$("#sd span").html("分类");
+					lodingFrame();
+				})
 
-        footer {
-            height: 30px;
-            width: 100%;
-            background-color: #81a9c3;
-            color: white;
-            line-height: 30px;
-            text-align: center;
-        }
-    </style>
-</head>
 
-<body class="wrap">
-    <header>APICloud</header>
-    <section class="flex-1">
+				//  checkUpdate();
 
-    </section>
-    <footer>Copyright &copy;<span id="year"></span></footer>
-</body>
-<script type="text/javascript" src="./script/api.js"></script>
-<script type="text/javascript">
-    apiready = function() {
-        //输出Log，Log将显示在APICloud Studio控制台
-        console.log("Hello World! Hello APICloud!");
+				jiguang();
 
-        var header = $api.dom('header'); // 获取 header 标签元素
-        var footer = $api.dom('footer'); // 获取 footer 标签元素
+				api.addEventListener({
+					name: 'smartupdatefinish'
+				}, function(ret, err) {
+					api.alert({
+						title: '更新提示',
+						msg: '当前APP已更新，点击确定重新启动APP',
+						buttons: ['确定']
+					}, function(rest, err) {
+						var index = rest.buttonIndex;
+						$api.setStorage("xiufuID", ret.value[0].extra);
+						if(index == 1) {
+							api.rebootApp();
+						}
+					});
 
-        // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
-        // 2.默认已开启了沉浸式效果 config.xml中 <preference name="statusBarAppearance" value="true"/>
-        // 3.沉浸式效果适配支持iOS7+，Android4.4+以上版本
-        var headerH = $api.fixStatusBar(header);
-        // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
-        var footerH = $api.fixTabBar(footer);
+				});
 
-        api.openFrame({
-            name: 'main',
-            url: 'html/main.html',
-            bounces: true,
-            rect: { // 推荐使用Margin布局，用于适配屏幕的动态变化
-                marginTop: headerH, // main页面距离win顶部的高度
-                marginBottom: footerH, // main页面距离win底部的高度
-                w: 'auto' // main页面的宽度 自适应屏幕宽度
-            }
-        });
+				api.addEventListener({
+					name: 'shaidan'
+				}, function(res) {
+					fnSetMenuIndex(3);
+				});
 
-        // 获取当前年份时间，并加载显示到页面
-        var year = $api.byId('year');
-        year.innerHTML = new Date().getFullYear();
-    };
+				api.addEventListener({
+					name: 'baoliao'
+				}, function(res) {
+					fnSetMenuIndex(2);
+				});
 
-</script>
+				api.addEventListener({
+					name: 'resume'
+				}, function(ret, err) {
+					checkNewMsg();
+					checkJiantieban();
+					var _sgShare = new SingleShare();
+					_sgShare.getList(function(ret) {
+						$api.setStorage("timeJson",ret);
+						_api_HideProgress();
+					});
+				});
+
+				setTimeout(function() {
+					checkJiantieban();
+				}, 1000);
+
+				var _sgShare = new SingleShare();
+				_sgShare.getList(function(ret) {
+					$api.setStorage("timeJson",ret);
+					_api_HideProgress();
+				});
+
+			}
+			function openFxz(){
+				openNewWin(null,'html/shareMake_w.html');
+			}
+
+			function lodingFrame() {
+				api.setStatusBarStyle({
+					style: 'light'
+				});
+				var footer = $api.byId('footer');
+				$api.fixTabBar(footer);
+				var footerH = $api.offset(footer).h;
+				var menus = $api.domAll(".menu");
+
+				var frames = [];
+				for(var i = 0; i < menus.length; i++) {
+					if(i != 1) {
+						var thisUrl = $api.attr(menus[i], 'data-url');
+						var thisName = getPageName(thisUrl);
+						frames.push({
+							name: thisName,
+							url: thisUrl,
+							bgColor: '#f0f0f0',
+							allowEdit: true
+						});
+					}
+				}
+
+				api.openFrameGroup({
+					name: 'mainFrameGroup',
+					scrollEnabled: false,
+					rect: {
+						x: 0,
+						y: 0,
+						w: 'auto',
+						h: api.winHeight - footerH
+					},
+					index: 0,
+					preload: 3,
+					frames: frames
+				}, function(ret, err) {
+					fnSetMenuActive(ret.index);
+				});
+			}
+
+			function checkPeizhi() {
+				if($api.getStorage("memberId")) {
+					$.post(apiUrl + 'Ad/auto.html', {
+						type: 'peizhi',
+						mid: $api.getStorage("memberId")
+					}, function(ret) {
+						if(ret.code.toString() == '1') {
+							$api.setStorage("peizhi", ret.data.toString());
+						}
+					}, 'json');
+				} else {
+					$api.rmStorage("peizhi");
+				}
+			}
+
+			function fnSetMenuActive(_index) {
+				var menus = $api.domAll(".menu");
+				for(var i = 0; i < menus.length - 1; i++) {
+					if(_index == i) {
+						if(i > 0) {
+							$api.addCls(menus[i + 1], 'active');
+						} else {
+							$api.addCls(menus[i], 'active');
+						}
+
+					} else {
+						if(i > 0) {
+							$api.removeCls(menus[i + 1], 'active');
+						} else {
+							$api.removeCls(menus[i], 'active');
+						}
+					}
+
+				}
+			}
+
+			function fnSetMenuIndex(_index) {
+				if(_index > 1) {
+					api.setFrameGroupIndex({
+						name: 'mainFrameGroup',
+						index: _index - 1,
+						scroll: true
+
+					});
+				} else {
+					api.setFrameGroupIndex({
+						name: 'mainFrameGroup',
+						index: _index,
+						scroll: true
+					});
+				}
+
+			}
+
+			function checkJiantieban() {
+				var _searchStg = $api.getStorage("search");
+				var clipBoard = api.require('clipBoard');
+				clipBoard.get(function(rets, err) {
+					if(rets.value) {
+						rets.value = dpstr(rets.value.toString()).toString();
+						console.log(rets.value);
+						if(rets.value.match(/￥[^>]*￥/g) && rets.value.length < 20) { //淘口令
+							if(rets.value != _searchStg) {
+								api.confirm({
+									title: '是否要搜索',
+									msg: '已获取到剪贴板淘口令：' + rets.value + '，是否要打开商品？',
+									buttons: ['打开', '取消']
+								}, function(ret, err) {
+									var index = ret.buttonIndex;
+									if(index == 1) {
+										$api.setStorage("search", rets.value);
+										api.sendEvent({
+											name: 'closeThisWin'
+										});
+										getGoodInfoByToken(rets.value, function(reds) {
+											openNewWin(null, 'html/detail_w.html', {
+												goodId: reds.taobao_item_id,
+												coupons: reds.coupon
+											});
+										});
+									} else {
+										$api.setStorage("search", rets.value);
+									}
+								});
+							}
+						} else if(rets.value.indexOf("http") > -1) { //是链接
+							if(rets.value != _searchStg) {
+								api.confirm({
+									title: '是否要打开链接',
+									msg: '已获取到剪贴板链接：' + rets.value + '，是否要打开该链接？',
+									buttons: ['打开', '取消']
+								}, function(ret, err) {
+									var index = ret.buttonIndex;
+									if(index == 1) {
+										$api.setStorage("search", rets.value);
+										api.sendEvent({
+											name: 'closeThisWin'
+										});
+										getApiJson('Goods/getUrl.html', {
+											request_url: rets.value,
+											mid: $api.getStorage("memberId")
+										}, function(reds) {
+											if(reds.data.url_type.toString() == '0') {
+												openNewWin(null, 'html/page_w.html', {
+													href: reds.data.click_url.toString(),
+													pageName: ''
+												});
+											} else {
+												openNewWin(null, 'html/detail_w.html', {
+													goodId: reds.data.taobao_item_id
+												});
+											}
+
+										});
+									} else {
+										$api.setStorage("search", rets.value);
+									}
+								});
+
+							}
+						} else { //非连接
+							if(rets.value != _searchStg) {
+								api.confirm({
+									title: '是否要搜索',
+									msg: '已获取到剪贴板内容：' + rets.value + '，是否要搜索？',
+									buttons: ['搜索', '取消']
+								}, function(ret, err) {
+									var index = ret.buttonIndex;
+									if(index == 1) {
+										$api.setStorage("search", rets.value);
+										api.sendEvent({
+											name: 'closeThisWin'
+										});
+										openNewWin(null, 'html/searchBar_f.html', {
+											searchName: rets.value
+										});
+									} else {
+										$api.setStorage("search", rets.value);
+									}
+								});
+
+							}
+						}
+
+					}
+				});
+			}
+		</script>
+	</body>
 
 </html>

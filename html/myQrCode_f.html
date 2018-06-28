@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>开发</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="myLink">
+			<p>我的专属链接</p>
+			<button onclick="copyLink()">立即复制</button>
+		</div>
+		<p class="linkBox">
+			http:\\www.baidu.com
+		</p>
+
+		<div class="QrCodeBox">
+			<div id="qrbox">
+				<canvas id="qr"></canvas>
+			</div>
+		</div>
+		<!--第三方登录-->
+		<div class="thirdPartyLogin">
+			<div class="title">
+				<span>分享链接</span>
+				<div></div>
+			</div>
+			<div class="thirdPartyBox">
+				<div class="thirdPartyItem">
+					<a href="javascript:;" style="background-color: #2299ed;" onclick="shareQQ()">
+						<i class="iconfont icon-qq"></i>
+					</a>
+				</div>
+				<div class="thirdPartyItem">
+					<a href="javascript:;" style="background-color: #07cf26;" onclick="wxShareFriend()">
+						<i class="iconfont icon-weixin"></i>
+					</a>
+				</div>
+				<div class="thirdPartyItem">
+					<a href="javascript:;" style="background-color: #07cf26;" onclick="wxShareQuer()">
+						<i class="iconfont icon-pengyouquan"></i>
+					</a>
+				</div>
+				<div class="thirdPartyItem">
+					<a href="javascript:;" style="background-color: #fe5d49;" onclick="copyLink()">
+						<i class="iconfont icon-lianjie1"></i>
+					</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elcav = $api.byId('qr');
+			var _elBox = $api.byId('qrbox');
+			var _ellink = $api.dom('.linkBox');
+			apiready = function() {
+				$('.linkBox').text(shareUrl + $api.getStorage('memberId'));
+				var qr = new QRious({
+					element: document.getElementById('qr'),
+					value: shareUrl+ $api.getStorage('memberId'),
+					size: api.winWidth * 0.5 - 20
+				});
+				var qq = api.require('QQPlus');
+				qq.installed(function(ret, err) {
+					if(ret.status) {} else {
+						$(".thirdPartyItem").eq(0).css("display", 'none');
+						
+					}
+				});
+				var wx = api.require('wx');
+				wx.isInstalled(function(ret, err) {
+					if(ret.installed) {
+					} else {
+						$(".thirdPartyItem").eq(1).css("display", 'none');
+						$(".thirdPartyItem").eq(2).css("display", 'none');
+						
+					}
+				});
+				
+			}
+
+		</script>
+	</body>
+
+</html>

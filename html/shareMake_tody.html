@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>编辑地址</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		
+		<div class="singleShareCnt">
+			<div class="swiper-container" id="cntSwiper">
+				<div class="swiper-wrapper">
+					<!--<div class="swiper-slide">
+						<div class="singleShareList">
+							<div class="row">
+								<div class="appLog">
+									<img src="../image/loog.png" />
+								</div>
+								<div class="goodCnt">
+									<p class="title">网红爆款太阳镜</p>
+									<div class="goodWenan">商品文案</div>
+									<div class="goodImgBox">
+										<img src="../image/good3.jpg" />
+										<img src="../image/good3.jpg" />
+									</div>
+									<div class="goodComment">
+										<div class="commemtDt">不错样式很好看</div>
+										<div class="copyBorder">
+											<div class="copyComment">
+												<span>复制</span>
+												<span>评论</span>
+											</div>
+										</div>
+									</div>
+									<div class="goodOpBox">
+										<div class="btn goumai">
+											<i class="iconfont icon-ticket"></i>
+											<span>领券购买</span>
+										</div>
+										<div class="btn">
+											<i class="iconfont icon-share"></i>
+											<span>一键分享</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+						</div>
+					</div>
+					-->
+					<div class="swiper-slide">
+						<div class="singleShareList">
+							<div class="wushuju">
+								<i class="iconfont icon-time"></i>
+								<span>商品加载中...</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="shareCnt hidden">
+			<div class="shareMenuBox">
+				<div class="shareGroup">
+					<div class="shareIetm" onclick="qfQuan()">
+						<img src="../image/friend.png" />
+						<span>朋友圈</span>
+					</div>
+					<div class="shareIetm" onclick="qfWX()">
+						<img src="../image/weifriend.png" />
+						<span>微信</span>
+					</div>
+					<div class="shareIetm" onclick="qfQQ()">
+						<img src="../image/QQ.png" />
+						<span>QQ</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="#swiper-container3"></div>
+		<script type="text/javascript" src="../src/concat/all.js"></script>
+		<script>
+			var _imgs = [];
+			var pageIndex;
+			var swiperIndex = 0;
+			var allList;
+			var _sgShare = new SingleShare();
+			var cntSwiper;
+			apiready = function() {
+				_api_ShowProgress("正在加载数据");
+				var timeJson = JSON.parse($api.getStorage("timeJson"));
+				pageIndex = new Array(timeJson.data.time_range.length);
+				allList = timeJson.data.all_day_list;
+				
+				
+					_sgShare.addGoodDom(allList, function(_idx) {
+						cntSwiper = new Swiper("#cntSwiper", {
+							direction: 'horizontal',
+							autoHeight: true,
+							initialSlide: _idx,
+							lazyLoading: true,
+							onInit: function() {
+								swiperIndex = _idx;
+								pageIndex[_idx] = 0;
+							},
+							onSlideChangeEnd: function(swiper) {
+								swiperIndex = swiper.activeIndex;
+							}
+
+						});
+						
+						_api_HideProgress();
+					});
+
+
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 20 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					if((!pageIndex[swiperIndex]) || (pageIndex[swiperIndex] == undefined)) {
+						pageIndex[swiperIndex] = 0;
+					}
+					_sgShare.appendGood(pageIndex[swiperIndex], allList, function(_html) {
+						$("#cntSwiper").find(".swiper-slide").eq(swiperIndex).children(".singleShareList").append(_html).promise().then(function() {
+							cntSwiper.update();
+							pageIndex[swiperIndex]++;
+						});
+
+					});
+
+				});
+
+			}
+
+			//切换分享组
+			$("#cntSwiper").on("click", ".fenxiang", function() {
+				var _parent = $(this).parents(".row");
+				if($api.getStorage("memberId")) {
+					var _gid = $(_parent).attr("data-gid");
+					var _cid = $(_parent).attr("data-cid");
+					_api_ShowProgress("正在生成分享海报");
+					getGaoyong(_gid, _cid, function(retgaoyong) {
+						printObj(retgaoyong);
+						if(retgaoyong.data.token) {
+							var _wenan = '';
+							_wenan += $(_parent).find(".title").html() + '\n';
+							_wenan += $(_parent).find(".goodWenan").html() + '\n';
+							_wenan += '【' + $(_parent).find(".yuanjia").html() + '】\n';
+							_wenan += '【' + $(_parent).find(".quanhou").html() + '】\n';
+							_wenan += '【领券立' + $(_parent).find(".quanBox span").html() + '元】\n';
+							_wenan += "复制这条信息，" + retgaoyong.data.token + '打开【手机淘宝】即可领券购买';
+							var clipBoard = api.require('clipBoard');
+							clipBoard.set({
+								value: _wenan
+							}, function(ret, err) {
+								if(ret) {
+
+								}
+							});
+
+							_imgs = [];
+
+							$.each(_parent.find(".swiper-lazy"), function(key, val) {
+								_imgs.push($(val).attr("src"));
+							})
+							//获取分享海报图片
+							var _shareGoodurl = _GS_goodUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + _gid;
+							var _jian = $(_parent).find(".quanBox span").html();
+							$.post(apiUrl + 'Imagechuli/getImg.html', {
+								title: retgaoyong.data.taobao_item_title,
+								money: _jian.substring(1, _jian.length),
+								shopimg: encodeURIComponent(retgaoyong.data.taobao_item_image),
+								url: encodeURIComponent(_shareGoodurl)
+							}, function(ret) {
+								printObj(ret);
+								if(ret.code.toString() == '1') {
+									_imgs.push(ret.url);
+									setTimeout(function() {
+										imgDown(function() {
+											_api_HideProgress();
+											$(".shareCnt").toggleClass("hidden");
+										});
+									}, 500);
+								} else {
+									_api_showToast("获取商品海报失败");
+								}
+
+							});
+
+						} else {
+							_api_showToast("获取淘口令失败" + retgaoyong.msg);
+						}
+
+					});
+				} else {
+					toLogin();
+				}
+
+			});
+
+			//分享组空白点击事件
+			$(".shareCnt,.shareCnt *").on("click", function(e) {
+				if($(e.target).is(".shareIetm") || $(e.target).is("img") || $(e.target).is("span")) {} else {
+					$(".shareCnt").addClass("hidden");
+				}
+
+			});
+
+			//复制评论
+			$("#cntSwiper").on("click", ".copyComment", function() {
+				var _pl = $(this).parent(".copyBorder").prev().html();
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: _pl
+				}, function(ret, err) {
+					if(ret) {
+						_api_ShowToast('已成功复制该商品的评论');
+					}
+				});
+			});
+
+			//领券购买
+			$("#cntSwiper").on("click", ".goumai", function() {
+				var _gid = $(this).attr("data-gid");
+				var _cid = $(this).attr("data-cid");
+				if($api.getStorage("memberId")) {
+					openNewWin(null, 'detail_w.html', {
+						goodId: _gid,
+						coupons: _cid
+					});
+				} else {
+					toLogin();
+				}
+			});
+
+			function toLogin() {
+				openNewWin(null, 'login_w.html', {
+					toWin: 'shareMake_w'
+				});
+			}
+
+			function qfQQ() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+
+				});
+			}
+
+			function qfWX() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+				});
+			}
+
+			function qfQuan() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				}
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+				});
+			}
+
+			//图片下载事件
+			function imgDown(callback) {
+				printObj(_imgs);
+				var imgdefereds = [];
+				$.each(_imgs, function(key, val) {
+					var dfd = $.Deferred();
+					var _kzm = '.jpg';
+					if(val.indexOf('png') > 0) {
+						_kzm = '.png'
+					}
+					api.download({
+						url: val,
+						savePath: 'fs://img/' + key + _kzm,
+						report: true,
+						allowResume: true
+					}, function(ret, err) {
+						if(ret.state == 1) {
+							_imgs[key] = 'fs://img/' + key + _kzm;
+							dfd.resolve();
+						} else {
+
+						}
+					});
+					//					api.imageCache({
+					//						url: val
+					//					}, function(ret, err) {
+					//						
+					//					});
+					imgdefereds.push(dfd);
+				});
+				$.when.apply(null, imgdefereds).done(function() {
+					printObj(_imgs);
+					setTimeout(function() {
+						_api_showToast("文案已复制，请粘贴至内容框");
+						callback()
+					}, 500);
+
+				});
+
+			}
+
+			$(window).on('scroll', function() { //当页面滚动的时候绑定事件
+				$('body img').each(function() { //遍历所有的img标签
+					loadImg($(this)); //符合上述条件之后，再写一个加载函数加载当前img
+				})
+			})
+
+			function loadImg($img) {
+				$img.attr("src", $img.attr("data-src"));
+			}
+		</script>
+	</body>
+
+</html>

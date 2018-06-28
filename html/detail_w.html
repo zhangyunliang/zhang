@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>商品分类</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>商品详情</span>
+			<div class="right" tapmode="hover" onclick="dialogBox_actionMenu()">
+				<i class="iconfont icon-share"></i>
+			</div>
+		</header>
+
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			var dialogBox;
+			var a = [];
+			var _item = [];
+			apiready = function() {
+				setHeaderH();
+				dialogBox = api.require('dialogBox');
+				openNewFrame("detail_f.html", 40, 0, api.pageParam);
+				api.addEventListener({
+					name: 'closeThisWin'
+				}, function(ret, err) {
+					api.closeWin();
+				});
+				getReleaseIs(function(ret){
+					if((!ret) || (ret.data.toString()!=1)){
+						$(".right").addClass("hidden");
+					}else{
+						$(".right").removeClass("hidden");
+					}
+				},function(err){
+					$(".right").addClass("hidden");
+				});
+
+			}
+
+			function dialogBox_actionMenu() {
+				var jsfun = 'showShareBox()';
+				api.execScript({
+					name: 'detail_w',
+					frameName: 'detail_f',
+					script: jsfun
+				});
+			}
+		</script>
+	</body>
+
+</html>

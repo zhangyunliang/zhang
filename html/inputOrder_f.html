@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>录入订单</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="orderPostBox  editBox cnt">
+			<p style="font-size: 1.6rem;">小提示：若订单未自动显示请提订单号手动领取。</p>
+			<div class="codeBox">
+				<input id="orderId" type="text" placeholder="长按粘贴订单号" autofocus="autofocus" />
+			</div>
+			<input type="button" value="找回订单" data-url="setpass_w.html" tapmode onclick="recodeOrder()" />
+			<div id="tishi" class="codeBox" style="margin-top: 5px;font-size: 1.2rem; color: #f64580;">如何复制订单号↓↓↓</div>
+		</div>
+		<div class="orderPostCnt">
+			<img src="../image/orderTs1.png" />
+			<img src="../image/orderTs2.png" />
+			<img src="../image/orderTs3.png" />
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+				
+			
+			apiready = function() {
+				$(".orderPostCnt").css("margin-top",$(".orderPostBox").innerHeight()+"px");
+			}
+
+			function recodeOrder() {
+				var _orderId = $("#orderId").val();
+				if(!_orderId) {
+					api.toast({
+						msg: "订单编号不能为空"
+					});
+				} else {
+					var postData = {
+						oid: _orderId,
+						mid: $api.getStorage("memberId")
+					}
+					$.post(apiUrl + 'Guiji/record.html', postData, function(ret) {
+						if(ret.code.toString() == "1") {
+							api.toast({
+								msg: "订单提交成功"
+							});
+							var jsfun = 'getList()';
+							api.execScript({
+								name: 'myOrder_w',
+								frameName: getPageName(api.pageParam.parentW),
+								script: jsfun
+							});
+							api.closeToWin({
+								name: 'myOrder_w'
+							});
+						} else {
+							api.toast({
+								msg: ret.msg
+							});
+						}
+					}, 'json')
+				}
+			}
+			$("#tishi").on("click",function(){
+				$(".orderPostCnt").toggleClass("hidden");
+			});
+		</script>
+	</body>
+
+</html>

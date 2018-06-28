@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>购买会员</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" onclick="api.closeWin();" tapmode>
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>购买会员</span>
+		</header>
+		<!--header end-->
+		<!--<a class="fixedbtn" href="javascript:;" onclick="alipay()">立即购买</a>-->
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				setHeaderH();
+				getApiJson('member/get.html', {
+					mid: $api.getStorage('memberId')
+				}, function(data) {
+					if(data.data.level.toString()!='0'){
+						$("#header span").text('续费会员');
+					}
+				});
+				openNewFrame("openVip_f.html", 45, 0, api.pageParam);
+			}
+
+			function alipay() {
+				var jsfun = 'alipay()';
+				api.execScript({
+					name: 'openVio_w',
+					frameName:'openVip_f',
+					script: jsfun
+				});
+			}
+		</script>
+	</body>
+
+</html>

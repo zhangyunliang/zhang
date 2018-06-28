@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>分销中心</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--personInfo start-->
+		<div class="personInfoBox distributionBox">
+			<a href="javascript:;" data-url="personInfo_w.html" tapmode onclick="openNewWin(this)">
+				<img id="memberAvt" src="../image/hp.jpg" />
+			</a>
+			<div class="dialog">
+				<p>我的邀请码：<span id="memberid">1234</span></p>
+				<label>快点加入一起推广赚钱吧！</label>
+				<div class="triangle"></div>
+			</div>
+		</div>
+		<!--personInfo end-->
+		<div class="distributionInfo">
+			<div class="cloumn" onclick="openNewWin(this)" data-url='teamMember_w.html' tapmode>
+				<p><span id="tjRen">0</span><span>个</span></p>
+				<label>推荐人数</label>
+			</div>
+			<div class="cloumn" onclick="openNewWin(this)" data-url='myCommission_w.html' tapmode> 
+				<p><span id="ljyj">0</span></p>
+				<label>累计集分宝</label>
+			</div>
+			<div class="cloumn" onclick="openNewWin(this)" data-url='myCommission_w.html' tapmode>
+				<p><span id="ktxyj">0.00</span></p>
+				<label>可提集分宝</label>
+			</div>
+		</div>
+
+		<div class="settingCells distributionCells ">
+			<a href="javascript:;" data-url="teamMember_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-group_fill_light" style="color: #F64580;"></i>
+				<label>我的团队</label>
+				<span>全部的成员</span>
+				<i class="iconfont icon-right"></i>
+			</a>
+			<a href="javascript:;" data-url="myQrCode_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-barcode" style="color: deepskyblue;"></i>
+				<label>我的二维码</label>
+				<span>直接分享出去</span>
+				<i class="iconfont icon-right"></i>
+			</a>
+			<!--<a href="javascript:;" data-url="revenueRanking_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-recharge" style="color: coral;"></i>
+				<label>收入排名</label>
+				<span>查看你的收入排名</span>
+				<i class="iconfont icon-right"></i>
+			</a>
+			<a href="javascript:;" data-url="teamRanking_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-friendfamous" style="color: coral;"></i>
+				<label>人数排名</label>
+				<span>查看你的人数排名</span>
+				<i class="iconfont icon-right"></i>
+			</a>-->
+			<a href="javascript:;" data-url="myCommission_w.html" tapmode onclick="openNewWin(this)">
+				<i class="iconfont icon-moneybagfill" style="color: yellowgreen;"></i>
+				<label>收益统计</label>
+				<span>收支明细</span>
+				<i class="iconfont icon-right"></i>
+			</a>
+		</div>
+		
+		<!--<p class="jionTime">
+			<label>我的加入时间：</label>
+			<span>2017-07-05</span>
+		</p>-->
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready=function(){
+				getMemberInfo();
+			}
+			function getMemberInfo(){
+				getApiJson('member/get.html', {
+					mid: $api.getStorage('memberId')
+				}, function(data) {
+					$('#memberid').text(data.data.id);
+					if(data.data.avatar) {
+						$('#memberAvt').attr('src',data.data.avatar);
+					}
+				});
+				
+				getApiJson('Member/tuijian.html', {
+					mid: $api.getStorage('memberId')
+				}, function(ret) {
+					if(ret.data.count) {
+						$('#tjRen').text(ret.data.count);
+					}
+					if(ret.data.money) {
+						$('#ljyj').text(parseInt(parseFloat(ret.data.money)*100));
+					}
+				});
+				
+				//加载可提现收入
+				getApiJson('Member/shouru.html', {
+					mid: $api.getStorage('memberId'),
+					type: 'shouru'
+				}, function(ret) {
+					if(ret.data) {
+						$('#ktxyj').text(parseInt(parseFloat(ret.data)*100));
+					}
+				});
+			}
+			
+		</script>
+	</body>
+
+</html>

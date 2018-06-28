@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>搜索</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="newSearchBox">
+			<p>搜索淘宝/天猫商品</p>
+			<span>购物最高返80%集分宝</span>
+			<div class="row">
+				<i class="iconfont icon-search"></i>
+				<input id="search" type="search" placeholder="输入关键字或复制淘宝天猫产品完整标题搜索即可拿返利" />
+				<label id="searchBtn">搜索</label>
+			</div>
+		</div>
+
+		<div class="searchTishi">
+			<div class="row">
+				<p class="searchTitle">3步拿集分宝精准搜索返集分宝</p>
+				<p>第1步：在淘宝/天猫复制商品标题</p>
+				<p>第2步：在搜索框里搜索购买商品</p>
+				<p>第3步：确认收货后返集分宝</p>
+			</div>
+			<img src="../image/searchTS_01.png" />
+			<img src="../image/searchTS_02.png" />
+			<img src="../image/searchTS_03.png" />
+			<img src="../image/searchTS_04.png" />
+			<img src="../image/searchTS_05.png" />
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			$("#search").on('keypress', function(e) {
+				var keycode = e.keyCode;
+				var searchName = $(this).val();
+				if(keycode == '13') {
+					toSearchList(searchName);
+				}
+			});
+			$("#searchBtn").on("click", function() {
+				var searchName = $("#search").val();
+				toSearchList(searchName);
+				
+			})
+
+			function toSearchList(_s) {
+				_s = dpstr(_s).toString();
+				if(_s.indexOf("http") > -1) {
+					getApiJson('Goods/getUrl.html', {
+						request_url: _s,
+						mid: $api.getStorage("memberId")
+					}, function(reds) {
+						if(reds.data.url_type.toString() == '0') {
+							openNewWin(null, 'page_w.html', {
+								href: reds.data.click_url.toString(),
+								pageName: '搜索结果'
+							});
+						} else {
+							openNewWin(null, 'detail_w.html', {
+								goodId: reds.data.taobao_item_id
+							});
+						}
+
+					});
+				} else if(_s.match(/￥[^>]*￥/g) && _s.length < 20) {
+					getGoodInfoByToken(_s, function(reds) {
+						openNewWin(null, 'detail_w.html', {
+							goodId: reds.taobao_item_id,
+							coupons: reds.coupon
+						});
+					});
+				} else {
+					api.pageParam.searchName = _s;
+					openNewWin(null, 'searchBar_f.html', api.pageParam);
+				}
+				
+				
+			}
+		</script>
+	</body>
+
+</html>

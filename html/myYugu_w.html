@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>收支明细</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header" class="relativeBox">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>预估收益</span>
+		</header>
+		<div class="yuguTip relativeBox">TIPS：亲，在淘宝确认收货后，预估收益会自动转入到可提现集分宝中哦。</div>
+		<div  class="yuguBox relativeBox">
+			<div class="yuguItem">
+				<label>今日预估</label>
+				<span id="jinri">0</span>
+			</div>
+			<div class="yuguItem">
+				<label>本月预估</label>
+				<span id="benyue">0</span>
+			</div>
+			<div class="yuguItem">
+				<label>上月预估</label>
+				<span id="shangyue">0</span>
+			</div>
+		</div>
+
+		<!--header end-->
+		<div class="commissionTab relativeBox">
+			<div class="commissionItem active" data-url="myYugu_0.html" onclick="fnSetCommissionTabIndex(0)" tapmode>我的订单</div>
+			<div class="commissionItem"  data-url="myYugu_1.html" onclick="fnSetCommissionTabIndex(1)" tapmode>下级订单</div>
+			<!--<div class="commissionItem"  data-url="myYugu_2.html" onclick="fnSetCommissionTabIndex(2)" tapmode>今日预估</div>
+			<div class="commissionItem"  data-url="myYugu_3.html" onclick="fnSetCommissionTabIndex(3)" tapmode>本月预估</div>
+			<div class="commissionItem"  data-url="myYugu_4.html" onclick="fnSetCommissionTabIndex(4)" tapmode>上月预估</div>-->
+		</div>
+
+
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				setHeaderH();
+				var list = $api.domAll(".commissionItem");
+
+				var frames = [];
+				for(var i = 0; i < list.length; i++) {
+					var thisUrl = $api.attr(list[i], 'data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				}
+				var _y;
+				if(api.systemType == 'ios') {
+					_y = 170;
+				} else {
+					
+					_y = 175;
+				}
+				api.openFrameGroup({
+					name: 'myYuguGroup',
+					scrollEnabled: true,
+					rect: {
+						x: 0,
+						y: _y+api.safeArea.top,
+						w: 'auto',
+						h: 'auto'
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetCommissionTabActive(ret.index);
+				});
+
+				lodingData();
+			}
+
+			function fnSetCommissionTabActive(_index) {
+				var list = $api.domAll(".commissionItem");
+				for(var i = 0; i < list.length; i++) {
+					if(_index == i) {
+						$api.addCls(list[i], 'active');
+					} else {
+						$api.removeCls(list[i], 'active');
+					}
+
+				}
+			}
+
+			function fnSetCommissionTabIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'myYuguGroup',
+					index: _index,
+					scroll: true
+				});
+			}
+
+			function lodingData(){
+				var _yg=new Order();
+				//加载今日预估
+				_yg.getYuguList({
+					mid:$api.getStorage("memberId"),
+					type:0
+				},function(ret){
+						$("#jinri").html(parseFloat(ret.yugu*100).toFixed(0));
+				});
+				_yg.getYuguList({
+					mid:$api.getStorage("memberId"),
+					type:1
+				},function(ret){
+						$("#benyue").html(parseFloat(ret.yugu*100).toFixed(0));
+				});
+				_yg.getYuguList({
+					mid:$api.getStorage("memberId"),
+					type:2
+				},function(ret){
+						$("#shangyue").html(parseFloat(ret.yugu*100).toFixed(0));
+				});
+			}
+		</script>
+	</body>
+
+</html>

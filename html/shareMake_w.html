@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>编辑地址</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header" style="background-color: #FFFFFF;">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back" style="color: #f64580;"></i>
+			</a>
+			<div class="tabGroup">
+				<div class="tabGroupItem active" data-url="shareMake_single.html" onclick="fnSetTabIndex(0)">单品分享</div>
+				<div class="tabGroupItem" data-url="shareMake_f.html" onclick="fnSetTabIndex(1)">批量分享</div>
+			</div>
+		</header>
+		<!--header end-->
+		
+		<script type="text/javascript" src="../dist/js/all.js"></script>
+		<script>
+			apiready = function() {
+				api.setStatusBarStyle({
+				    style: 'dark'
+				});
+				setHeaderH();
+				var frames = [];
+				$.each($('.tabGroup .tabGroupItem'), function(key, val) {
+					var thisUrl = $(this).attr('data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				});
+				var _y=45;
+				api.openFrameGroup({
+					name: 'myShareFrameGroup',
+					rect: {
+						x: 0,
+						y: _y+api.safeArea.top,
+						w: 'auto',
+						h: 'auto'
+					},
+					index: 0,
+					scrollEnabled:false,
+					frames: frames
+				}, function(ret, err) {
+					fnSetTabActive(ret.index);
+				});
+			}
+
+			function fnSetTabActive(_index) {
+				var orderType = $api.domAll(".tabGroupItem");
+				for(var i = 0; i < orderType.length; i++) {
+					if(_index == i) {
+						$api.addCls(orderType[i], 'active');
+					} else {
+						$api.removeCls(orderType[i], 'active');
+					}
+				}
+			}
+
+			function fnSetTabIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'myShareFrameGroup',
+					index: _index,
+					scroll: true
+				});
+			}
+		</script>
+	</body>
+
+</html>

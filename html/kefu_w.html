@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+			#header {
+				border-bottom-color: transparent;
+				display: flex;
+				z-index: 99999;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>联系客服</span>
+		</header>
+		<!--header end-->
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				setHeaderH();
+				api.openFrame({
+					name: 'kefu_bd',
+					url: _GS_kefuUrl,
+					rect: {
+						x: 0,
+						y: 0,
+						w: 'auto',
+						h: 'auto'
+					},
+					allowEdit: true,
+					bounces: false,
+					bgColor: '#f0f0f0',
+					vScrollBarEnabled: true,
+					hScrollBarEnabled: false,
+				});
+				var y = 0;
+				if(api.systemType == 'ios') {
+					y += 45;
+				} else {
+					y += 50;
+				}
+				api.openFrame({
+					name: 'kefu_hd',
+					url: 'kefu_hd.html',
+					rect: {
+						x: 0,
+						y: 0,
+						w: 'auto',
+						h: y+api.safeArea.top
+					},
+					allowEdit: true,
+					bounces: false,
+					bgColor: '#f0f0f0',
+					vScrollBarEnabled: true,
+					hScrollBarEnabled: false,
+				});
+
+			}
+		</script>
+	</body>
+
+</html>

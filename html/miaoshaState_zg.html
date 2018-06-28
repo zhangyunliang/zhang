@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="msRstSuccess">
+			<i class="iconfont icon-roundcheckfill"></i>
+			<span>秒杀成功</span>
+		</div>
+		<div class="cgZgCnt">
+			<div class="item">
+				<span id="dsj">￥50.00</span>
+				<label>到手价</label>
+			</div>
+			<div class="item">
+				<span id="dnj">￥60.00</span>
+				<label>电脑淘宝价</label>
+			</div>
+			<div class="item">
+				<span id="fjb">500</span>
+				<label>返集分宝</label>
+			</div>
+		</div>
+		
+		<p class="mscgTs">您已成功秒杀到商品【<span id="title"></span>】的购买资格，<span class="fc-m">请在30分钟内下单付款</span>,付款完成后<span class="fc-m">返回APP填写已付款的正确单号</span>，否则无法获得返利集分宝</p>
+		
+		<div class="tijiaoMs" onclick="toByGood()">去购买</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _goodId;
+			var _isGaoyong;
+			apiready = function() {
+				
+				_goodId=api.pageParam.goodId;
+				$("#dsj").html("￥"+api.pageParam.daoshoujia);
+				$("#dnj").html("￥"+api.pageParam.oldPirce);
+				$("#fjb").html("￥"+api.pageParam.vipFanli);
+				$("#title").html("￥"+api.pageParam.msTitle);
+				_isGaoyong=api.pageParam.isGaoyong
+			}
+			
+			function toByGood(){
+				if(_isGaoyong.toString()=='1'){
+					var _baichuan=new BaiChuan();
+					_baichuan.openOldId(_goodId);
+				}else{
+					var _baichuan=new BaiChuan();
+					_baichuan.openId(_goodId);
+				}
+				
+				
+			}
+		</script>
+	</body>
+
+</html>

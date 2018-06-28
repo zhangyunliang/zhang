@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>录入订单</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="csImg">
+			<label>点击选择图片：</label>
+			<img id="tupian" src="../image/chatBox_album2.png" onclick="getPicture2(this)"/>
+		</div>
+		<div class="tijiaoMs" onclick="save()">提交</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+				
+			var _oid;
+			var imgurl;
+			apiready = function() {
+				_oid=api.pageParam.oid;
+			}
+			function getPicture2(e) {
+				api.getPicture({
+					sourceType: 'library',
+					encodingType: 'jpg',
+					mediaValue: 'pic',
+					destinationType: 'url',
+					allowEdit: true,
+					quality: 50,
+					saveToPhotoAlbum: false
+				}, function(ret, err) {
+					if(ret) {
+						if(ret.data) {
+							$('#tupian').attr('src', ret.data);
+							uploadImg($('#tupian'), ret.data,function(res){
+								imgurl=$('#tupian').attr("data-img");
+							});
+						}
+
+					} else {
+						//						alert(JSON.stringify(err));
+					}
+				});
+			}
+			function save(){
+				var _postData={
+					mid:$api.getStorage("memberId"),
+					ordersn:_oid,
+					photo:imgurl
+				}
+				
+				if(!_postData.photo){
+					_api_showToast("请选择图片后再提交");
+				}else{
+					var _ms=new MSOrder();
+				_ms.postImg(_postData,function(){
+					_api_showToast("提交成功！");
+					api.closeWin();
+				});
+				}
+				
+				
+			}
+		</script>
+	</body>
+
+</html>

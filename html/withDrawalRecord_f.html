@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>佣金记录</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="withDrowHeadCell">
+			<div>时间</div>
+			<div>提现金额</div>
+			<div>真实姓名</div>
+			<div>支付宝</div>
+			<div>交易状态</div>
+		</div>
+		<div class=" withDrowListcell">
+			<!--<li class="row _type" data-id='_id'>
+				<span>_addtime</span>
+				<span>￥_money</span>
+				<span>_name</span>
+				<span>_zhifubao</span>
+				<span>_typeText</span>
+			</li>-->
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _yjType = new Array();
+			_yjType['1'] = 'success';
+			_yjType['0'] = 'handling';
+
+			var _yjTxt = new Array();
+			_yjTxt['1'] = '已到账';
+			_yjTxt['0'] = '处理中';
+
+			var _strModel = $('.withDrowListcell').html();
+			apiready = function() {
+				getApiJson('Member/tixianLog.html', {
+					mid: $api.getStorage("memberId")
+				}, function(ret) {
+					
+					var _html = '';
+					for(var i = 0; i < ret.data.length; i++) {
+						_html += '<li class="row '+_yjType[ret.data[i].status.toString()]+'" data-id="'+ret.data[i].id+'">' +
+						'<span>'+datepattern(ret.data[i].addtime, 'MM月dd日 HH:mm')+'</span>' +
+						'<span>￥'+parseFloat(ret.data[i].money)+'</span>' +
+						'<span>'+ret.data[i].name+'</span>' +
+						'<span>'+ret.data[i].zhifubao+'</span>' +
+						'<span>'+_yjTxt[ret.data[i].status.toString()]+'</span>' +
+						'</li>';
+					}
+					$('.withDrowListcell').html(_html);
+				});
+			}
+		</script>
+	</body>
+
+</html>

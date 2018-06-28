@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>关于我们</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>人数排名</span>
+		</header>
+		<div id="tst" class="goodCVSbox" >
+			<img src="../image/2.jpg" />
+			<p>这是文章标题</p>
+		</div>
+		<button onclick="sheng()">生成</button>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			function sheng() {
+				var _dom=document.getElementById("tst");
+				html2canvas(_dom, {
+					onrendered: function(canvas) {
+						var url = canvas.toDataURL(); //图片地址
+						document.body.appendChild(canvas);
+					},
+					width: 600,
+					height: 1000
+				});
+			}
+		</script>
+	</body>
+
+</html>

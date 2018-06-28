@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>编辑地址</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="shareMakeCnt">
+			<p class="ts">该功能仅限VIP用户使用，非VIP用户分享无法自动跟踪返利</p>
+			<div class="shareMakeRow">
+				<label>选择集合商品</label>
+				<div class="numBox">
+					<label>已选：</label>
+					<span>0</span>
+				</div>
+			</div>
+			<div class="shareMakeRow">
+				<div class="searchBg">
+					<input id="search" type="search" placeholder="请输入商品标题或关键字" />
+					<i id="searchBtn" class="iconfont icon-search"></i>
+				</div>
+			</div>
+			<div class="shareMakeRow">
+				<div class="smItem shareTP">
+					<span>今日爆款</span>
+					<i class="iconfont icon-unfold"></i>
+				</div>
+				<div class="smItem shareKD">
+					<span>全部分类</span>
+					<i class="iconfont icon-unfold"></i>
+				</div>
+				<div class="smItem shareSX">
+					<span>默认排序</span>
+					<i class="iconfont icon-unfold"></i>
+				</div>
+
+			</div>
+			<div class="goodRankBox shareRankBox hidden">
+				<div class="rankItemBox active" data-rank="new" data-longrank="queryType=0">
+					<span>默认排序</span>
+				</div>
+				<div class="rankItemBox priceRank">
+					<span class="priceRankText">按价格</span>
+					<span class="priceRankType hidden" data-rank="price_desc" data-longrank="queryType=0&sortType=3">价格高→低</span>
+					<span class="priceRankType hidden" data-rank="price_asc" data-longrank="queryType=0&sortType=4">价格低→高</span>
+				</div>
+				<div class="rankItemBox" data-rank="sales_num_desc" data-longrank="queryType=0&sortType=9">
+					<span>按销量</span>
+				</div>
+				<div class="rankItemBox" data-rank="commission_rate_desc" data-longrank="queryType=0&sortType=1">
+					<span>按返佣比</span>
+				</div>
+			</div>
+
+			<div class="shareGoodType hidden">
+				<span class="goodTypeItem" data-type="0">今日爆款</span>
+				<span class="goodTypeItem" data-type="1">精品推荐</span>
+				<span class="goodTypeItem" data-type="6">今日必买</span>
+				<span class="goodTypeItem" data-type="2">销量排行</span>
+			</div>
+
+			<div class="allClassBox hidden">
+				<!-- <span class="classItem" data-classId=""></span> -->
+			</div>
+		</div>
+
+		<div class="indexGoodsList" style="margin-top: 130px;position: relative;z-index: 9; padding-bottom: 60px; overflow-y:auto;-webkit-overflow-scrolling: touch; ">
+
+		</div>
+
+		<div class="lodindGood">
+			<i class="iconfont icon-pullup"></i>
+			<span>上拉加载更多商品</span>
+		</div>
+		<div class="loding">
+			<i class="iconfont icon-loading"></i>
+			<span>正在加载中...</span>
+		</div>
+
+		<div class="goodHtmlBox" id="htmlBox">
+			<!--<div class="googCVSBox">
+				<img class="goodCVSImg" src="" />
+				<div class="goodF">
+					<div class="gdInfo">
+						<p class="CVStitle"><i class="iconfont "></i></p>
+						<p class="CVSprice">
+							<label>券后:</label>
+							<span class="quanhj"></span>
+						</p>
+						<p class="quan">
+							<span>领券</span>
+							<span class="CVSquan">立</span>
+						</p>
+					</div>
+					<div class="erweima">
+						<img id="qr" />
+						<p>长按二维码购买</p>
+					</div>
+				</div>
+			</div>-->
+		</div>
+
+		<div class="cvsImgBox">
+
+		</div>
+		<div class="shareCnt hidden">
+			<div class="shareMenuBox">
+				<div class="shareGroup">
+					<div class="shareIetm" onclick="qfQuan()">
+						<img src="../image/friend.png" />
+						<span>朋友圈</span>
+					</div>
+					<div class="shareIetm" onclick="qfWX()">
+						<img src="../image/weifriend.png" />
+						<span>微信</span>
+					</div>
+					<div class="shareIetm" onclick="qfQQ()">
+						<img src="../image/QQ.png" />
+						<span>QQ</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="shareBtnGp">
+			<div class="btn" onclick="qunfa()">一键群发</div>
+			<div class="btn btnOrange" onclick="heji()">分享合集页</div>
+		</div>
+		<script type="text/javascript" src="../src/concat/all.js"></script>
+		<script>
+			var pageIndex = 1;
+			var _loding = $api.dom('.loding');
+			var _logindMore = $api.dom('.lodindGood');
+			var ld = 0; //0 今日爆款	1精品推荐  2销量排行  3某个分类   4库内搜索   5全站搜索
+			var _classId = null;
+			var rankType = null;
+			var longRankType = 'queryType=0';
+			var _scStr = '';
+			var _goodArr = [];
+			var _shareImgs = [];
+			var _gidArr = [];
+			var hjHref = '';
+			var _shopType = new Array();
+			_shopType['B'] = 'icon-tmall';
+			_shopType['C'] = 'icon-mobiletao';
+			_shopType['1'] = 'icon-tmall';
+			_shopType['0'] = 'icon-mobiletao';
+
+			apiready = function() {
+
+				lodingJRGood(pageIndex);
+				addGoodClass();
+				api.addEventListener({
+					name: 'scrolltobottom',
+					extra: {
+						threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+					}
+				}, function(ret, err) {
+					if(ld == 0) {
+						lodingJRGood(pageIndex);
+					} else if(ld == 1) {
+						lodingJxGood(pageIndex);
+					} else if(ld == 2) {
+						lodingSalesGood(pageIndex);
+					} else if(ld == 3) {
+						lodingGoodById(pageIndex);
+					} else if(ld == 4) {
+						lodingGoods(_scStr, pageIndex);
+					} else if(ld == 5) {
+						lodingTaokeGood(_scStr, pageIndex);
+					}
+					if(ld != 6) {
+						$api.css(_logindMore, 'display:none;');
+						$api.css(_loding, 'display:flex;');
+					}
+
+				});
+			}
+			
+			$("#todyCnt").on("scroll",function(){
+				var nScrollHight = 0; //滚动距离总长(注意不是滚动条的长度)
+			    var nScrollTop = 0;  //滚动到的当前位置
+			    var nDivHight = $(this).height()+api.safeArea.top+195;
+			 
+			   	
+			    nScrollHight = $(this)[0].scrollHeight;
+			    nScrollTop = $(this)[0].scrollTop;
+			     
+			    if(nScrollTop + nDivHight >= nScrollHight){
+			     	if(ld == 0) {
+						lodingJRGood(pageIndex);
+					} else if(ld == 1) {
+						lodingJxGood(pageIndex);
+					} else if(ld == 2) {
+						lodingSalesGood(pageIndex);
+					} else if(ld == 3) {
+						lodingGoodById(pageIndex);
+					} else if(ld == 4) {
+						lodingGoods(_scStr, pageIndex);
+					} else if(ld == 5) {
+						lodingTaokeGood(_scStr, pageIndex);
+					}
+					if(ld != 6) {
+						$api.css(_logindMore, 'display:none;');
+						$api.css(_loding, 'display:flex;');
+					}
+			    }   
+			   
+			});
+			
+			//加载商品
+			function lodingGoods(_searcStr, index) {
+				var gd = new Good();
+				var _postData = {
+					page: index,
+					q: _searcStr,
+					sortType: rankType
+
+				};
+				gd.getList(_postData, function(ret) {
+					if(ret.length < 1) {
+						lodingTaokeGood(_searcStr,index);
+					} else {
+						gd.addSelectDom($('.indexGoodsList'), ret, function() {
+							$api.css(_logindMore, 'display:flex;');
+							$api.css(_loding, 'display:none;');
+						});
+					}
+
+				});
+				pageIndex += 1;
+
+			}
+
+			//接口排序
+			function rankGood(e) {
+				$(".indexGoodsList").html("");
+				rankType = $api.attr(e, 'data-rank');
+				longRankType = $api.attr(e, 'data-longrank');
+				pageIndex = 1;
+				if(api.pageParam.searchName.length < 7) {
+					lodingGoods(pageIndex);
+				} else {
+					lodingTaokeGood(pageIndex);
+				}
+
+			}
+
+			//长文本查询接口获取数据
+			function lodingTaokeGood(_searcStr, index) {
+				var searchStr = 'q=' + _searcStr + '&toPage=' + index + '&' + longRankType + '&yxjh=-1';
+				var goodList;
+				$.ajax({
+					type: "get",
+					url: "http://pub.alimama.com/items/search.json?" + searchStr,
+					async: false,
+					dataType: 'json',
+					success: function(ret) {
+						if(ret.data && ret.data.pageList) {
+							goodList = ret.data.pageList;
+							for(var i = 0; i < goodList.length; i++) {
+								$.ajax({
+									type: "get",
+									url: apiUrl + 'Goods/getmoney.html?money=' + goodList[i].tkCommFee,
+									async: false,
+									dataType: 'json',
+									success: function(red) {
+										var _gd = new Good();
+										_gd.addLongSarchDom($(".indexGoodsList"), goodList, red, function() {
+
+										});
+									}
+								});
+							}
+						} else {
+							api.toast({
+								msg: '未搜到任何相关数据'
+							})
+						}
+
+					}
+				});
+				pageIndex += 1;
+
+			}
+
+			//加载精品推荐商品
+			function lodingJxGood(index) {
+				var gd = new Good();
+				var _postData = {
+					page: index
+				};
+				//				console.log(JSON.stringify(_postData));
+				gd.getJXList(_postData, function(ret) {
+					gd.addSelectDom($('.indexGoodsList'), ret, function() {
+						$api.css(_logindMore, 'display:flex;');
+						$api.css(_loding, 'display:none;');
+					});
+				});
+				pageIndex += 1;
+			}
+
+			//默认加载今日爆款商品
+			function lodingJRGood(index) {
+				var gd = new Good();
+				var _postData = {
+					page: index,
+					sortType: rankType
+				};
+				gd.getList(_postData, function(ret) {
+					gd.addSelectDom($('.indexGoodsList'), ret, function() {
+						$api.css(_logindMore, 'display:flex;');
+						$api.css(_loding, 'display:none;');
+					});
+				});
+				pageIndex += 1;
+			}
+
+			function logindBm() {
+				$('.indexGoodsList').html('');
+				var _idxGoodsGp = new IndexSwiper();
+				_idxGoodsGp.getList(function(ret) {
+					printObj(ret);
+					var _gd = new Good();
+					_gd.addJRDom($('.indexGoodsList'), ret, function() {
+						$(".lodindGood").css("display", 'none');
+						$(".loding").css("display", 'none');
+					});
+				})
+
+			}
+
+			//加载销量排行商品
+			function lodingSalesGood(index) {
+				var gd = new Good();
+				var _postData = {
+					page: index,
+					orderBy: 'sales_num'
+				};
+				gd.getJXList(_postData, function(ret) {
+					gd.addDom($('.indexGoodsList'), ret, function() {
+						$api.css(_logindMore, 'display:flex;');
+						$api.css(_loding, 'display:none;');
+					});
+				});
+				pageIndex += 1;
+			}
+
+			//根据分类ID加载商品
+			function lodingGoodById(index) {
+				var gd = new Good();
+				var _postData = {
+					categoryId: _classId,
+					page: index,
+					sortType: rankType
+				};
+				gd.getList(_postData, function(ret) {
+					gd.addSelectDom($('.indexGoodsList'), ret, function() {
+						$api.css(_logindMore, 'display:flex;');
+						$api.css(_loding, 'display:none;');
+					});
+				});
+				pageIndex += 1;
+			}
+
+			//推荐类型选中事件
+			$(".goodTypeItem").on("click", function() {
+				var _type = parseInt($(this).attr("data-type"));
+				ld = _type;
+				$(".shareKD span").html("全部分类");
+				//1.视觉交互
+				$(".shareTP").children("span").html($(this).html());
+				if($(this).attr("data-type") != 0) {
+					$(".shareSX").addClass("hidden");
+				} else {
+					$(".shareSX").removeClass("hidden");
+				}
+				$(".shareGoodType").addClass("hidden");
+
+				pageIndex = 1;
+				$(".indexGoodsList").html('');
+				if(ld == 0) {
+					lodingJRGood(pageIndex);
+				} else if(ld == 1) {
+					lodingJxGood(pageIndex);
+				} else if(ld == 2) {
+					lodingSalesGood(pageIndex);
+				} else if(ld == 6) {
+					logindBm();
+				} else {}
+
+			});
+
+			// 商品分类点击事件
+			$(".allClassBox").on("click", ".classItem", function() {
+
+				$(".shareSX").removeClass("hidden");
+				$(".shareKD").children("span").html($(this).html());
+				$(".allClassBox").addClass("hidden");
+				ld = 3;
+				_classId = $(this).attr("data-classId");
+				pageIndex = 1;
+				$(".indexGoodsList").html('');
+				lodingGoodById(pageIndex);
+			})
+
+			// 排序方式点击事件
+			$(".rankItemBox:not(.priceRank)").on("click", function() {
+				// 视觉交互
+				$(".priceRankType").addClass("hidden");
+				$(".goodRankBox .active").removeClass("active");
+				$(this).addClass("active");
+				$(".shareSX").children("span").html($(this).children("span").html());
+				$(".shareRankBox").addClass("hidden");
+				if(ld == 0) {
+					rankType = $(this).attr("data-rank");
+					pageIndex = 1;
+					$(".indexGoodsList").html('');
+					lodingJRGood(pageIndex);
+				} else if(ld == 3) {
+					rankType = $(this).attr("data-rank");
+					pageIndex = 1;
+					$(".indexGoodsList").html('');
+					lodingGoodById(pageIndex);
+				} else if(ld == 4) {
+					rankType = $(this).attr("data-rank");
+					pageIndex = 1;
+					$(".indexGoodsList").html('');
+					lodingGoods(_scStr, pageIndex);
+				} else if(ld == 5) {
+					longRankType = $(this).attr("data-longrank");
+					pageIndex = 1;
+					$(".indexGoodsList").html('');
+					lodingTaokeGood(_scStr, pageIndex);
+
+				}
+			});
+			// 按价格排序点击事件
+			$(".priceRankType").on("click", function(e) {
+				$(".goodRankBox .active").removeClass("active");
+				$(this).addClass("active");
+				$(".priceRankText").addClass("active");
+				$(".priceRankType").addClass("hidden");
+				if($(this).attr("data-rank")) {
+					$(".shareSX").children("span").html($(this).html());
+					$(".shareRankBox").addClass("hidden");
+					if(ld == 0) {
+						rankType = $(this).attr("data-rank");
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingJRGood(pageIndex);
+					} else if(ld == 3) {
+						rankType = $(this).attr("data-rank");
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingGoodById(pageIndex);
+					} else if(ld == 4) {
+						rankType = $(this).attr("data-rank");
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingGoods(_scStr, pageIndex);
+					} else if(ld == 5) {
+						longRankType = $(this).attr("data-longrank");
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingTaokeGood(_scStr, pageIndex);
+
+					}
+				}
+
+			});
+
+			//加载分类
+			function addGoodClass() {
+				getApiJson('category/index.html', null, function(rest) {
+					if(rest.data) {
+						var _html = '';
+						$.each(rest.data, function(key, val) {
+							_html += '<span class="classItem" data-classId="' + val.id + '">' + val.category_name + '</span>'
+						});
+						$(".allClassBox").html(_html);
+					}
+
+				})
+			}
+
+			//切换显示隐藏排序条件
+			$(".shareSX").on("click", function() {
+				$(".shareGoodType").addClass("hidden");
+				$(".allClassBox").addClass("hidden");
+				if($(".shareRankBox").hasClass("hidden")) {
+					$(".shareRankBox").removeClass("hidden")
+				} else {
+					$(".shareRankBox").addClass("hidden");
+				}
+			});
+
+			//切换显示隐藏推荐类型
+			$(".shareTP").on("click", function() {
+				$(".shareRankBox").addClass("hidden");
+				$(".allClassBox").addClass("hidden");
+				if($(".shareGoodType").hasClass("hidden")) {
+					$(".shareGoodType").removeClass("hidden")
+				} else {
+					$(".shareGoodType").addClass("hidden");
+				}
+			});
+
+			//切换显示隐藏分类选择
+			$(".shareKD").on("click", function() {
+				$(".shareRankBox").addClass("hidden");
+				$(".shareGoodType").addClass("hidden");
+				if($(".allClassBox").hasClass("hidden")) {
+					$(".allClassBox").removeClass("hidden");
+				} else {
+					$(".allClassBox").addClass("hidden");
+				}
+			});
+
+			$("#search").on('keypress', function(e) {
+				var keycode = e.keyCode;
+				_scStr = $(this).val();
+
+				if(keycode == '13') {
+					if(_scStr) {
+						if(_scStr.length < 7) {
+							ld = 4;
+							pageIndex = 1;
+							$(".indexGoodsList").html('');
+							lodingGoods(_scStr, pageIndex);
+						} else {
+							ld = 5
+							pageIndex = 1;
+							$(".indexGoodsList").html('');
+							lodingTaokeGood(_scStr, pageIndex);
+						}
+					} else {
+						_api_showToast("请先输入搜索内容");
+					}
+
+				}
+			});
+			$("#searchBtn").on("click", function() {
+				_scStr = $("#search").val();
+				if(_scStr) {
+					if(_scStr.length < 7) {
+						ld = 4;
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingGoods(_scStr, pageIndex);
+					} else {
+						ld = 5
+						pageIndex = 1;
+						$(".indexGoodsList").html('');
+						lodingTaokeGood(_scStr, pageIndex);
+					}
+
+				} else {
+					_api_showToast("请先输入搜索内容");
+				}
+
+			})
+
+			//商品选中事件
+			$(".indexGoodsList").on("click", '.goodsRow', function() {
+				var _gid = $(this).attr("data-id");
+				var _gimg = $(this).attr("data-img");
+				var _gtitle = $(this).find(".ttl").html();
+				var _gQhj = $(this).find(".qhj").html();
+				var _quan = $(this).find(".quan").html();
+				var _type = $(this).attr("data-shop");
+				if($(this).hasClass("selected")) {
+					$(this).removeClass("selected");
+					delGdArr(_gid);
+					$(".numBox span").html(_goodArr.length);
+				} else {
+					$(this).addClass("selected");
+					var _gda = {
+						id: _gid,
+						img: _gimg.replace('_240x240.jpg', ''),
+						tltle: _gtitle,
+						quanhoujia: _gQhj,
+						quan: _quan,
+						shopType: _type
+					};
+					_goodArr.push(_gda);
+					_gidArr.push(_gid);
+					$(".numBox span").html(_goodArr.length);
+
+				}
+			});
+
+			function delGdArr(_id) {
+				for(var i = 0, l = _goodArr.length; i < l; i++) {
+					if(_goodArr[i]['id'] == _id) {
+						_goodArr.splice(i, 1);
+						_gidArr.splice(i, 1);
+						break;
+					}
+				}
+			}
+
+			function addHtmlDom() {
+
+				_api_ShowProgress("正在生成分享图片", false);
+				$("#htmlBox").removeClass("hidden");
+				$(".goodHtmlBox").html("");
+				var tmpAll = [].concat(JSON.parse(JSON.stringify(_goodArr)));
+
+				$("body").scrollTop(0).promise().then(function() {
+					addhtml(tmpAll);
+				});
+
+				function addhtml(all) {
+					if(all.length > 0) {
+						var key = all.length;
+						var val = all.pop();
+						var _html = '<div class="googCVSBox" id="cvs' + key + '">' +
+							'<img class="goodCVSImg" id="CVSimg' + key + '" src="' + val.img + '" style="height:' + api.winWidth + 'px;" />' +
+							'<div class="goodF">' +
+							'<div class="gdInfo">' +
+							'<p class="CVStitle"><i class="iconfont ' + _shopType[val.shopType] + '"></i>' + val.tltle + '</p>' +
+							'<p class="CVSprice">' +
+							'<label>券后:</label>' +
+							'<span class="quanhj">' + val.quanhoujia + '</span>' +
+							'</p>';
+						if(val.quan != '减0' && val.quan != '减0.00') {
+							_html += '<p class="quan"><span>领券</span><span class="CVSquan">立' + val.quan + '</span></p>';
+						}
+						_html += '</div>' +
+							'<div class="erweima">' +
+							'<img id="qr' + key + '" />' +
+							'<p>长按二维码购买</p>' +
+							'</div>' +
+							'</div>' +
+							'</div>';
+						$(".goodHtmlBox").html(_html);
+						var qr = new QRious({
+							element: document.getElementById('qr' + key),
+							value: _GS_goodUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + val.id,
+							size: api.winWidth * 0.35
+						});
+
+						isImgLoad("#CVSimg" + key, function() {
+							var _dom = document.getElementById("cvs" + key);
+							//  var _imgName = Date.parse(new Date()).toString() + key + ".jpg";
+							var _imgName = key + ".jpg";
+							var _thisW = $(this).width();
+							var _thisH = $(this).height();
+							var cas = document.createElement("canvas"); //创建一个canvas节点
+							var scale = window.devicePixelRatio; //定义任意放大倍数 支持小数
+							cas.width = _thisW * scale; //定义canvas 宽度 * 缩放
+							cas.height = _thisH * scale; //定义canvas高度 *缩放
+							cas.style.width = _thisW;
+							cas.style.height = _thisH;
+							cas.getContext("2d").scale(scale, scale); //获取context,设置scale
+
+							html2canvas(_dom, {
+								canvas: cas,
+								allowTaint: true,
+								async: false,
+							}).then(function(canvas) {
+								var _url = canvas.toDataURL(); //图片地址
+								var trans = api.require('trans');
+								trans.saveImage({
+									base64Str: _url.replace('data:image/png;base64,', ''),
+									album: false,
+									imgPath: "fs://img/",
+									imgName: _imgName
+								}, function(ret, err) {
+
+									if(ret.status) {
+										var _imgpath = "fs://img/" + _imgName;
+										//_shareImgs[key] = _imgpath;
+										_shareImgs.push(_imgpath);
+										setTimeout(function() {
+											addhtml(all);
+										}, 500);
+									}
+								});
+							});
+						});
+					} else {
+						console.log('隐藏');
+						_api_HideProgress();
+						$(".shareCnt").removeClass("hidden");
+					}
+				}
+
+				//判断图片有没有加载
+				function isImgLoad(_class, callback) {
+					
+					$(_class).bind('load', function() {
+						callback();
+					}).bind('error', function() {
+						//图片加载错误，加入错误处理
+						//  dfd.resolve();
+					})
+				}
+
+			}
+
+			
+
+			function qunfa() {
+				_shareImgs.splice(0, _shareImgs.length);
+				if($api.getStorage("memberId")) {
+
+					$(".shareIetm").eq(2).attr("onclick", 'qfQQ()');
+					$(".shareIetm").eq(1).attr("onclick", 'qfWX()');
+					$(".shareIetm").eq(0).attr("onclick", 'qfQuan()');
+
+					if(_goodArr.length < 1) {
+						_api_showToast("请先选择商品再群发");
+					} else if(_goodArr.length > 9) {
+						_api_showToast("群发最多只能选择9个商品");
+					} else {
+						addHtmlDom();
+					}
+				} else {
+
+					openNewWin(null, 'login_w.html', {
+						runJS: 'hkfnChangeLogin()',
+						runWin: 'root',
+						runFrame: 'my_fr',
+						toWin: 'root'
+					});
+				}
+
+			}
+
+			function heji() {
+				if($api.getStorage("memberId")) {
+					$(".shareIetm").eq(2).attr("onclick", 'hjQQ()');
+					$(".shareIetm").eq(1).attr("onclick", 'hjWX()');
+					$(".shareIetm").eq(0).attr("onclick", 'hjQuan()');
+					if(_goodArr.length < 1) {
+						_api_showToast("请先选择商品再群发");
+					} else {
+						var _str = _gidArr.join(',');
+						getJiHePgae(_str, function(ret) {
+							printObj(ret);
+							$(".shareCnt").removeClass("hidden");
+							hjHref = ret.shorten_share_url
+						});
+					}
+				} else {
+					openNewWin(null, 'login_w.html', {
+						runJS: 'hkfnChangeLogin()',
+						runWin: 'root',
+						runFrame: 'my_fr',
+						toWin: 'root'
+					});
+				}
+
+			}
+
+			function qfQQ() {
+				var _pth = _shareImgs.join(',');
+				printObj(_pth);
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				} else {
+					_pm = {
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功")
+					}
+				});
+				$("#htmlBox").addClass("hidden");
+			}
+
+			function qfWX() {
+				var _pth = _shareImgs.join(',');
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				} else {
+					_pm = {
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功")
+					}
+				});
+				$("#htmlBox").addClass("hidden");
+			}
+
+			function qfQuan() {
+				var _pth = _shareImgs.join(',');
+				var inShare = api.require('inShare');
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				} else {
+					_pm = {
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				}
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功")
+					}
+				});
+				$("#htmlBox").addClass("hidden");
+
+			}
+
+			function hjQQ() {
+				var _qq = new QQPlusSDK();
+				_qq.isInstalled(function() {
+					_qq.shareNewsToFriend({
+						title: _GS_hejiTitle,
+						desc: _GS_hejiDesc,
+						href: hjHref,
+						imgUrl: _goodArr[0].img.toString()
+					})
+				});
+			}
+
+			function hjWX() {
+				var _wx = new WXPlus();
+				_wx.isInstalled(function() {
+					_wx.sharePageToFriend({
+						title: _GS_hejiTitle,
+						desc: _GS_hejiDesc,
+						href: hjHref,
+						imgUrl: _goodArr[0].img.toString()
+					})
+				});
+			}
+
+			function hjQuan() {
+				var _wx = new WXPlus();
+				_wx.isInstalled(function() {
+					_wx.sharePageToQuer({
+						title: _GS_hejiTitle,
+						desc: _GS_hejiDesc,
+						href: hjHref,
+						imgUrl: _goodArr[0].img.toString()
+					})
+				});
+			}
+			//隐藏分享组
+			$(".shareCnt,.shareCnt *").on("click", function(e) {
+				if($(e.target).is(".shareIetm") || $(e.target).is("img") || $(e.target).is("span")) {
+
+				} else {
+
+					$(".shareCnt").addClass("hidden");
+					$("#htmlBox").addClass("hidden");
+				}
+
+			});
+		</script>
+	</body>
+
+</html>

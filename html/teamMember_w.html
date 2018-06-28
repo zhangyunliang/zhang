@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>开发</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header" class="relativeBox">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>团队成员</span>
+		</header>
+		<!--header end-->
+		<div class="orderTab relativeBox">
+			<div class="orderTabItem active" data-url="teamMember_f.html" onclick="fnSetTabIndex(0)">代理团队</div>
+			<div class="orderTabItem" data-url="teamMember_f2.html" onclick="fnSetTabIndex(1)">已邀请好友</div>
+		</div>
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				setHeaderH();
+
+				var frames = [];
+				$.each($('.orderTab .orderTabItem'), function(key, val) {
+					var thisUrl = $(this).attr('data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				});
+				var _y=90;
+				api.openFrameGroup({
+					name: 'myOrderFrameGroup',
+					scrollEnabled: true,
+					rect: {
+						x: 0,
+						y: _y+api.safeArea.top,
+						w: 'auto',
+						h: 'auto'
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetTabActive(ret.index);
+				});
+			}
+
+			function fnSetTabActive(_index) {
+				var orderType = $api.domAll(".orderTabItem");
+				for(var i = 0; i < orderType.length; i++) {
+					if(_index == i) {
+						$api.addCls(orderType[i], 'active');
+					} else {
+						$api.removeCls(orderType[i], 'active');
+					}
+				}
+			}
+
+			function fnSetTabIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'myOrderFrameGroup',
+					index: _index,
+					scroll: true
+				});
+			}
+		</script>
+	</body>
+
+</html>

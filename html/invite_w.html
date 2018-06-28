@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>晒单详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<header id="header">
+			<a id="pageBack" href="javascript:;" tapmode onclick="api.closeWin()">
+				<i class="iconfont icon-back"></i>
+			</a>
+			<span>邀请好友</span>
+			<div class="right" tapmode="hover" onclick="dialogBox_actionMenu()">
+				<i class="iconfont icon-share"></i>
+			</div>
+		</header>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var dialogBox;
+			var a = [];
+			var _item = [];
+			apiready = function() {
+				setHeaderH();
+				dialogBox = api.require('dialogBox');
+				openNewFrame("invite_f.html", 45, 0, api.pageParam);
+				var wx = api.require('wx');
+				wx.isInstalled(function(ret, err) {
+					if(ret.installed) {
+						_item.push({
+							text: '微信朋友圈',
+							icon: 'widget://image/friend.png'
+						}, {
+							text: '微信好友',
+							icon: 'widget://image/weifriend.png'
+						});
+						a.push("wxShareQuer()");
+						a.push("wxShareFriend()");
+
+					}
+				});
+
+				var qq = api.require('QQPlus');
+				qq.installed(function(ret, err) {
+					if(ret.status) {
+						_item.push({
+							text: 'QQ好友',
+							icon: 'widget://image/QQ.png'
+						})
+						a.push("shareQQ()");
+					}
+				});
+				_item.push({
+					text: '复制链接',
+					icon: 'widget://image/copy.png'
+				});
+				a.push("copyLink()");
+				_item.push({
+					text: '保存图片',
+					icon: 'widget://image/tuiguang.png'
+				});
+				a.push("saveImg()");
+			}
+
+			function dialogBox_actionMenu() {
+				dialogBox.actionMenu({
+					rect: {
+						h: 200
+					},
+					texts: {
+						cancel: '取消'
+					},
+					items: _item,
+					styles: {
+						bg: '#FFF',
+						corner: 6,
+						column: 4,
+						itemText: {
+							color: '#000',
+							size: 14,
+							marginT: 10
+						},
+						itemIcon: {
+							size: 54
+						},
+						cancel: {
+							bg: '#fff',
+							color: '#333',
+							h: 55,
+							size: 14
+						}
+					},
+					tapClose: true
+				}, function(ret) {
+					if(ret.eventType == 'cancel') {
+						dialogBox.close({
+							dialogName: 'actionMenu'
+						});
+					} else {
+						var jsfun = a[ret.index];
+						api.execScript({
+							name: 'invite_w',
+							frameName: 'invite_f',
+							script: jsfun
+						});
+					}
+
+				});
+			}
+			
+			function closeDialog(){
+				dialogBox.close({
+					dialogName: 'actionMenu'
+				});
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>团队成员</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="withDrowHead yuguOtherHead">
+			<div>用户</div>
+			<div>预估收益</div>
+			<div>关系</div>
+		</div>
+		
+		<div class="withDrowList yuguOtherList">
+			<!--<li class="row _type" data-id="">
+				<span>18795956017</span>
+				<span>500集分宝</span>
+				<span>下级</span>
+			</li>-->
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready=function(){
+				var _od=new Order();
+				_od.getYuguList({
+					mid:$api.getStorage("memberId"),
+					type:1
+				},function(ret){
+					_od.addXiajiYuguDom($(".yuguOtherList"),ret.xiajiUser);
+				})
+			}
+			
+			
+		</script>
+	</body>
+
+</html>

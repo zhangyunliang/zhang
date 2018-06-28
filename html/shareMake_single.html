@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>编辑地址</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="timeTabbar">
+			<div class="moveBg"></div>
+			<div class="todyCnt">今日</div>
+			<div class="swiper-container" id="timeSwiper">
+				<div class="swiper-wrapper">
+					<div class="swiper-slide">
+						<div class="timeItem">
+							<span>00:00</span>
+							<label>未开始</label>
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="timeItem">
+							<span>10:00</span>
+							<label>未开始</label>
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="timeItem">
+							<span>15:00</span>
+							<label>未开始</label>
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="timeItem">
+							<span>20:00</span>
+							<label>未开始</label>
+						</div>
+					</div>
+					<div class="swiper-slide">
+						<div class="timeItem">
+							<span>00:00</span>
+							<label>未开始</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="singleShareCnt hidden" id="todyCnt">
+			<div class="swiper-container">
+				<div class="swiper-wrapper">
+					<div class="swiper-wrapper">
+						<div class="singleShareList">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="singleShareCnt " id="timeGoodCnt">
+			<div class="swiper-container" id="cntSwiper">
+				<div class="swiper-wrapper">
+					<div class="swiper-slide">
+						<div class="singleShareList">
+							<div class="wushuju">
+								<i class="iconfont icon-time"></i>
+								<span>商品加载中...</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="shareCnt hidden">
+			<div class="shareMenuBox">
+				<div class="shareGroup">
+					<div class="shareIetm" onclick="qfQuan()">
+						<img src="../image/friend.png" />
+						<span>朋友圈</span>
+					</div>
+					<div class="shareIetm" onclick="qfWX()">
+						<img src="../image/weifriend.png" />
+						<span>微信</span>
+					</div>
+					<div class="shareIetm" onclick="qfQQ()">
+						<img src="../image/QQ.png" />
+						<span>QQ</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="#swiper-container3"></div>
+		<script type="text/javascript" src="../src/concat/all.js"></script>
+		<script>
+			var _imgs = [];
+			var pageIndex = 0;
+			var isTody = true;
+			var allList;
+			var _sgShare = new SingleShare();
+			var cntSwiper, timeSwiper;
+			apiready = function() {
+				_api_ShowProgress("正在加载数据");
+				var timeJson =$api.getStorage("timeJson");
+				allList = timeJson.data.all_day_list;
+				_sgShare.appendGood(pageIndex, allList, function(_htmlret) {
+					$("#todyCnt .singleShareList").append(_htmlret).promise().then(function() {
+						pageIndex++;
+						$('#todyCnt img').each(function() {
+							loadImg($(this));
+						})
+					});
+
+				});
+				_sgShare.addTimeDom(timeJson.data.time_range, function(_idx) {
+					timeSwiper = new Swiper("#timeSwiper", {
+						direction: 'horizontal',
+						slidesPerView: 5,
+						centeredSlides: true,
+						initialSlide: _idx,
+						onInit: function() {
+							$("#timeSwiper .swiper-wrapper").css("padding-left", '0px');
+						},
+
+					});
+					_sgShare.addGoodDom(timeJson.data.time_range, function(_idx) {
+						cntSwiper = new Swiper("#cntSwiper", {
+							direction: 'horizontal',
+							autoHeight: true,
+							initialSlide: _idx,
+							lazyLoading: true,
+
+						});
+						timeSwiper.params.control = cntSwiper; //需要在Swiper2初始化后，Swiper1控制Swiper2
+						cntSwiper.params.control = timeSwiper; //需要在Swiper1初始化后，Swiper2控制Swiper1
+
+						var Swiper3 = new Swiper('#swiper-container3', {
+							control: [timeSwiper, cntSwiper], //控制前面两个Swiper
+						})
+						_api_HideProgress();
+					});
+				});
+
+			}
+			//timeBar点击事件
+			$("#timeSwiper").on("click", ".swiper-slide", function() {
+				var _index = $(this).index();
+				$(".todyCnt").css("background-color", "#000000");
+				$("#todyCnt").addClass("hidden");
+				$("#timeGoodCnt").removeClass("hidden");
+				cntSwiper.update();
+				timeSwiper.slideTo(_index);
+				cntSwiper.slideTo(_index);
+				$(".moveBg").removeClass("hidden");
+				isTody = false;
+			});
+			$(".todyCnt").on("click", function() {
+				$(this).css("background-color", "#f64580");
+				$(".moveBg").addClass("hidden");
+				$("#todyCnt").removeClass("hidden");
+				$("#timeGoodCnt").addClass("hidden");
+				isTody = true;
+			});
+
+			//切换分享组
+			$("#cntSwiper,#todyCnt").on("click", ".fenxiang", function() {
+				var _status = $(this).attr("data-statut");
+				var _parent = $(this).parents(".row");
+				if($api.getStorage("memberId")) {
+					if(_status != '1') {
+						var _gid = $(_parent).attr("data-gid");
+						var _cid = $(_parent).attr("data-cid");
+						_api_ShowProgress("正在生成分享海报");
+						getGaoyong(_gid, _cid, function(retgaoyong) {
+							if(retgaoyong.data.token) {
+								var _wenan = '';
+								_wenan += $(_parent).find(".title").html() + '\n';
+								_wenan += $(_parent).find(".goodWenan").html().replace(/<[^>]*>/g, '\n') + '\n';
+								_wenan += '【' + $(_parent).find(".yuanjia").html() + '】\n';
+								_wenan += '【' + $(_parent).find(".quanhou").html().replace(/<[^>]*>/g, '') + '】\n';
+								_wenan += "复制这条信息，" + retgaoyong.data.token + '打开【手机淘宝】即可领券购买';
+								var clipBoard = api.require('clipBoard');
+								clipBoard.set({
+									value: _wenan
+								}, function(ret, err) {
+									if(ret) {
+
+									}
+								});
+
+								_imgs = [];
+
+								$.each(_parent.find(".swiper-lazy"), function(key, val) {
+									_imgs.push($(val).attr("src"));
+								})
+								//获取分享海报图片
+								var _shareGoodurl = _GS_goodUrl + 'mid=' + $api.getStorage("memberId") + '&gid=' + _gid;
+								var _jian = $(_parent).find(".quanBox span").html();
+								var _tuData = {
+									title: retgaoyong.data.taobao_item_title,
+									money: _jian.substring(1, _jian.length),
+									shopimg: encodeURIComponent(_imgs[0]),
+									price: $(_parent).find(".yuanjia").attr("data-yuanjia"),
+									coupon_price: $(_parent).find(".quanhou").attr("data-quanhou"),
+									url: encodeURIComponent(_shareGoodurl),
+								}
+								$.post(apiUrl + 'Imagechuli/getImg.html', _tuData, function(ret) {
+									if(ret.code.toString() == '1') {
+										_imgs[0] = ret.url;
+										setTimeout(function() {
+											imgDown(function() {
+												_api_HideProgress();
+												$(".shareCnt").toggleClass("hidden");
+											});
+										}, 500);
+									} else {
+										_api_showToast("获取商品海报失败");
+									}
+
+								});
+
+							} else {
+								_api_showToast("获取淘口令失败" + retgaoyong.msg);
+							}
+
+						});
+					}
+
+				} else {
+					toLogin();
+				}
+
+			});
+			$("#todyCnt").on("scroll", function() {
+				var nScrollHight = 0; //滚动距离总长(注意不是滚动条的长度)
+				var nScrollTop = 0; //滚动到的当前位置
+				var nDivHight = $(this).height() + api.safeArea.top + 105;
+
+				nScrollHight = $(this)[0].scrollHeight;
+				nScrollTop = $(this)[0].scrollTop;
+
+				if(nScrollTop + nDivHight >= nScrollHight) {
+					_sgShare.appendGood(pageIndex, allList, function(_html) {
+						$("#todyCnt .singleShareList").append(_html).promise().then(function() {
+							pageIndex++;
+						});
+
+					});
+				}
+
+			});
+			lazyRender();
+
+			var clock; //这里的clock为timeID，
+			$("#todyCnt").on('scroll', function() {
+
+				if(clock) {
+					clearTimeout(clock);
+				}
+				clock = setTimeout(function() {
+					console.log('运行了一次');
+					lazyRender();
+				}, 300)
+			})
+
+			function lazyRender() {
+				$('#todyCnt img').each(function() {
+					if(checkShow($(this)) && !isLoaded($(this))) {
+						loadImg($(this));
+					}
+				})
+			}
+
+			function checkShow($img) { // 传入一个img的jq对象
+				var scrollTop = $(window).scrollTop(); //即页面向上滚动的距离
+				var windowHeight = $(window).height(); // 浏览器自身的高度
+				var offsetTop = $img.offset().top; //目标标签img相对于document顶部的位置
+
+				if(offsetTop < (scrollTop + windowHeight) && offsetTop > scrollTop) { //在2个临界状态之间的就为出现在视野中的
+					return true;
+				}
+				return false;
+			}
+
+			function isLoaded($img) {
+				return $img.attr('data-src') === $img.attr('src'); //如果data-src和src相等那么就是已经加载过了
+			}
+
+			function loadImg($img) {
+				$img.attr('src', $img.attr('data-src')); // 加载就是把自定义属性中存放的真实的src地址赋给src属性
+			}
+
+			//分享组空白点击事件
+			$(".shareCnt,.shareCnt *").on("click", function(e) {
+				if($(e.target).is(".shareIetm") || $(e.target).is("img") || $(e.target).is("span")) {} else {
+					$(".shareCnt").addClass("hidden");
+				}
+
+			});
+
+			//复制评论
+			$("#cntSwiper,#todyCnt").on("click", ".copyComment", function() {
+				var _pl = $(this).parent(".copyBorder").prev().html();
+				var clipBoard = api.require('clipBoard');
+				clipBoard.set({
+					value: _pl
+				}, function(ret, err) {
+					if(ret) {
+						_api_showToast('已成功复制该商品的评论');
+					}
+				});
+			});
+
+			//领券购买
+			$("#cntSwiper,#todyCnt").on("click", ".goumai", function() {
+				var _gid = $(this).attr("data-gid");
+				var _cid = $(this).attr("data-cid");
+				var _status = $(this).attr("data-statut");
+				if($api.getStorage("memberId")) {
+					if(_status != '1') {
+						openNewWin(null, 'detail_w.html', {
+							goodId: _gid,
+							coupons: _cid
+						});
+					}
+
+				} else {
+					toLogin();
+				}
+			});
+
+			function toLogin() {
+				openNewWin(null, 'login_w.html', {
+					toWin: 'shareMake_w'
+				});
+			}
+
+			function qfQQ() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'qqFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+
+				});
+			}
+
+			function qfWX() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				var _pm = {};
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxFriend'
+					}
+				}
+
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+				});
+			}
+
+			function qfQuan() {
+				var _pth = _imgs.join(',');
+				var inShare = api.require('inShare');
+				if(api.systemType == 'ios') {
+					_pm = {
+						sendPattern: 'ALL',
+						needDecodePath: true,
+						imgSetType: 1,
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				} else {
+					_pm = {
+						forResult: true,
+						sendPattern: 'ONLY',
+						imgPaths: _pth,
+						app: 'wxCircle'
+					}
+				}
+				inShare.shareImgsTo(_pm, function(ret, err) {
+					if(ret.status) {
+						_api_showToast("分享成功");
+						$(".shareCnt").addClass("hidden");
+					}
+				});
+			}
+
+			//图片下载事件
+			function imgDown(callback) {
+				printObj(_imgs);
+				var imgdefereds = [];
+				$.each(_imgs, function(key, val) {
+					var dfd = $.Deferred();
+					var _kzm = '.jpg';
+					if(val.indexOf('png') > 0) {
+						_kzm = '.png'
+					}
+					api.download({
+						url: val,
+						savePath: 'fs://img/' + key + _kzm,
+						report: true,
+						allowResume: true
+					}, function(ret, err) {
+						if(ret.state == 1) {
+							_imgs[key] = 'fs://img/' + key + _kzm;
+							dfd.resolve();
+						} else {
+
+						}
+					});
+					//					api.imageCache({
+					//						url: val
+					//					}, function(ret, err) {
+					//						
+					//					});
+					imgdefereds.push(dfd);
+				});
+				$.when.apply(null, imgdefereds).done(function() {
+					printObj(_imgs);
+					setTimeout(function() {
+						_api_showToast("文案已复制，请粘贴至内容框");
+						callback()
+					}, 500);
+
+				});
+
+			}
+
+			function loadImg($img) {
+				$img.attr("src", $img.attr("data-src"));
+			}
+		</script>
+	</body>
+
+</html>

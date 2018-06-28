@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>绑定支付宝</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<div class="editBox cnt">
+			<p style="color:#f64580;">支付宝只能绑定一次，如要更改请联系客服，错误的帐号将收不到返利。</p>
+			<input id="realname" name="alipayname" type="text" placeholder="请输入支付宝姓名" />
+			<input id="alipay" name="alipayemail" type="text" placeholder="请输入支付宝帐号" />
+			<input class="disab-btn" type="button"  value="确定" onclick="bindAlipay()" />
+			<div class="lxkfBox" data-url="kefu_w.html" onclick="openNewWin(this)">
+				<i class="iconfont icon-service"></i>
+				<span>点击联系客服</span>
+			</div>
+			
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elname = $api.byId('realname');
+			var _elalipay = $api.byId('alipay');
+
+			apiready = function() {
+				if(api.pageParam.realname) {
+					$api.val(_elname, api.pageParam.realname);
+					$api.val(_elalipay, api.pageParam.zhifubao_name);
+					$("#realname").attr("disabled","disabled");
+					$("#alipay").attr("disabled","disabled");
+					$(".editBox input[type='button']").val("您已绑定过支付宝");
+				}else{
+					$(".editBox input[type='button']").val("确定");
+					$(".editBox input[type='button']").removeClass("disab-btn");
+				}
+			}
+
+			function bindAlipay() {
+				if(api.pageParam.realname && api.pageParam.zhifubao_name) {
+					api.alert({
+						msg: '您已经绑定过支付宝，请联系客服修改'
+					});
+				} else {
+					var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+
+					if(!$api.val(_elname)) {
+						api.toast({
+							msg: '支付宝姓名不能为空',
+							location: 'middle'
+						});
+					} else if(reg.test($api.val(_elalipay))||checkMobile($api.val(_elalipay))) {
+						getApiJson('member/setUser.html', {
+							mid: $api.getStorage('memberId'),
+							realname: $api.val(_elname),
+							zhifubao_name: $api.val(_elalipay)
+						}, function(data) {
+							api.toast({
+								msg: '绑定成功，正在跳转',
+								location: 'middle'
+							});
+							if(api.pageParam.isBindAlipay == false) {		//如果用户未绑定支付宝，绑定成功后跳转到提现页面
+								openNewWin(null, 'withDrawal_w.html', api.pageParam);
+							} else {
+								var jsfun = 'logindUserInfo()';
+								api.execScript({
+									name: 'personInfo_w',
+									frameName: 'personInfo_f',
+									script: jsfun
+								});
+								api.closeToWin({
+									name: 'personInfo_w'
+								});
+							}
+
+						});
+					} else {
+						api.toast({
+							msg: '支付宝格式错误，请检查',
+							location: 'middle'
+						});
+
+					}
+
+				}
+			}
+		</script>
+	</body>
+
+</html>

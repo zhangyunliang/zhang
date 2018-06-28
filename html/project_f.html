@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>专题页</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="projectBox">
+			<!--广告图 start-->
+			<img src="../image/banner2.jpg" />
+			<!--广告图 end-->
+
+			<!--商品列表容器-->
+			<div class="projectList" style="background-image: url(../image/livebg.jpg);">
+
+				<!--row start-->
+				<div class="projectRow" data-goodid="">
+					<div class="goodsImgBox">
+						<img src="../image/good2.jpg" />
+					</div>
+					<div class="goodInfoBox">
+						<div class="titleBox">
+							<i class="iconfont icon-tianmao5"></i>
+							<span>商品标题商品标题商品标题商品标题商品标题</span>
+						</div>
+						<p>销量：12345</p>
+						<div class="priceBox">
+							<label>券后</label><span>￥15.00</span>
+							<label>返集分宝</label><span>501</span>
+						</div>
+					</div>
+				</div>
+				<!--row end-->
+
+				<!--row start-->
+				<div class="projectRow" data-goodid="">
+					<div class="goodsImgBox">
+						<img src="../image/good2.jpg" />
+					</div>
+					<div class="goodInfoBox">
+						<div class="titleBox">
+							<i class="iconfont icon-tianmao5"></i>
+							<span>商品标题商品标题商品标题商品标题商品标题</span>
+						</div>
+						<p>销量：12345</p>
+						<div class="priceBox">
+							<label>券后</label><span>￥15.00</span>
+							<label>返集分宝</label><span>501</span>
+						</div>
+					</div>
+				</div>
+				<!--row end-->
+			</div>
+
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				//点击商品时发送监听事件
+				$(".projectList").on("click", ".projectRow", function(e) {
+					var _thisId = $(this).attr("data-goodid");
+					api.sendEvent({
+						name: 'openGood',
+						extra: {
+							goodId: _thisId
+						}
+					});
+				});
+			}
+		</script>
+	</body>
+
+</html>

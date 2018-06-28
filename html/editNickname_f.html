@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>修改昵称</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="editBox cnt">
+			<p>20个字符以内,仅支持中英文、数字、下划线</p>
+			<input id="nickName" name="nickname" type="text" />
+			<input type="button" value="确定" tapmode onclick="editNickName(this)" />
+		</div>
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var _elNickName = $api.byId('nickName');
+			apiready = function() {
+				if(api.pageParam.nickname) {
+					$api.val(_elNickName, api.pageParam.nickname)
+				}
+			}
+
+			function editNickName(e) {
+				var reg = new RegExp("^([\u4E00-\uFA29]|[\uE7C7-\uE7F3]|[a-zA-Z0-9_]){1,20}$");
+				if(reg.test($api.val(_elNickName))) {
+					getApiJson('member/setUser.html', {
+						mid: api.pageParam.id,
+						nickname: $api.val(_elNickName)
+					}, function() {
+						api.toast({
+							msg: '修改成功，正在跳转...',
+							location: 'middle'
+						});
+						var jsfunoo = 'lodingData()';
+						api.execScript({
+							name: 'jifen_w',
+							frameName: 'jifen_f',
+							script: jsfunoo
+						});
+						//刷新数据
+						var jsfun = 'logindUserInfo()';
+						var jsfun2 = 'hkfnChangeLogin()'
+						api.execScript({
+							name: 'personInfo_w',
+							frameName: 'personInfo_f',
+							script: jsfun
+						});
+						api.execScript({
+							name: 'root',
+							frameName: 'my_fr',
+							script: jsfun2
+						});
+						api.toast({
+							msg: '修改成功，正在跳转...',
+							location: 'middle'
+						});
+						api.closeToWin({
+							name: 'personInfo_w'
+						});
+
+					});
+
+				} else {
+					api.toast({
+						msg: '昵称格式错误，请检查',
+						location: 'middle'
+					});
+				}
+			}
+		</script>
+	</body>
+
+</html>

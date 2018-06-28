@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>商品详情</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var dialogBox;
+			apiready = function() {
+				setHeaderH();
+				dialogBox = api.require('dialogBox');
+				openNewFrame("goodsDetail_f.html", 45, 45);
+			}
+			function dialogBox_actionMenu() {
+				dialogBox.actionMenu({
+					rect: {
+						h: 200
+					},
+					texts: {
+						cancel: '取消'
+					},
+					items: [{
+						text: '微信朋友圈',
+						icon: 'widget://image/friend.png'
+					}, {
+						text: '微信好友',
+						icon: 'widget://image/weifriend.png'
+					}, {
+						text: '微博',
+						icon: 'widget://image/weibo64.png'
+					}, {
+						text: 'QQ好友',
+						icon: 'widget://image/QQ.png'
+					}, {
+						text: 'QQ空间',
+						icon: 'widget://image/Qzone.png'
+					}, {
+						text: '复制链接',
+						icon: 'widget://image/copy.png'
+					}],
+					styles: {
+						bg: '#FFF',
+						corner: 6,
+						column: 4,
+						itemText: {
+							color: '#000',
+							size: 14,
+							marginT: 10
+						},
+						itemIcon: {
+							size: 54
+						},
+						cancel: {
+							bg: '#fff',
+							color: '#333',
+							h: 55,
+							size: 14
+						}
+					},
+					tapClose: true
+				}, function(ret) {
+					// alert(JSON.stringify(ret));
+				});
+			}
+		</script>
+	</body>
+
+</html>

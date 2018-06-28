@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>联系客服</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="settingCells ">
+			<a id="QQ" href="javascript:;" data-url="kefu_w.html" onclick="openNewWin(this)">
+				<i class="iconfont icon-wang"></i>
+				<label>在线客服</label>
+				<i class="iconfont icon-right"></i>
+			</a>
+			<a href="javascript:;" onclick="callServer()" tapmode>
+				<i class="iconfont icon-phone"></i>
+				<label>联系电话</label>
+				<i class="iconfont icon-right"></i>
+			</a>
+		</div>
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			var serverTel,serverQQ;
+			
+			apiready = function() {
+				setHeaderH();
+				$.post(apiUrl+'Ad/auto.html',{type:'kefu'},function(ret){
+					serverTel=ret.data.mobile.toString();
+					serverQQ=ret.data.qq.toString();
+				},'json');
+				
+				
+			}
+			
+			function lxQQ(){
+				location.href='mqqwpa://im/chat?chat_type=wpa&uin='+serverQQ+'&version=1&src_type=web&web_src=oicqzone.com';
+			}
+
+			function callServer() {
+				api.call({
+					type: 'tel_prompt',
+					number: serverTel
+				});
+			}
+		</script>
+	</body>
+
+</html>

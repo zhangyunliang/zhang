@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>首页</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+
+		<!--footer-nav start-->
+		<footer id="footer" class="footer">
+			<ul>
+				<li class="menu active" data-url="home_fr.html" tapmode onclick="fnSetMenuIndex(0)">
+					<i class="iconfont icon-shouye"></i>
+					<span>首页</span>
+				</li>
+				<li class="menu" data-url="live_fr.html" tapmode onclick="fnSetMenuIndex(1)">
+					<i class="iconfont icon-zhibo-copy"></i>
+					<span>直播</span>
+				</li>
+				<li class="menu" data-url="factList_fr.html" tapmode onclick="fnSetMenuIndex(2)">
+					<i class="iconfont icon-baoliao"></i>
+					<span>爆料</span>
+				</li>
+				<li class="menu" data-url="baskSingleList_fr.html" tapmode onclick="fnSetMenuIndex(3)">
+					<i class="iconfont icon-shaidan"></i>
+					<span>晒单</span>
+				</li>
+				<li class="menu" data-url="my_fr.html" tapmode onclick="fnSetMenuIndex(4)">
+					<i class="iconfont icon-wode"></i>
+					<span>我的</span>
+				</li>
+			</ul>
+		</footer>
+		<!--footer-nav end-->
+
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				var footer = $api.byId('footer');
+				var footerH = $api.offset(footer).h;
+				var menus = $api.domAll(".menu");
+
+				var frames = [];
+				for(var i = 0; i < menus.length; i++) {
+					var thisUrl = $api.attr(menus[i], 'data-url');
+					var thisName = getPageName(thisUrl);
+					frames.push({
+						name: thisName,
+						url: thisUrl,
+						bgColor: '#f0f0f0'
+					});
+				}
+
+				api.openFrameGroup({
+					name: 'mainFrameGroup',
+					scrollEnabled: true,
+					rect: {
+						x: 0,
+						y: 0,
+						w: 'auto',
+						h: api.winHeight - footerH
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetMenuActive(ret.index);
+				});
+			}
+
+			function fnSetMenuActive(_index) {
+				var menus = $api.domAll(".menu");
+				for(var i = 0; i < menus.length; i++) {
+					if(_index == i) {
+						$api.addCls(menus[i], 'active');
+					} else {
+						$api.removeCls(menus[i], 'active');
+					}
+				}
+			}
+
+			function fnSetMenuIndex(_index) {
+				api.setFrameGroupIndex({
+					name: 'mainFrameGroup',
+					index: _index,
+					scroll: true
+				});
+			}
+		</script>
+	</body>
+
+</html>

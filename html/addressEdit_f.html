@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<!--<link rel="stylesheet" href="../dist/css/styleMin.css" />-->
+		<style>
+			.tijiaoMs {
+				font-size: 16px;
+				color: #ffffff;
+				background-color: #f64580;
+				height: 40px;
+				line-height: 40px;
+				margin: 20px 15px;
+				border-radius: 20px;
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--header start-->
+		<div class="weui-cells weui-cells_form">
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">收货人：</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input id="name" class="weui-input" type="text" placeholder="请输入真实姓名">
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">手机号码：</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input id="tel" class="weui-input" type="number" placeholder="请输入手机号码">
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">选择区域</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input id="ssq" class="weui-input" type="text" placeholder="点击选择省/市/区">
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">详细地址：</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input id="adds" class="weui-input" type="text" placeholder="请输入详细地址">
+				</div>
+			</div>
+
+		</div>
+		<div class="tijiaoMs" onclick="saveAddress()">保存</div>
+		<script type="text/javascript" src="../src/concat/all.js" ></script>
+		<script>
+			var _id;
+			apiready = function() {
+				api.setFrameAttr({
+					name: 'addressEdit_f',
+					bounces: false
+				});
+
+				if(api.pageParam.addressId) { //编辑
+					_id = api.pageParam.addressId;
+					getDetail(_id);
+				}
+
+				$("#ssq").cityPicker({
+					title: "请选择省市区",
+					onChange: function(picker, values, displayValues) {
+
+					}
+				});
+			}
+
+			function getDetail(_id) {
+				var _add = new Address();
+				_add.getDetailById(_id, function(ret) {
+					$("#name").val(ret.realname);
+					$("#tel").val(ret.mobile);
+					$("#ssq").val(ret.province + ' ' + ret.city + ' ' + ret.area);
+					$("#adds").val(ret.address);
+
+				});
+			}
+
+			function saveAddress() {
+				var _ssq = $("#ssq").val();
+				var _postData = {
+					mid: $api.getStorage("memberId"),
+					realname: $("#name").val(),
+					mobile: $("#tel").val(),
+					province: _ssq.split(' ')[0],
+					city: _ssq.split(' ')[1],
+					area: _ssq.split(' ')[2],
+					address: $("#adds").val(),
+					id: _id
+				};
+
+				if(!_postData.realname) {
+					_api_showToast("收货人不能为空");
+				} else if(!_postData.mobile) {
+					_api_showToast("手机号码不能为空");
+				} else if(!(/^1[345789]\d{9}$/.test(_postData.mobile))) {
+					_api_showToast("手机号码格式错误");
+				} else if(!_postData.province) {
+					_api_showToast("请选择省市区");
+				} else if(!_postData.address) {
+					_api_showToast("详细地址不能为空")
+				} else {
+					var _add = new Address();
+					_add.eidtAddress(_postData, function() {
+						api.toast({
+							msg: '保存成功'
+						})
+						if(api.pageParam.isSelect) { //选择
+
+							var jsfun = 'getAddList()';
+							api.execScript({
+								name: 'addressSelect_w',
+								frameName: 'addressSelect_f',
+								script: jsfun
+							});
+							api.closeWin();
+						} else { //列表
+
+							var jsfun = 'getAddList()';
+							api.execScript({
+								name: 'addressList_w',
+								frameName: 'addressList_f',
+								script: jsfun
+							});
+							api.closeWin();
+						}
+
+					})
+				}
+
+			}
+		</script>
+	</body>
+
+</html>

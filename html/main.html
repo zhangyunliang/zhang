@@ -1,71 +1,124 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
-    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
-    <title>Hello APP</title>
-    <link rel="stylesheet" type="text/css" href="../css/api.css" />
-    <style>
-        label {
-            margin: 10px;
-            font-size: 24px;
-        }
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>首页</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
 
-        ul {
-            margin-bottom: 10px;
-        }
+		</style>
+	</head>
 
-        ul li {
-            margin: 5px 10px;
-            padding: 5px;
-            color: #000;
-            word-wrap: break-word;
-        }
-    </style>
-</head>
+	<body>
+		<!--footer-nav start-->
+		<footer id="footer" class="footer">
+			<ul>
+				<li class="menu active" data-url="home_fr.html" tapmode onclick="fnSetMenuIndex(0)">
+					<i class="iconfont icon-shouye"></i>
+					<span>首页</span>
+				</li>
+				<li class="menu" data-url="live_w.html" tapmode onclick="openNewWin(this)">
+					<i class="iconfont icon-zhibo-copy"></i>
+					<span>直播</span>
+				</li>
+				<li class="menu" data-url="factList_fr.html" tapmode onclick="fnSetMenuIndex(2)">
+					<i class="iconfont icon-baoliao"></i>
+					<span>爆料</span>
+				</li>
+				<li class="menu" data-url="baskSingleList_fr.html" tapmode onclick="fnSetMenuIndex(3)">
+					<i class="iconfont icon-shaidan"></i>
+					<span>晒单</span>
+				</li>
+				<li class="menu" data-url="my_fr.html" tapmode onclick="fnSetMenuIndex(4)">
+					<i class="iconfont icon-wode"></i>
+					<span>我的</span>
+				</li>
+			</ul>
+		</footer>
+		<!--footer-nav end-->
 
-<body>
-    <label>Hello APP</label>
-    <div id='sys-info'></div>
-</body>
-<script type="text/javascript" src="../script/api.js"></script>
-<script type="text/javascript">
-    apiready = function() {
-        var ver = api.version;
-        var sType = api.systemType;
-        var sVer = api.systemVersion;
-        var id = api.deviceId;
-        var model = api.deviceModel;
-        var name = api.deviceName;
-        var cType = api.connectionType;
-        var winName = api.winName;
-        var winWidth = api.winWidth;
-        var winHeight = api.winHeight;
-        var frameName = api.frameName || '';
-        var frameWidth = api.frameWidth || '';
-        var frameHeight = api.frameHeight || '';
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				var footer = $api.byId('footer');
+				var footerH = $api.offset(footer).h;
+				var menus = $api.domAll(".menu");
 
-        var str = '<ul>';
-        str += '<li>引擎版本信息: ' + ver + '</li>';
-        str += '<li>系统类型: ' + sType + '</li>';
-        str += '<li>系统版本: ' + sVer + '</li>';
-        str += '<li>设备标识: ' + id + '</li>';
-        str += '<li>设备型号: ' + model + '</li>';
-        str += '<li>设备名称: ' + name + '</li>';
-        str += '<li>网络状态: ' + cType + '</li>';
-        str += '<li>主窗口名字: ' + winName + '</li>';
-        str += '<li>主窗口宽度: ' + winWidth + '</li>';
-        str += '<li>主窗口高度: ' + winHeight + '</li>';
-        str += '<li>子窗口名字: ' + frameName + '</li>';
-        str += '<li>子窗口宽度: ' + frameWidth + '</li>';
-        str += '<li>子窗口高度: ' + frameHeight + '</li>';
-        str += '</ul>';
+				var frames = [];
+				for(var i = 0; i < menus.length; i++) {
+					if(i != 1) {
+						var thisUrl = $api.attr(menus[i], 'data-url');
+						var thisName = getPageName(thisUrl);
+						frames.push({
+							name: thisName,
+							url: thisUrl,
+							bgColor: '#f0f0f0'
+						});
+					}
 
-        $api.byId('sys-info').innerHTML = str;
+				}
 
-    };
-</script>
+				api.openFrameGroup({
+					name: 'mainFrameGroup',
+					scrollEnabled: false,
+					rect: {
+						x: 0,
+						y: 0,
+						w: 'auto',
+						h: api.winHeight - footerH
+					},
+					index: 0,
+					frames: frames
+				}, function(ret, err) {
+					fnSetMenuActive(ret.index);
+				});
+			}
+
+			function fnSetMenuActive(_index) {
+				var menus = $api.domAll(".menu");
+				for(var i = 0; i < menus.length - 1; i++) {
+
+						if(_index == i) {
+							if(i>0){
+								$api.addCls(menus[i+1], 'active');
+							}else{
+								$api.addCls(menus[i], 'active');
+							}
+
+						} else {
+							if(i>0){
+								$api.removeCls(menus[i+1], 'active');
+							}else{
+								$api.removeCls(menus[i], 'active');
+							}
+						}
+
+
+				}
+			}
+
+			function fnSetMenuIndex(_index) {
+				if(_index > 1) {
+					api.setFrameGroupIndex({
+						name: 'mainFrameGroup',
+						index: _index - 1,
+						scroll: true
+					});
+				} else {
+					api.setFrameGroupIndex({
+						name: 'mainFrameGroup',
+						index: _index,
+						scroll: true
+					});
+				}
+
+			}
+		</script>
+	</body>
 
 </html>

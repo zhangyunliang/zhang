@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>地址列表</title>
+		<link rel="stylesheet" href="../font/iconfont.css" />
+		<link rel="stylesheet" href="../dist/css/allMin.css" />
+		<link rel="stylesheet" href="../dist/css/styleMin.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<div class="qiandaoBox">
+			<div class="item">
+				<span>连续签到</span>
+				<p><label id="sendDay">0</label>天</p>
+			</div>
+			<div class="item">
+				<img id="qdimg" src="../image/qiandaoBg.png" />
+			</div>
+			<div class="item">
+				<span>我的集分宝</span>
+				<p><label id="jfb">0</label>个</p>
+			</div>
+		</div>
+
+		<div class="renwuTitle"><span>新人任务</span><label>(0/5)</label></div>
+		<div class="renwuList">
+			<div class="row">
+				<img src="../image/qiandao-rw.png" />
+				<span>每日签到</span>
+				<label>未完成</label>
+			</div>
+		</div>
+		
+		<!--签到日历 start-->
+		
+		<div class="dateCnt">
+			<div class="dateBox">
+				<img class="date-bg" src="../image/date-bg.png" />
+				<div class="dateHead">
+					<span class="todyDate">11月18日</span>
+					<span class="qiandaoTishi">今日已签到+2积分</span>
+					<span class="qiandaoDesc">再连续签到X天，可额外+5分</span>
+					<i class="iconfont icon-roundclose"></i>
+				</div>
+				<div class="dateBody">
+					<label class="lxqd">+8</label>
+				</div>
+			</div>
+			
+		</div>
+		
+		<!--签到日历 end-->
+		
+		<script type="text/javascript" src="../dist/js/all.js" ></script>
+		<script>
+			apiready = function() {
+				lodingData();
+			}
+			
+			$(document).ready(function(){
+				var _d=new Date();
+				var _y=_d.getFullYear();
+				var _m=_d.getMonth();
+				var _d2=new Date(_y,_m+1,0);
+				var _d3=new Date(_y,_m,1);
+				var _day=_d.getDate();
+				var _days=_d2.getDate();		//每月天数
+				var _week=_d3.getDay(); //每月第一天周几  0:周日
+				var _html='';
+				for(var i=0;i<_week;i++){
+					_html+='<span></span>'
+				}
+				$(".dateBody").append(_html);
+				var _html2="";
+				for(var i=0;i<_days;i++){
+					if(i==_day-1){
+						_html2+='<span class="active">'+(i+1)+'</span>'
+						
+					}else{
+						_html2+='<span>'+(i+1)+'</span>'
+					}
+					
+				}
+				$(".dateBody").append(_html2);
+				var _lh=$(".dateBody span").eq(0).height();
+				console.log(_lh);
+				$(".dateBody span").css("line-height",_lh+'px');
+				
+				
+			});
+			
+			function lodingData() {
+				var _jf = new JiFen();
+				_jf.getLXDays(function(ret) {
+					$("#sendDay").html(ret)
+				});
+				_jf.getRWList(function(ret) {
+					_jf.addRWListDom($(".renwuList"), ret);
+					setTimeout(function(){
+						var _qdstatust=$(".renwuList .row").eq(0).find("label").html();
+						console.log(_qdstatust);
+						
+						if(_qdstatust=='已完成'){
+							$("#qdimg").attr("src","../image/qiandaoBg-yq.png")
+						}
+					},500)
+					
+					
+				});
+
+				var _mb = new Member();
+				_mb.getJiFenBao(function(ret) {
+					$("#jfb").html(parseInt(parseFloat(ret.data) * 100));
+				})
+			}
+
+			$("#qdimg").on("click", function() {
+				qiandao();
+			});
+
+			function qiandao() {
+				var _jf = new JiFen()
+				_jf.qiandao(function(ret) {
+					if(ret.code.toString() == "1") {
+						api.alert({
+							msg: "签到成功,获得" + ret.jifen + "个集分宝"
+						});
+					} else {
+						api.alert({
+							msg: "签到失败," + ret.msg
+						});
+					}
+					lodingData();
+				});
+			}
+
+			$(".renwuList").on("click", ".row", function() {
+				if($(this).attr("data-key") == "yaoqing") {
+					openNewWin(null, "invite_w.html", null);
+				} else if($(this).attr("data-key") == "qiandao") { //签到
+					qiandao();
+				} else if($(this).attr("data-key") == "touxiang" || $(this).attr("data-key") == "taobao" || $(this).attr("data-key") == "weixin") {
+					openNewWin(null, "personInfo_w.html", null);
+				} else if($(this).attr("data-key") == "wanshanxinxi") { //修改昵称
+					openNewWin(null, "editNickname_w.html", {nickname:''});
+				} else if($(this).attr("data-key") == "baoliao") { //发布爆料
+					openNewWin(null, "factRelease_w.html", null);
+				} else if($(this).attr("data-key") == "shaidan") { //发布晒单
+					openNewWin(null, "baskSingleRelease_w.html", null);
+				} else if($(this).attr("data-key") == "huifushaidan") { //回复晒单
+					api.sendEvent({
+						name: 'shaidan'
+					});
+					api.closeWin();
+				} else if($(this).attr("data-key") == "huifubaoliao") { //回复爆料
+					api.sendEvent({
+						name: 'baoliao'
+					});
+					api.closeWin();
+				} else{
+					
+				}
+
+			});
+		</script>
+	</body>
+
+</html>
